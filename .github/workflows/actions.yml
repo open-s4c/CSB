@@ -7,6 +7,20 @@ jobs:
     steps:
       - name: install pre-requisites
         run: sudo apt-get install -y libhiredis-dev
+
+      - name: Install perf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y linux-tools-common linux-tools-generic linux-tools-$(uname -r)
+
+      - name: Enable perf events
+        run: |
+          echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
+          echo 0 | sudo tee /proc/sys/kernel/kptr_restrict
+
+      - name: Verify perf
+        run: perf --version
+
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
         with:
