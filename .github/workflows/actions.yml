@@ -5,11 +5,18 @@ jobs:
   Run-bm-generator:
     runs-on: ubuntu-latest
     steps:
-      - name: install pre-requisites
-        run: sudo apt-get install -y linux-tools-generic build-essential cmake libhiredis-dev
+      - name: Verify perf before
+        run: |
+          perf --version
+          uname -r
 
-      - name: Verify perf
-        run: perf --version
+      - name: install pre-requisites
+        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) build-essential cmake libhiredis-dev
+
+      - name: Verify perf after
+        run: |
+          perf --version
+          uname -r
 
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
@@ -150,7 +157,7 @@ jobs:
       - name: Install pre-requisites
         run: |
           sudo apt update
-          sudo apt-get install -y build-essential linux-tools-generic cmake libhiredis-dev bubblewrap
+          sudo apt-get install -y build-essential linux-tools-common linux-tools-$(uname -r) cmake libhiredis-dev bubblewrap
       - name: Run Benchmark ${{ matrix.benchmark }}
         run: |
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
