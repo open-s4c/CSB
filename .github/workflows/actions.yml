@@ -23,11 +23,13 @@ jobs:
           go env -w GOBIN=$HOME/.local/bin
           strace --version
           cd bm-generator/
-          ./test.sh
+          sudo ./test.sh
 
       - name: Fix artifact permissions
         if: always()
-        run: sudo chmod -R a+r ${{ github.workspace }}/results
+        run: |
+          sudo chmod -R a+r ${{ github.workspace }}/results
+          sudo chmod -R a+r ${{ github.workspace }}/bench-select
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -37,6 +39,7 @@ jobs:
           path: |
             ${{ github.workspace }}/bm-generator/ls_strace.log
             ${{ github.workspace }}/results
+            ${{ github.workspace }}/bench-select
 
 
   # Checks if cmake and C files are properly formatted
