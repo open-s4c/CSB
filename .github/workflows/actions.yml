@@ -24,12 +24,19 @@ jobs:
           strace --version
           cd bm-generator/
           ./test.sh
-      - name: Upload strace log
+
+      - name: Fix artifact permissions
+        if: always()
+        run: sudo chmod -R a+r ${{ github.workspace }}/results
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ls_strace
-          path: ${{ github.workspace }}/bm-generator/ls_strace.log
+          name: bm-generator-artifacts
+          path: |
+            ${{ github.workspace }}/bm-generator/ls_strace.log
+            ${{ github.workspace }}/results
 
 
   # Checks if cmake and C files are properly formatted
