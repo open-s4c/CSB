@@ -23,7 +23,7 @@ jobs:
           go env -w GOBIN=$HOME/.local/bin
           strace --version
           cd bm-generator/
-          sudo ./test.sh
+          ./test.sh
 
       - name: Fix artifact permissions
         if: always()
