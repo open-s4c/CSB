@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install pre-requisites
-        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) linux-cloud-tools-$(uname -r) build-essential cmake libhiredis-dev
+        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) build-essential cmake libhiredis-dev
 
       - name: Verify perf after
         run: |
