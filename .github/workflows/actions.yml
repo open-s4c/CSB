@@ -5,13 +5,8 @@ jobs:
   Run-bm-generator:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify perf before
-        run: |
-          perf --version
-          uname -r
-
       - name: install pre-requisites
-        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) build-essential cmake libhiredis-dev
+        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) linux-cloud-tools-$(uname -r) build-essential cmake libhiredis-dev
 
       - name: Verify perf after
         run: |
