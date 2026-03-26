@@ -6,12 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install pre-requisites
-        run: sudo apt-get install -y linux-tools-common linux-tools-$(uname -r) build-essential cmake libhiredis-dev
-
-      - name: Verify perf after
-        run: |
-          perf --version
-          uname -r
+        run: sudo apt-get install -y build-essential linux-tools-common linux-tools-$(uname -r) cmake libhiredis-dev
 
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
