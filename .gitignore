@@ -4,8 +4,9 @@ build/
 venv/
 __pycache__/
 results/
-bm-external/*
 deserialized/
 extracted/
 Testing/
 gen-ws
+bm-external/byte-unixbench
+bm-external/sysbench
