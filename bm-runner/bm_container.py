@@ -164,7 +164,7 @@ class Container(ExecutionUnit):
                 return source
 
         bm_log(
-            f"CSB container doesn't map '{home_dir}'. Can't create subcontainers",
+            f"CSB container doesn't map '{home_dir}'. Can't create sub-containers",
             LogType.ERROR,
         )
         return None
@@ -192,7 +192,7 @@ class Container(ExecutionUnit):
                 cpuset_cpus=self.core_set,
                 volumes=volumes,
                 privileged=True,  # privileged mode
-                detach=True,  # detach mode
+                detach=True,  # detached mode
                 working_dir="/home",
                 ports=ports,
             )
@@ -225,7 +225,7 @@ class Container(ExecutionUnit):
         if self.app.cd:
             assert self.app.path is not None, "path is not set while change directory is requested!"
             command = f"cd {self.app.path} && {command}"
-        commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, use_in_container=True)}"  # same as self.output_file outside container.
+        commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, use_in_container=True)} 2> {resolve_path(self.err_file, use_in_container=True)}"  # same as self.output_file outside container.
         return self.__start(commands)
 
 
