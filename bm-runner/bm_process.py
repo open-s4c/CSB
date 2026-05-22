@@ -40,15 +40,16 @@ class Process(ExecutionUnit):
         commands = (
             f"{self.CMD_WHILE_NOT_START}{change_dir}taskset --cpu-list {self.core_set} {command}"
         )
-        with open(resolve_path(self.output_file), "w") as outfile:
-            self.process = subprocess.Popen(
-                commands,
-                shell=True,
-                stdout=outfile,
-                stderr=subprocess.DEVNULL,
-                preexec_fn=preexec_process,
-                cwd=self.home_dir,
-            )
+        with open(resolve_path(self.err_file), "w") as err_file:
+            with open(resolve_path(self.output_file), "w") as outfile:
+                self.process = subprocess.Popen(
+                    commands,
+                    shell=True,
+                    stdout=outfile,
+                    stderr=err_file,
+                    preexec_fn=preexec_process,
+                    cwd=self.home_dir,
+                )
         bm_log(f"launched process {self.name} with {commands}")
         return True
 
