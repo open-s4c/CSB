@@ -1,0 +1,48 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#Containers",
+      "y": "time",
+      "y_lbl": "Time(s)",
+      "hue_lbl": "Executer",
+      "hue": "container_cnt",
+      "shape": "barplot",
+      "title": "Time needed to launch and destroy N containers"
+    }
+  ],
+  "benchmark_config": {
+    "threads": {
+      "values": [
+        [
+          1, 2, 3, 4, 5, 6
+        ]
+      ]
+    },
+    "exec_env" : ["native"],
+    "duration": 10,
+    "monitors": {
+      "perf": [
+        "-a",
+        "--all-kernel"
+       ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 1
+  },
+  "applications": [
+    {
+      "path": "bm-external",
+      "name": "bm-cgroups.py",
+      "args": "--instances {threads} --duration {duration}"
+    }
+  ]
+}

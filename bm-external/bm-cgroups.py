@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 import docker
 import time
 import concurrent.futures
+import argparse
 
 # ---------------------------
 # Config
@@ -59,33 +61,29 @@ def launch_container(index):
 # ---------------------------
 # Main Benchmark
 # ---------------------------
-def main():
-    print("Checking host cgroup v2 support...")
-    if not check_host_cgroup2():
-        print("⚠️  Host/runtime does NOT appear to use cgroup v2. Benchmark may be invalid!")
-        return
-    print("✅ Host/runtime uses cgroup v2. Starting benchmark...")
+def main(count:int, duration: int):
+    cgroup = "v2" if check_host_cgroup2() else "v1"
 
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(launch_container, i) for i in range(NUM_CONTAINERS)]
+        futures = [executor.submit(launch_container, i) for i in range(count)]
         for future in concurrent.futures.as_completed(futures):
             results.append(future.result())
 
     # ---------------------------
     # Report
     # ---------------------------
-    print("\nBenchmark results:")
     total_time = 0
     for idx, elapsed, cg in sorted(results):
         if elapsed is not None:
-            print(f"Container {idx:03d}: {elapsed:.3f}s, cgroup={cg}")
             total_time += elapsed
         else:
             print(f"Container {idx:03d}: ERROR {cg}")
-
-    print(f"\nLaunched {NUM_CONTAINERS} containers in {total_time:.3f}s total.")
-    print(f"Average per container: {total_time/NUM_CONTAINERS:.3f}s")
+    print(f"host_cgroup={cgroup};container_cgroup={cg};num_containers={count};time={total_time/count:.3f}\n")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
+    parser.add_argument("--instances", help="", default=NUM_CONTAINERS, type=int)
+    parser.add_argument("--duration", help="", default=TIMEOUT)
+    args, others = parser.parse_known_args()
+    main(count=args.instances, duration=args.duration)
