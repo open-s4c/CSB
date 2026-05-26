@@ -19,7 +19,7 @@ def bm_log(msg: str, t: LogType = LogType.DEBUG):
     current_time = datetime.now().strftime("%H:%M:%S.%f")
     match t:
         case LogType.ERROR | LogType.FATAL:
-            file=sys.stderr
+            file = sys.stderr
         case _:
-            file=sys.stdout
+            file = sys.stdout
     print(f"{t.value}{current_time} [{t.name}] {msg}{RESET}", file=file)
