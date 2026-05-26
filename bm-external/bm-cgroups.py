@@ -28,7 +28,6 @@ def check_host_cgroup2():
             IMAGE_NAME,
             CONTAINER_COMMAND,
             detach=True,
-            tty=True,
             remove=True
         )
         logs = container.logs().decode().strip()
