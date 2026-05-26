@@ -16,7 +16,8 @@
     "duration": 10,
     "monitors": {
       "perf": [
-        "-C 0",
+        "-C",
+        "0",
         "--all-kernel"
        ]
     }
