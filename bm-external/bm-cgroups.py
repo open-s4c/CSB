@@ -65,10 +65,16 @@ def main(count:int, duration: int):
     cgroup = "v2" if check_host_cgroup2() else "v1"
 
     results = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(launch_container, i) for i in range(count)]
-        for future in concurrent.futures.as_completed(futures):
-            results.append(future.result())
+
+    if count == 1:
+        output = launch_container(0)
+        results.append(output)
+    else:
+        # launches stuff in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=count) as executor:
+            futures = [executor.submit(launch_container, i) for i in range(count)]
+            for future in concurrent.futures.as_completed(futures):
+                results.append(future.result())
 
     # ---------------------------
     # Report

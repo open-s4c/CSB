@@ -16,8 +16,7 @@
     "duration": 10,
     "monitors": {
       "perf": [
-        "-a",
-        "--all-kernel"
+        "-C 0"
        ]
     }
   },
@@ -25,7 +24,7 @@
     "container_list": {
       "values": [
         [
-          1, 6
+          1, 2 ,3 , 4, 5, 6
         ]
       ]
     },
