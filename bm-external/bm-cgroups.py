@@ -3,6 +3,7 @@ import docker
 import time
 import concurrent.futures
 import argparse
+import sys
 
 # ---------------------------
 # Config
@@ -15,7 +16,7 @@ TIMEOUT = 60                    # seconds
 # ---------------------------
 # Docker client
 # ---------------------------
-client = docker.from_env()
+client =  docker.DockerClient(base_url="unix://var/run/docker.sock")
 
 # ---------------------------
 # Helper functions
@@ -36,12 +37,13 @@ def check_host_cgroup2():
         else:
             return True
     except Exception as e:
-        print("Error checking host cgroup:", e)
+        print("Error checking host cgroup:", e, file=sys.stderr)
         return False
 
 def launch_container(index):
     """Launch a single container, check cgroup, and measure time."""
     start_time = time.time()
+    cgroup2_used = ""
     try:
         container = client.containers.run(
             IMAGE_NAME,
@@ -55,7 +57,9 @@ def launch_container(index):
         elapsed = time.time() - start_time
         return index, elapsed, cgroup2_used
     except Exception as e:
-        return index, None, f"error: {e}"
+        print("Error in creating or destructing the container:", e, file=sys.stderr)
+        elapsed = time.time() - start_time
+        return index, elapsed, cgroup2_used
 
 # ---------------------------
 # Main Benchmark
@@ -83,7 +87,7 @@ def main(count:int, duration: int):
         if elapsed is not None:
             total_time += elapsed
         else:
-            print(f"Container {idx:03d}: ERROR {cg}")
+            print(f"Container {idx:03d}: ERROR {cg}", file=sys.stderr)
     print(f"host_cgroup={cgroup};container_cgroup={cg};num_containers={count};time={total_time/count:.3f}\n")
 
 if __name__ == "__main__":
