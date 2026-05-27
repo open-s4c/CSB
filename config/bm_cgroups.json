@@ -9,7 +9,18 @@
       "hue": "execution_unit",
       "shape": "barplot",
       "title": "Time needed to launch and destroy N containers"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "time",
+      "y_lbl": "Avg Time(s)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Average Time vs. #Containers",
+      "type": "mean"
     }
+
   ],
   "benchmark_config": {
     "exec_env" : ["native"],
@@ -18,7 +29,8 @@
       "perf": [
         "-C",
         "0",
-        "--all-kernel"
+        "-e",
+        "cycles:k"
        ]
     }
   },

@@ -54,7 +54,7 @@ class FlameGraph(Monitor):
 
     @classmethod
     def perf_events(cls) -> list[str]:
-        events = ["cycles"]
+        events = []
         if cls.arm_spe_enabled_and_supported():
             events.append(cls.arm_spe_event())
         return events
