@@ -9,6 +9,7 @@ from benchkit.benchmark import (
 import sys
 from typing import Optional, Dict, Any, List
 import bm_utils
+from bm_utils import get_cgroups_version
 from bm_container import Containers
 from bm_process import Processes
 from config.benchmark import ExecutionType
@@ -48,6 +49,7 @@ class ScalabilityBenchmark(Benchmark):
         kernel_info = kernel_info.strip()
         self.common_info["kernel"] = kernel_info.replace("#", " ")
         self.common_info["Allowed CPUs"] = self.container_cfg.get_cpu_pool()
+        self.common_info["cgroup"] = get_cgroups_version()
 
     def prebuild_bench(self, **_kwargs):
         b = Builder()

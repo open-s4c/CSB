@@ -316,6 +316,7 @@ def read_data_frame_from_csv(file: str) -> Optional[pd.DataFrame]:
         bm_log(f"{e} on {file}", LogType.ERROR)
         return None
 
+
 def get_cgroups_version() -> str:
     """
     Returns the used version of cgroups.
@@ -324,9 +325,9 @@ def get_cgroups_version() -> str:
     # then cgroup v2 is in use. If it returns
     # `tmpfs` then most likely v1 is in use.
     cgroup = shell_out(
-        command=f"stat -f -c %T /sys/fs/cgroup",
+        command="stat -f -c %T /sys/fs/cgroup",
         output_is_log=False,
         print_file_shell_cmd=False,
-    )
+    ).strip()
     version = "v2" if cgroup == "cgroup2fs" else "v1"
-    return f"{cgroup} -> {version}"
+    return f"{cgroup}({version})"
