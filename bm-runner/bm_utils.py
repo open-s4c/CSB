@@ -325,9 +325,9 @@ def get_cgroups_version() -> str:
     # then cgroup v2 is in use. If it returns
     # `tmpfs` then most likely v1 is in use.
     cgroup = shell_out(
-        command="stat -f -c %T /sys/fs/cgroup",
+        command="cat /proc/mounts",
         output_is_log=False,
         print_file_shell_cmd=False,
     ).strip()
-    version = "v2" if cgroup == "cgroup2fs" else "v1"
-    return f"{cgroup}({version})"
+    version = "v2" if "cgroup2".lower() in cgroup.lower() else "v1"
+    return f"{version}"
