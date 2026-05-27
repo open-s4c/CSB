@@ -10,63 +10,43 @@ import sys
 # ---------------------------
 IMAGE_NAME = "busybox:latest"   # lightweight image
 NUM_CONTAINERS = 50             # how many containers to launch
-CONTAINER_COMMAND = "sh -c 'cat /sys/fs/cgroup/cgroup.controllers || echo v1'"  # verify cgroup v2
 TIMEOUT = 60                    # seconds
 
 # ---------------------------
 # Docker client
 # ---------------------------
-client =  docker.DockerClient(base_url="unix://var/run/docker.sock")
+client =  docker.from_env()
 
-# ---------------------------
-# Helper functions
-# ---------------------------
-def check_host_cgroup2():
-    """Check if host Docker uses cgroup v2."""
-    try:
-        # Create a temporary container to inspect /sys/fs/cgroup
-        container = client.containers.run(
-            IMAGE_NAME,
-            CONTAINER_COMMAND,
-            detach=True,
-            remove=True
-        )
-        logs = container.logs().decode().strip()
-        if "v1" in logs:
-            return False
-        else:
-            return True
-    except Exception as e:
-        print("Error checking host cgroup:", e, file=sys.stderr)
-        return False
 
 def launch_container(index):
-    """Launch a single container, check cgroup, and measure time."""
-    start_time = time.time()
+    """Launch a minimal container lifecycle benchmark."""
+    start_time = time.perf_counter()
     cgroup2_used = ""
     try:
         container = client.containers.run(
             IMAGE_NAME,
-            CONTAINER_COMMAND,
+            "true",                 # minimal workload
             detach=True,
-            tty=True,
+            remove=True,            # automatic cleanup
+            tty=False,
+            stdin_open=False,
+            network_disabled=True,
         )
-        logs = container.logs().decode().strip()
-        cgroup2_used = "v2" if logs else "v1"
-        container.remove(force=True)
-        elapsed = time.time() - start_time
-        return index, elapsed, cgroup2_used
+
+        # Wait for container exit + cleanup
+        container.wait()
+
+        elapsed = time.perf_counter() - start_time
+        return index, elapsed
     except Exception as e:
         print("Error in creating or destructing the container:", e, file=sys.stderr)
-        elapsed = time.time() - start_time
-        return index, elapsed, cgroup2_used
+        elapsed = time.perf_counter() - start_time
+        return index, elapsed
 
 # ---------------------------
 # Main Benchmark
 # ---------------------------
 def main(count:int, duration: int):
-    cgroup = "v2" if check_host_cgroup2() else "v1"
-
     results = []
 
     if count == 1:
@@ -83,12 +63,12 @@ def main(count:int, duration: int):
     # Report
     # ---------------------------
     total_time = 0
-    for idx, elapsed, cg in sorted(results):
+    for idx, elapsed in sorted(results):
         if elapsed is not None:
             total_time += elapsed
         else:
-            print(f"Container {idx:03d}: ERROR {cg}", file=sys.stderr)
-    print(f"host_cgroup={cgroup};container_cgroup={cg};num_containers={count};time={total_time/count:.3f}\n")
+            print(f"Container {idx:03d}", file=sys.stderr)
+    print(f"num_containers={count};time={total_time/count:.3f}\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
