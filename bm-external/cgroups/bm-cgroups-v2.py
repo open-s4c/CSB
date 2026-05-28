@@ -19,9 +19,18 @@ def launch_container(index):
     container_name = f"cgroups_{index}"  # unique per run
     start_time = time.perf_counter()
     try:
-        shell_out(command = f"crun run -d {container_name}")
-        shell_out(command = f"crun delete {container_name}")
+        create_out = shell_out(command = f"crun run -d {container_name}", print_shell_cmd=False,
+                            print_input = False,
+                            output_is_log=False,
+                            print_file_shell_cmd=False,)
+        delete_out = shell_out(command = f"crun delete {container_name}",
+                            print_input = False,
+                            print_shell_cmd=False,
+                            output_is_log=False,
+                            print_file_shell_cmd=False,)
         elapsed = time.perf_counter() - start_time
+        print(create_out, file=sys.stderr)
+        print(delete_out, file=sys.stderr)
         return index, elapsed
     except Exception as e:
         print("Error in creating or destructing the container:", e, file=sys.stderr)
