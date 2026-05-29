@@ -41,7 +41,7 @@
     {
       "path": "bm-external/cgroups",
       "name": "bm-cgroups-v2.py",
-      "args": "--instances 1 --duration {duration}",
+      "args": "--instances 1 --index {index}",
       "cd" : true
     }
   ]

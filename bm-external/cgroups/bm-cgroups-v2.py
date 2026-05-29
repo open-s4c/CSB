@@ -4,7 +4,6 @@ import time
 import concurrent.futures
 import argparse
 import sys
-import podman
 from benchkit.shell.shell import shell_out
 # ---------------------------
 # Config
@@ -19,11 +18,11 @@ def launch_container(index):
     container_name = f"cgroups_{index}"  # unique per run
     start_time = time.perf_counter()
     try:
-        create_out = shell_out(command = f"crun run -d {container_name}", print_shell_cmd=False,
+        create_out = shell_out(command = f"sudo runc run -d {container_name}", print_shell_cmd=False,
                             print_input = False,
                             output_is_log=False,
                             print_file_shell_cmd=False,)
-        delete_out = shell_out(command = f"crun delete {container_name}",
+        delete_out = shell_out(command = f"sudo runc delete -f {container_name}",
                             print_input = False,
                             print_shell_cmd=False,
                             output_is_log=False,
@@ -34,17 +33,17 @@ def launch_container(index):
         return index, elapsed
     except Exception as e:
         print("Error in creating or destructing the container:", e, file=sys.stderr)
-        elapsed = time.perf_counter() - start_time
+        sys.exit(1)
         return index, elapsed
 
 # ---------------------------
 # Main Benchmark
 # ---------------------------
-def main(count:int, duration: int):
+def main(count:int, index: int):
     results = []
 
     if count == 1:
-        output = launch_container(0)
+        output = launch_container(index)
         results.append(output)
     else:
         # launches stuff in parallel
@@ -67,6 +66,6 @@ def main(count:int, duration: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
     parser.add_argument("--instances", help="", default=NUM_CONTAINERS, type=int)
-    parser.add_argument("--duration", help="", default=TIMEOUT)
-    args, others = parser.parse_known_args()
-    main(count=args.instances, duration=args.duration)
+    parser.add_argument("--index", help="", default=TIMEOUT)
+    args, index = parser.parse_known_args()
+    main(count=args.instances, index=args.index)
