@@ -14,6 +14,15 @@ ln -s /busybox bin/true
 ```
 
 
+
+# Toybox
+
+[Available binaries](https://landley.net/toybox/bin/)
+
+- https://landley.net/toybox/bin/toybox-aarch64
+- https://landley.net/toybox/bin/toybox-x86_64
+
+
 ```bash
 mv toybox-aarch64 toybox
 chmod +x toybox
