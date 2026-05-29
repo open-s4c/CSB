@@ -18,11 +18,11 @@ def launch_container(index):
     container_name = f"cgroups_{index}"  # unique per run
     start_time = time.perf_counter()
     try:
-        create_out = shell_out(command = f"sudo runc run -d {container_name}", print_shell_cmd=False,
+        create_out = shell_out(command = f"runc run -d {container_name}", print_shell_cmd=False,
                             print_input = False,
                             output_is_log=False,
                             print_file_shell_cmd=False,)
-        delete_out = shell_out(command = f"sudo runc delete -f {container_name}",
+        delete_out = shell_out(command = f"runc delete -f {container_name}",
                             print_input = False,
                             print_shell_cmd=False,
                             output_is_log=False,
