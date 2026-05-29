@@ -13,6 +13,20 @@ ln -s /busybox bin/echo
 ln -s /busybox bin/true
 ```
 
+
+```bash
+mv toybox-aarch64 toybox
+chmod +x toybox
+mkdir bin
+cd bin
+for cmd in $(../toybox); do ln -s ../toybox "$cmd"; done
+cd ..
+cd ..
+runc spec  # or runc spec --rootless
+sed -i 's/"args": \[[^]*\]/"args": ["\/bin\/sh"]/g' config.json
+
+```
+
 # Edit config
 edit the auto-generation `config.json`
 
@@ -22,5 +36,5 @@ edit the auto-generation `config.json`
 
 # sanity check
 
-- `sudo crun run cgroups`
+- `sudo runc run cgroups` # or in rootless `runc --root /tmp/runc-rootless run cgroups`
 - `crun list`
