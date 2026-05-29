@@ -24,7 +24,13 @@ echo "Preparing rootfs"
 echo "=========================================="
 mkdir bin
 cd bin
-for cmd in $(../toybox); do ln -s ../  "$cmd"; done
+for cmd in $(../toybox); do ln -s ../toybox  "$cmd"; done
+
+echo "=========================================="
+echo "Verify symbolic links point to toybox"
+echo "=========================================="
+
+ls -lR
 
 echo "=========================================="
 echo "Creating config"
@@ -32,3 +38,11 @@ echo "=========================================="
 cd ../../
 rm -f config.json
 runc spec
+
+echo "=========================================="
+echo "Test running and removing test container"
+echo "=========================================="
+CONTAINER_NAME="test-container"
+sudo runc run $CONTAINER_NAME
+
+
