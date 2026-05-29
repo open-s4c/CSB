@@ -4,7 +4,24 @@
 
 set -e
 
-TOYBOX_URL=https://landley.net/toybox/bin/toybox-x86_64
+echo "=========================================="
+echo "Detecting Architecture"
+echo "=========================================="
+arch=$(uname -m)
+case "$arch" in
+    x86_64)
+        echo "ARM x86_64 arch detected!"
+        TOYBOX_URL=https://landley.net/toybox/bin/toybox-x86_64
+        ;;
+    aarch64)
+        echo "ARM 64-bit arch detected!"
+        TOYBOX_URL=https://landley.net/toybox/bin/toybox-aarch64
+        ;;
+    *)
+        echo "[ERROR] Unsupported architecture: $arch"
+        exit 1
+        ;;
+esac
 
 echo "=========================================="
 echo "Cleaning up and creating dir rootfs"
@@ -30,7 +47,7 @@ echo "=========================================="
 echo "Verify symbolic links point to toybox"
 echo "=========================================="
 
-ls -lR
+# ls -lR
 
 echo "=========================================="
 echo "Creating config"
@@ -39,10 +56,11 @@ cd ../../
 rm -f config.json
 runc spec
 
+sed -i 's|"terminal": true,|"terminal": false,|' config.json
+
 echo "=========================================="
 echo "Test running and removing test container"
 echo "=========================================="
 CONTAINER_NAME="test-container"
-sudo runc run $CONTAINER_NAME
-
-
+sudo runc run -d $CONTAINER_NAME
+sudo runc delete -f $CONTAINER_NAME
