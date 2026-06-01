@@ -13,6 +13,8 @@ NUM_CONTAINERS = 50             # how many containers to launch
 TIMEOUT = 60                    # seconds
 
 
+## TODO: for this to work everything needs to run with sudo :/
+
 def launch_container(index):
     """Launch a minimal container lifecycle benchmark."""
     container_name = f"cgroups_{index}"  # unique per run
