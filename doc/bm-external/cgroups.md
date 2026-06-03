@@ -1,3 +1,16 @@
+# cgroups v2 Benchmark
+
+## Requirements
+
+Before launching the benchmark for the first time run the prepare script.
+
+```bash
+scripts/bm-external/cgroups/prepare.sh
+```
+
+The script will download [toybox](https://landley.net/toybox/bin/) and create `bm-external/cgroups/rootfs` and `bm-external/cgroups/config.json`.
+These are required by the cgroups benchmark.
+
 # Run the following in this folder
 
 ```bash
