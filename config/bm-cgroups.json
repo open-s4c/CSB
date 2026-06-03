@@ -20,17 +20,18 @@
       "title": "Average Time vs. #Containers",
       "type": "mean"
     }
-
   ],
   "benchmark_config": {
-    "exec_env" : ["native"],
-     "monitors": {
+    "exec_env": [
+      "native"
+    ],
+    "monitors": {
       "perf": [
         "-C",
         "0",
         "-e",
         "cycles:k"
-       ]
+      ]
     }
   },
   "containers": {
@@ -41,7 +42,7 @@
       "path": "bm-external/cgroups",
       "name": "bm-cgroups.py",
       "args": "--index {index}",
-      "cd" : true
+      "cd": true
     }
   ]
 }
