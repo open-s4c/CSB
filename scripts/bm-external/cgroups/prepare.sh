@@ -4,6 +4,10 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WDIR="$SCRIPT_DIR/../../../bm-external/cgroups"
+cd $WDIR
+
 echo "=========================================="
 echo "Detecting Architecture"
 echo "=========================================="
