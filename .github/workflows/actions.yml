@@ -173,13 +173,17 @@ jobs:
           sudo ./scripts/run-single.sh config/bm-cgroups.json
       - name: Fix artifact permissions
         if: always()
-        run: sudo chmod -R a+r results/
+        run: |
+          sudo chmod -R a+r results/
+          sudo chmod -R a+r build/bench/
       - name: Upload results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: results-cgroups
-          path: results/
+          name: artifacts-cgroups
+          path: |
+           results/
+           build/bench/
 
   Run-External-Benchmark:
     runs-on: ubuntu-latest
@@ -209,7 +213,7 @@ jobs:
           ${{ matrix.benchmark.build }}
       - name: Run Benchmark ${{ matrix.benchmark }}
         run: |
-          ./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
+          sudo./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
       - name: Fix artifact permissions
         if: always()
         run: sudo chmod -R a+r results/
@@ -218,7 +222,9 @@ jobs:
         if: always()
         with:
           name: results-${{ matrix.benchmark.config }}
-          path: results/
+          path: |
+            results/
+            build/bench
 
   Check-Submodule-Commit:
     runs-on: ubuntu-latest
