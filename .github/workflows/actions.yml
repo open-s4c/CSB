@@ -170,7 +170,7 @@ jobs:
           ./scripts/bm-external/cgroups/prepare.sh
       - name: Run Benchmark
         run: |
-          ./scripts/run-single.sh config/bm-cgroups.json
+          sudo ./scripts/run-single.sh config/bm-cgroups.json
       - name: Fix artifact permissions
         if: always()
         run: sudo chmod -R a+r results/
