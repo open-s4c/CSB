@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
+
 import time
 import argparse
 import sys
 from benchkit.shell.shell import shell_out
-# ---------------------------
-# Config
-# ---------------------------
-DEFAULT_INDEX = 0               # seconds
 
 
 ## TODO: for this to work everything needs to run with sudo :/
@@ -45,7 +42,7 @@ def launch_container(index):
 # ---------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
-    parser.add_argument("--index", help="Index of the container", default=DEFAULT_INDEX)
+    parser.add_argument("--index", help="Index of the container", default=0)
     args, index = parser.parse_known_args()
 
     instance_name, elapsed  = launch_container(args.index)
