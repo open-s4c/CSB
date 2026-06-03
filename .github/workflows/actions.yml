@@ -125,7 +125,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        benchmark: [bm_empty, bm_server_redis, rocksdb/rocksdb_aggregated, mysql/mysql-aggregated]
+        benchmark:
+          -  { prepare_cmd: "" , config: bm_empty }
+          -  { prepare_cmd: "" , config: bm_server_redis }
+          -  { prepare_cmd: "" , config: rocksdb/rocksdb_aggregated }
+          -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
+          -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
+          -  { prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-cgroups }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -138,52 +144,29 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y build-essential cmake libhiredis-dev
-      - name: Run Benchmark ${{ matrix.benchmark }}
+      - name: Satisfy Specific Prerequisites
         run: |
-          ./scripts/run-single.sh config/${{ matrix.benchmark }}.json
+          ${{ matrix.benchmark.prepare_cmd }}
+      - name: Run Benchmark ${{ matrix.benchmark.config }}
+        run: |
+          sudo ./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
       - name: Fix artifact permissions
         if: always()
-        run: sudo chmod -R a+r results/
+        run: |
+          sudo chmod -R a+r results/
+          sudo chmod -R a+r build/bench/
 
       - name: Create unique name
-        run: echo "ARTIFACT_NAME=$(echo '${{ matrix.benchmark }}' | tr '/' '_')" >> $GITHUB_ENV
+        run: echo "ARTIFACT_NAME=$(echo '${{ matrix.benchmark.config }}' | tr '/' '_')" >> $GITHUB_ENV
 
       - name: Upload results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: results-${{ env.ARTIFACT_NAME }}
-          path: results/
-
-  Run-cgroups-Benchmark:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Satisfy Prerequisites
-        run: |
-          ./scripts/bm-external/cgroups/prepare.sh
-      - name: Run Benchmark
-        run: |
-          sudo ./scripts/run-single.sh config/bm-cgroups.json
-      - name: Fix artifact permissions
-        if: always()
-        run: |
-          sudo chmod -R a+r results/
-          sudo chmod -R a+r build/bench/
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: artifacts-cgroups
           path: |
-           results/
-           build/bench/
+            results/
+            build/bench/
 
   Run-External-Benchmark:
     runs-on: ubuntu-latest
