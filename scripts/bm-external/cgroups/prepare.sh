@@ -61,9 +61,10 @@ rm -f config.json
 runc spec
 
 sed -i 's|"terminal": true,|"terminal": false,|' config.json
+sed -i 's|"sh"|"/bin/sh", "-c", "echo hello"|' config.json
 
 echo "=========================================="
-echo "Test running and removing test container"
+echo "Test (run & delete) container"
 echo "=========================================="
 CONTAINER_NAME="test-container"
 sudo runc run -d $CONTAINER_NAME
