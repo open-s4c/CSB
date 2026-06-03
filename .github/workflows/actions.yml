@@ -196,7 +196,7 @@ jobs:
           ${{ matrix.benchmark.build }}
       - name: Run Benchmark ${{ matrix.benchmark }}
         run: |
-          sudo./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
+          ./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
       - name: Fix artifact permissions
         if: always()
         run: sudo chmod -R a+r results/
