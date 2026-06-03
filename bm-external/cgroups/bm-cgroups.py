@@ -7,11 +7,7 @@ import argparse
 import sys
 from benchkit.shell.shell import shell_out
 
-
-## TODO: for this to work everything needs to run with sudo :/
-
 def launch_container(index):
-    """Launch a minimal container lifecycle benchmark."""
     container_name = f"cgroups_{index}"  # unique per run
     start_time = time.perf_counter()
     try:
