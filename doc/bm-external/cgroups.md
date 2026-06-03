@@ -45,3 +45,14 @@ scripts/bm-external/cgroups/prepare.sh
 The script will download [toybox](https://landley.net/toybox/bin/) and create `bm-external/cgroups/rootfs` and `bm-external/cgroups/config.json`.
 
 These are required by the cgroups benchmark.
+
+
+# Running the benchmark
+
+This benchmark may require `sudo` to run correctly.
+
+Users can run it as follows:
+
+```bash
+sudo scripts/run-single.sh config/bm-cgroups.json
+```

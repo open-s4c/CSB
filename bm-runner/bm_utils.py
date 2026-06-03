@@ -327,6 +327,7 @@ def get_cgroups_version() -> str:
     cgroup = shell_out(
         command="cat /proc/mounts",
         output_is_log=False,
+        print_output=False,
         print_file_shell_cmd=False,
     ).strip()
     version = "v2" if "cgroup2".lower() in cgroup.lower() else "v1"
