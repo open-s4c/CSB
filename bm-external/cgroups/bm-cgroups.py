@@ -1,7 +1,6 @@
+#!/usr/bin/env python
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
-
-#!/usr/bin/env python
 import time
 import argparse
 import sys
