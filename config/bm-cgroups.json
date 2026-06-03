@@ -24,8 +24,7 @@
   ],
   "benchmark_config": {
     "exec_env" : ["native"],
-    "duration": 10,
-    "monitors": {
+     "monitors": {
       "perf": [
         "-C",
         "0",
@@ -41,7 +40,7 @@
     {
       "path": "bm-external/cgroups",
       "name": "bm-cgroups.py",
-      "args": "--instances 1 --index {index}",
+      "args": "--index {index}",
       "cd" : true
     }
   ]

@@ -1,16 +1,12 @@
 #!/usr/bin/env python
-import docker
 import time
-import concurrent.futures
 import argparse
 import sys
 from benchkit.shell.shell import shell_out
 # ---------------------------
 # Config
 # ---------------------------
-IMAGE_NAME = "busybox:latest"   # lightweight image
-NUM_CONTAINERS = 50             # how many containers to launch
-TIMEOUT = 60                    # seconds
+DEFAULT_INDEX = 0               # seconds
 
 
 ## TODO: for this to work everything needs to run with sudo :/
@@ -30,44 +26,23 @@ def launch_container(index):
                             output_is_log=False,
                             print_file_shell_cmd=False,)
         elapsed = time.perf_counter() - start_time
-        print(create_out, file=sys.stderr)
-        print(delete_out, file=sys.stderr)
-        return index, elapsed
+        # we write these to stderr, so that we don't pollute the output
+        # with things bm-runner cannot parse. We redirect to stderr
+        # for debugging purpose.
+        print(f"Container creation output: {create_out}", file=sys.stderr)
+        print(f"Container deletion output: {delete_out}", file=sys.stderr)
+        return container_name, elapsed
     except Exception as e:
         print("Error in creating or destructing the container:", e, file=sys.stderr)
         sys.exit(1)
-        return index, elapsed
 
 # ---------------------------
 # Main Benchmark
 # ---------------------------
-def main(count:int, index: int):
-    results = []
-
-    if count == 1:
-        output = launch_container(index)
-        results.append(output)
-    else:
-        # launches stuff in parallel
-        with concurrent.futures.ThreadPoolExecutor(max_workers=count) as executor:
-            futures = [executor.submit(launch_container, i) for i in range(count)]
-            for future in concurrent.futures.as_completed(futures):
-                results.append(future.result())
-
-    # ---------------------------
-    # Report
-    # ---------------------------
-    total_time = 0
-    for idx, elapsed in sorted(results):
-        if elapsed is not None:
-            total_time += elapsed
-        else:
-            print(f"Container {idx:03d}", file=sys.stderr)
-    print(f"num_containers={count};time={total_time/count:.3f}\n")
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
-    parser.add_argument("--instances", help="", default=NUM_CONTAINERS, type=int)
-    parser.add_argument("--index", help="", default=TIMEOUT)
+    parser.add_argument("--index", help="Index of the container", default=DEFAULT_INDEX)
     args, index = parser.parse_known_args()
-    main(count=args.instances, index=args.index)
+
+    instance_name, elapsed  = launch_container(args.index)
+    print(f"instance_name={instance_name};time={elapsed:.3f}\n")
