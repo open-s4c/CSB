@@ -155,6 +155,32 @@ jobs:
           name: results-${{ env.ARTIFACT_NAME }}
           path: results/
 
+  Run-cgroups-Benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Satisfy Prerequisites
+        run: |
+          ./scripts/bm-external/cgroups/prepare.sh
+      - name: Run Benchmark
+        run: |
+          ./scripts/run-single.sh config/bm-cgroups.json
+      - name: Fix artifact permissions
+        if: always()
+        run: sudo chmod -R a+r results/
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-cgroups
+          path: results/
+
   Run-External-Benchmark:
     runs-on: ubuntu-latest
     strategy:
