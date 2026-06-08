@@ -117,6 +117,7 @@ CPU/Core assignment policy for execution units, i.e. containers and native proce
 Monitors are used to monitor performance. They can be used to analyze the behavior of the benchmarks.  <br/>Supported values:
 - `"mpstat"`:  Runs mpstat and generates related graphs.
 - `"perf"`:  Runs perf and generates flame-graphs.
+- `"iostat"`:  Runs iostat -x and generates block-device graphs.
 - `"redis_benchmark"`:  parses the output of redis_benchmark.
 - `"sar_net"`:  monitors network traffic.
 - `"perf_stat"`:  Runs perf stat.
