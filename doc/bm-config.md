@@ -119,6 +119,7 @@ Monitors are used to monitor performance. They can be used to analyze the behavi
 - `"perf"`:  Runs perf and generates flame-graphs.
 - `"redis_benchmark"`:  parses the output of redis_benchmark.
 - `"sar_net"`:  monitors network traffic.
+- `"perf_stat"`:  Runs perf stat.
 ## PlotType
 Supported types of plots.  <br/>Supported values:
 - `"normal"`:  Plots according to the config no post processing of data.
