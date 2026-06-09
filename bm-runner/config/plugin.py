@@ -32,7 +32,7 @@ class ExecutionTime(str, Enum):
 # "plugins" : [ { path: "<valid path>", name: "<script_name>", exec_time = "pre", args = ["1", "2"]}]
 # note that `args` has to be a list of strings
 class Plugin(dict):
-    DIR = "scripts/plugins"
+    DEFAULT_DIR = "scripts/plugins"  # relative to the project root
     CONFIG_KEY: str = "plugins"
 
     def __init__(
@@ -73,7 +73,8 @@ class Plugin(dict):
         self.exec_time = exec_time
         self.force_stop = force_stop
         self.process = None
-        self.fname = ensure_exists(name, dir=resolve_path(self.DIR) if path is None else path)
+        self.default_abs_dir = resolve_path(self.DEFAULT_DIR)
+        self.fname = ensure_exists(name, dir=self.default_abs_dir if path is None else path)
 
     def get_command(self) -> str:
         commands = [self.fname]

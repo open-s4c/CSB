@@ -9,7 +9,7 @@ from bm_utils import resolve_path
 
 
 class Adapter(dict):
-    DIR = "scripts/adapters"
+    DEFAULT_DIR = "scripts/adapters"  # relative to the project root
 
     def __init__(self, name: str, path: Optional[Path] = None):
         """
@@ -29,7 +29,8 @@ class Adapter(dict):
         -
         """
         super().__init__(name=name, path=path)
-        self.fname = ensure_exists(name, dir=resolve_path(self.DIR) if path is None else path)
+        self.default_abs_dir = resolve_path(self.DEFAULT_DIR)
+        self.fname = ensure_exists(name, dir=self.default_abs_dir if path is None else path)
 
     def adapt(self, output: str) -> str:
         # This is a blocking call
