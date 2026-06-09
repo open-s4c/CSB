@@ -7,6 +7,7 @@ from monitors.redis_bench import RedisStats
 from monitors.perf import FlameGraph
 from monitors.sarnet import SarNetStats
 from monitors.monitor import Monitor
+from monitors.perfstat import PerfStat
 from utils.logger import bm_log, LogType
 import sys
 from config.env_config import EnvUniversalConfig, UniversalConfig
@@ -49,6 +50,8 @@ class MonitorFactory:
                 return RedisStats(output_dir=results_dir, args=args)
             case MonitorType.SAR_NET:
                 return SarNetStats(output_dir=results_dir, args=args)
+            case MonitorType.PERF_STAT:
+                return PerfStat(output_dir=results_dir, args=args)
             case _:
                 bm_log(f"Unsupported monitor type {monitor_type}", LogType.FATAL)
                 sys.exit(1)

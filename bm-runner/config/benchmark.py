@@ -31,12 +31,14 @@ class MonitorType(str, Enum):
     PERF: Runs perf and generates flame-graphs.
     REDIS_BENCHMARK: parses the output of redis_benchmark.
     SAR_NET: monitors network traffic.
+    PERF_STAT: Runs perf stat.
     """
 
     MPSTAT = "mpstat"
     PERF = "perf"
     REDIS_BENCHMARK = "redis_benchmark"
     SAR_NET = "sar_net"
+    PERF_STAT = "perf_stat"
 
 
 class BenchmarkConfig(dict):

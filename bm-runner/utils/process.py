@@ -159,3 +159,10 @@ class BackgroundProcess:
         except Exception as e:
             bm_log(f"Failed to read {self.ofile_name} {e}", LogType.ERROR)
             return ""
+
+    @property
+    def output_file_name(self):
+        """
+        Returns the full path of the output file name of the process.
+        """
+        return self.ofile_name

@@ -308,9 +308,13 @@ def get_all_files_by_ext(dir: str, extension: str = ".csv"):
     return filtered_files
 
 
-def read_data_frame_from_csv(file: str) -> Optional[pd.DataFrame]:
+def read_data_frame_from_csv(
+    file: str, names: Optional[list[str]] = None
+) -> Optional[pd.DataFrame]:
     try:
-        df = pd.read_csv(file, sep=";", comment="#", engine="python", on_bad_lines="error")
+        df = pd.read_csv(
+            file, names=names, sep=";", comment="#", engine="python", on_bad_lines="error"
+        )
         return df
     except Exception as e:
         bm_log(f"{e} on {file}", LogType.ERROR)
