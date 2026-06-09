@@ -6,13 +6,14 @@ import sys
 import subprocess
 import glob
 from monitors.monitor import Monitor
+from bm_utils import resolve_path
 from utils.logger import bm_log, LogType
 from utils.process import BackgroundProcess
 from config.env_config import EnvUniversalConfig, UniversalConfig
 
 
 class FlameGraph(Monitor):
-    FG_PATH_ENV_VAR_NAME = "FLAMEGRAPH"
+    FG_PATH_DIR = "deps/FlameGraph"
     ARM_SPE_PERIOD_ENV_VAR_NAME = "CSB_ARM_SPE_PERIOD"
     ARM_SPE_DEVICE_GLOB = "/sys/bus/event_source/devices/arm_spe*"
     ARM_SPE_MIN_INTERVAL_GLOB = "/sys/bus/event_source/devices/arm_spe*/caps/min_interval"
@@ -34,13 +35,7 @@ class FlameGraph(Monitor):
             requires=["perf"],
             pin=self.get_cpus(),
         )
-        self.fg_path = os.getenv(self.FG_PATH_ENV_VAR_NAME)
-        if self.fg_path is None:
-            bm_log(
-                f"{self.FG_PATH_ENV_VAR_NAME} environment variable is not set. Set it to the path of `stackcollapse-perf.pl` and try again. Or remove perf from monitors",
-                LogType.FATAL,
-            )
-            sys.exit(1)
+        self.fg_path = resolve_path(self.FG_PATH_DIR)
 
     @classmethod
     def perf_record_cmd(cls, args: list[str]) -> list[str]:

@@ -17,12 +17,6 @@ TITLE=$(basename "$CONFIG" .json)
 
 ## this script is to be embedded in other scripts
 HOSTNAME=$(hostname)
-
-# Infer the important dirs
-export FLAMEGRAPH="${SCRIPT_DIR}/deps/FlameGraph"
-export SHE_HULK_ADAPTERS="${SCRIPT_DIR}/scripts/adapters"
-export CSB_ADAPTERS="${SCRIPT_DIR}/scripts/adapters"
-export CSB_PLUGINS="${SCRIPT_DIR}/scripts/plugins"
 export CSB_NO_BUILD_BENCH=ON
 
 BM_DIR=bm-runner

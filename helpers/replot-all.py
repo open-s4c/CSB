@@ -72,10 +72,6 @@ def main():
     print(f"Using venv at {VENV_PATH}")
 
     # Set required env variables for CSB to run
-    env["FLAMEGRAPH"] = f"{SRC_DIR}/deps/FlameGraph"
-    env["SHE_HULK_ADAPTERS"] = f"{SRC_DIR}/scripts/adapters"
-    env["CSB_ADAPTERS"] = f"{SRC_DIR}/scripts/adapters"
-    env["CSB_PLUGINS"] = f"{SRC_DIR}/scripts/plugins"
     env["CSB_NO_BUILD_BENCH"] = "ON"
 
     # Get a list of CSV files

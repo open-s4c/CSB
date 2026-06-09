@@ -5,10 +5,11 @@ import subprocess
 from typing import Optional
 from pathlib import Path
 from bm_utils import ensure_exists
+from bm_utils import resolve_path
 
 
 class Adapter(dict):
-    ENV_VAR = "CSB_ADAPTERS"
+    DIR = "scripts/adapters"
 
     def __init__(self, name: str, path: Optional[Path] = None):
         """
@@ -28,7 +29,7 @@ class Adapter(dict):
         -
         """
         super().__init__(name=name, path=path)
-        self.fname = ensure_exists(name, path, self.ENV_VAR)
+        self.fname = ensure_exists(name, dir=resolve_path(self.DIR) if path is None else path)
 
     def adapt(self, output: str) -> str:
         # This is a blocking call

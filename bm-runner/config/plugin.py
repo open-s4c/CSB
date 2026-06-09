@@ -5,6 +5,7 @@ from enum import Enum
 import sys
 from typing import Optional
 from bm_utils import ensure_exists
+from bm_utils import resolve_path
 from pathlib import Path
 from utils.process import BackgroundProcess
 
@@ -31,7 +32,7 @@ class ExecutionTime(str, Enum):
 # "plugins" : [ { path: "<valid path>", name: "<script_name>", exec_time = "pre", args = ["1", "2"]}]
 # note that `args` has to be a list of strings
 class Plugin(dict):
-    ENV_VAR = "CSB_PLUGINS"
+    DIR = "scripts/plugins"
     CONFIG_KEY: str = "plugins"
 
     def __init__(
@@ -72,7 +73,7 @@ class Plugin(dict):
         self.exec_time = exec_time
         self.force_stop = force_stop
         self.process = None
-        self.fname = ensure_exists(name, dir=path, env_var_dir=self.ENV_VAR)
+        self.fname = ensure_exists(name, dir=resolve_path(self.DIR) if path is None else path)
 
     def get_command(self) -> str:
         commands = [self.fname]
