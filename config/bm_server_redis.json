@@ -100,10 +100,7 @@
         "-C",
         "0,1"
       ],
-      "perf_stat": [
-        "-e",
-        "branch-misses"
-      ]
+      "perf_stat": []
     }
   },
   "containers": {
