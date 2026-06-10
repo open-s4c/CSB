@@ -28,7 +28,7 @@ class PerfStat(Monitor):
         super().__init__(dir=output_dir, args=args)
         self.name = "perf-stat"
         events = ",".join(self.DEFAULT_EVENTS)
-        cmds = ["perf", "stat", "-x", ";", "-o", self.name, "-e", events]
+        cmds = ["sudo", "perf", "stat", "-x", ";", "-o", self.name, "-e", events]
         cmds.extend(args)
 
         self.stat = BackgroundProcess(
