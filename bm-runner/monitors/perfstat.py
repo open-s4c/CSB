@@ -9,6 +9,10 @@ import pandas as pd
 
 
 class PerfStat(Monitor):
+    # we collect the usual defaults always, because
+    # some of the metric values rely on multiple counters
+    # to be calculated. e.g. `branch-misses` metric value
+    # needs `branches` to be also monitored.
     DEFAULT_EVENTS = [
         "cpu-clock",
         "context-switches",
@@ -67,9 +71,12 @@ class PerfStat(Monitor):
                 bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
                 return ""
             for _, row in df.iterrows():
-
                 value = row[VALUE_COL]
                 key = row[KEY_COL]
+                # on some machines e.g. CI, monitoring some events
+                # is not supported. In that case the value will be `<not supported>`.
+                # Here we want to avoid adding meaningless values to the final CSV,
+                # so we skip adding those with value N/A or not a number.
                 if pd.notna(value) and pd.api.types.is_number(value):
                     output += f"{key}={value};"
                 else:
