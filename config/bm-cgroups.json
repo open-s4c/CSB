@@ -72,7 +72,9 @@
     }
   ],
   "benchmark_config": {
-    "exec_env": ["native"],
+    "exec_env": [
+      "native"
+    ],
     "monitors": {
       "perf": [
         "--all-kernel"
