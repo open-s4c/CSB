@@ -79,7 +79,10 @@
       "perf": [
         "--all-kernel"
       ],
-      "perf_stat": []
+      "perf_stat": [
+        "-e",
+        "cache-references,cache-misses,faults,cgroup-switches"
+      ]
     }
   },
   "containers": {
