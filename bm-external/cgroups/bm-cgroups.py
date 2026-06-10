@@ -7,39 +7,52 @@ import argparse
 import sys
 from benchkit.shell.shell import shell_out
 
+
+def quiet_shell(command):
+    return shell_out(
+        command=command,
+        print_shell_cmd=False,
+        print_output=False,
+        print_input=False,
+        output_is_log=False,
+        print_file_shell_cmd=False,
+    )
+
+
 def launch_container(index):
-    container_name = f"cgroups_{index}"  # unique per run
-    start_time = time.perf_counter()
+    container_name = f"cgroups_{index}"
+
     try:
-        create_out = shell_out(command = f"sudo runc run -d {container_name}", print_shell_cmd=False,
-                            print_output = False,
-                            print_input  = False,
-                            output_is_log=False,
-                            print_file_shell_cmd=False,)
-        delete_out = shell_out(command = f"sudo runc delete -f {container_name}",
-                            print_input = False,
-                            print_output = False,
-                            print_shell_cmd=False,
-                            output_is_log=False,
-                            print_file_shell_cmd=False,)
-        elapsed = time.perf_counter() - start_time
-        # we write these to stderr, so that we don't pollute the output
-        # with things bm-runner cannot parse. We redirect to stderr
-        # for debugging purpose.
-        print(f"Container creation output: {create_out}", file=sys.stderr)
-        print(f"Container deletion output: {delete_out}", file=sys.stderr)
-        return container_name, elapsed
+        total_start = time.perf_counter()
+
+        create_start = time.perf_counter()
+        create_out = quiet_shell(f"sudo runc run -d  {container_name}")
+        create_time = time.perf_counter() - create_start
+        print(f"Container create output: {create_out}", file=sys.stderr)
+
+        delete_start = time.perf_counter()
+        delete_out = quiet_shell(f"sudo runc delete -f {container_name}")
+        delete_time = time.perf_counter() - delete_start
+        print(f"Container delete output: {delete_out}", file=sys.stderr)
+
+        total_time = time.perf_counter() - total_start
+        return container_name, create_time, delete_time, total_time
+
     except Exception as e:
-        print("Error in creating or destructing the container:", e, file=sys.stderr)
+        print("Error in container lifecycle:", e, file=sys.stderr)
         sys.exit(1)
 
-# ---------------------------
-# Main Benchmark
-# ---------------------------
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Container Scalability Benchmark")
     parser.add_argument("--index", help="Index of the container", default=0)
-    args, index = parser.parse_known_args()
+    args, _ = parser.parse_known_args()
 
-    instance_name, elapsed  = launch_container(args.index)
-    print(f"instance_name={instance_name};time={elapsed:.3f}\n")
+    instance_name, create_time, delete_time, elapsed = launch_container(args.index)
+
+    print(
+        f"instance_name={instance_name};"
+        f"create_time={create_time:.6f};"
+        f"delete_time={delete_time:.6f};"
+        f"time={elapsed:.6f}"
+    )

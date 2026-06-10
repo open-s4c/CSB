@@ -4,32 +4,80 @@
       "x": "container_cnt",
       "x_lbl": "#Containers",
       "y": "time",
-      "y_lbl": "Time(s)",
-      "hue_lbl": "Executer",
+      "y_lbl": "Total Time(s)",
       "hue": "execution_unit",
+      "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "Time needed to launch and destroy N containers"
+      "title": "Total container create/delete time"
     },
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "time",
-      "y_lbl": "Avg Time(s)",
+      "y": "create_time",
+      "y_lbl": "Create Time(s)",
+      "hue": "execution_unit",
+      "hue_lbl": "Executor",
+      "shape": "barplot",
+      "title": "runc create time"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "delete_time",
+      "y_lbl": "Delete Time(s)",
+      "hue": "execution_unit",
+      "hue_lbl": "Executor",
+      "shape": "barplot",
+      "title": "runc delete time"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "cache-misses",
+      "y_lbl": "Perf stat Cache-misses",
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
-      "title": "Average Time vs. #Containers",
-      "type": "mean"
+      "title": "Cache-misses vs. #Containers",
+      "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "branch-misses",
+      "y_lbl": "Perf stat Branch-misses",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Branch-misses vs. #Containers",
+      "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "faults",
+      "y_lbl": "Perf stat faults",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "faults vs. #Containers",
+      "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "cgroup-switches",
+      "y_lbl": "Perf stat cgroup-switches",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup-switches vs. #Containers",
+      "shape": "barplot"
     }
   ],
   "benchmark_config": {
-    "exec_env": [
-      "native"
-    ],
+    "exec_env": ["native"],
     "monitors": {
       "perf": [
-        "-C",
-        "0"
-      ]
+        "--all-kernel"
+      ],
+      "perf_stat": []
     }
   },
   "containers": {
