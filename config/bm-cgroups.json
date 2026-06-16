@@ -110,7 +110,8 @@
       "perf_lock": [
         "-C",
         "0"
-      ]
+      ],
+      "iostat":[]
     }
   },
   "containers": {
