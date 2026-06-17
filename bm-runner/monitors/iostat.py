@@ -56,14 +56,14 @@ class IoStat(Monitor):
         data = str_to_json(self.stat.read_output())
         if data is None:
             return ""
-        dataframe = self.dataframe_from_json(data)
+        dataframe = self.__transform_json_to_df(data)
         self.dump_plots(dataframe, self.dir)
         return self.aggregate_results(dataframe)
 
     @classmethod
-    def dataframe_from_json(cls, data: dict[str, Any]) -> DataFrame:
+    def __transform_json_to_df(cls, data: dict[str, Any]) -> DataFrame:
         rows = []
-        statistics = cls._statistics(data)
+        statistics = cls.__get_statistics(data)
         for sample_idx, stat in enumerate(statistics):
             for disk in stat.get("disk", []):
                 row = dict(disk)
@@ -147,7 +147,7 @@ class IoStat(Monitor):
         return re.sub(r"[^0-9A-Za-z]+", "_", name).strip("_")
 
     @staticmethod
-    def _statistics(data: dict[str, Any]) -> list[dict[str, Any]]:
+    def __get_statistics(data: dict[str, Any]) -> list[dict[str, Any]]:
         try:
             return data["sysstat"]["hosts"][0]["statistics"]
         except (KeyError, IndexError, TypeError):
