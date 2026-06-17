@@ -90,7 +90,7 @@ class IoStat(Monitor):
         if df.empty or cls.DEVICE_COL not in df:
             return
 
-        df = cls.active_devices(df)
+        df = cls.__remove_inactive_devices(df)
         for title, fname, metrics in cls.PLOTSETS:
             present_metrics = [metric for metric in metrics if metric in df.columns]
             if not present_metrics:
@@ -119,20 +119,26 @@ class IoStat(Monitor):
         plot_chart(df=melted, plot=cfg, out_fig_name=filename)
 
     @classmethod
-    def active_devices(cls, df: DataFrame) -> DataFrame:
+    def __remove_inactive_devices(cls, df: DataFrame) -> DataFrame:
+        """
+        Removes devices that were never active during the run.
+        """
+        # check which metrics exist in the data frame, and keep those columns
         activity_metrics = [
             metric
             for metric in ["r/s", "w/s", "d/s", "f/s", "rkB/s", "wkB/s", "dkB/s", "util", "aqu-sz"]
             if metric in df.columns
         ]
-        if not activity_metrics:
-            return df
+        if len(activity_metrics) > 0:
+            # Row-wise activity check: sum selected metrics and mark rows whose total activity > 0
+            active_rows = df[activity_metrics].abs().sum(axis=1) > 0
+            # Extract the set of devices associated with active rows
+            active_devices = df.loc[active_rows, cls.DEVICE_COL].unique()
+            if len(active_devices) > 0:
+                # keep those devices that has been active at least once.
+                return df[df[cls.DEVICE_COL].isin(active_devices)]
 
-        active_rows = df[activity_metrics].abs().sum(axis=1) > 0
-        active_devices = df.loc[active_rows, cls.DEVICE_COL].unique()
-        if len(active_devices) == 0:
-            return df
-        return df[df[cls.DEVICE_COL].isin(active_devices)]
+        return df
 
     @classmethod
     def metric_columns(cls, df: DataFrame) -> list[str]:
