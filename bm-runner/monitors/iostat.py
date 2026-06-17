@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 import re
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -13,22 +12,23 @@ from utils.logger import LogType, bm_log
 from utils.process import BackgroundProcess
 from bm_visualize import plot_chart, PlotConfig, PlotType
 from bm_utils import str_to_json
+import os
 
 
 class IoStat(Monitor):
     INTERVAL = 1
     DEVICE_COL = "disk_device"
     TIME_COL = "time"
-
-    PLOTSETS = [
-        ("I/O operations per second", "iostat-iops", ["r/s", "w/s", "d/s", "f/s"]),
-        ("Throughput (kB/s)", "iostat-throughput", ["rkB/s", "wkB/s", "dkB/s"]),
-        ("Await time (ms)", "iostat-await", ["r_await", "w_await", "d_await", "f_await"]),
-        ("Request size (kB)", "iostat-request-size", ["rareq-sz", "wareq-sz", "dareq-sz"]),
-        ("Average queue size", "iostat-queue", ["aqu-sz"]),
-        ("Utilization percentage", "iostat-util", ["util"]),
-        ("Merge rate", "iostat-merge-rate", ["rrqm/s", "wrqm/s", "drqm/s"]),
-        ("Merge percentage", "iostat-merge-percent", ["rrqm", "wrqm", "drqm"]),
+    # plot title, plot file name, columns/metrics to be plotted together
+    PLOT_SETS = [
+        ("I/O operations per second", "iops", ["r/s", "w/s", "d/s", "f/s"]),
+        ("Throughput (kB/s)", "throughput", ["rkB/s", "wkB/s", "dkB/s"]),
+        ("Await time (ms)", "await", ["r_await", "w_await", "d_await", "f_await"]),
+        ("Request size (kB)", "request-size", ["rareq-sz", "wareq-sz", "dareq-sz"]),
+        ("Average queue size", "avg-queue-size", ["aqu-sz"]),
+        ("Utilization percentage", "utilization-percent", ["util"]),
+        ("Merge rate", "merge-rate", ["rrqm/s", "wrqm/s", "drqm/s"]),
+        ("Merge percentage", "merge-percent", ["rrqm", "wrqm", "drqm"]),
     ]
 
     def __init__(self, output_dir: str, args: list[str] = []):
@@ -57,7 +57,8 @@ class IoStat(Monitor):
         if data is None:
             return ""
         dataframe = self.__transform_json_to_df(data)
-        self.dump_plots(dataframe, self.dir)
+        dataframe = self.__remove_inactive_devices(dataframe)
+        self.__dump_plots(dataframe)
         return self.aggregate_results(dataframe)
 
     @classmethod
@@ -85,38 +86,36 @@ class IoStat(Monitor):
                 results.append(f"iostat_{device_name}_{cls.safe_name(metric)}={value}")
         return ";".join(results) + (";" if results else "")
 
-    @classmethod
-    def dump_plots(cls, df: DataFrame, output_dir: Path):
-        if df.empty or cls.DEVICE_COL not in df:
+    def __dump_plots(self, df: DataFrame):
+        if df.empty or self.DEVICE_COL not in df:
             return
+        for plot_title, plot_name, metrics in self.PLOT_SETS:
+            # only consider present columns
+            columns = [metric for metric in metrics if metric in df.columns]
+            if len(columns) > 0:
+                self.__dump_plot(df, plot_title, columns, plot_name)
 
-        df = cls.__remove_inactive_devices(df)
-        for title, fname, metrics in cls.PLOTSETS:
-            present_metrics = [metric for metric in metrics if metric in df.columns]
-            if not present_metrics:
-                continue
-            cls.dump_plot(df, title, present_metrics, output_dir / f"{fname}")
-
-    @classmethod
-    def dump_plot(cls, df: DataFrame, title: str, metrics: list[str], filename: Path):
-        plot_df = df[[cls.TIME_COL, cls.DEVICE_COL] + metrics].copy()
+    def __dump_plot(self, df: DataFrame, plot_title: str, columns: list[str], plot_name: str):
+        plot_df = df[[self.TIME_COL, self.DEVICE_COL] + columns].copy()
         melted = plot_df.melt(
-            id_vars=[cls.TIME_COL, cls.DEVICE_COL],
-            value_vars=metrics,
+            id_vars=[self.TIME_COL, self.DEVICE_COL],
+            value_vars=columns,
             var_name="metric",
             value_name="value",
         )
-        melted["series"] = melted[cls.DEVICE_COL].astype(str) + " " + melted["metric"]
+        melted["series"] = melted[self.DEVICE_COL].astype(str) + " " + melted["metric"]
         cfg = PlotConfig(
-            x=cls.TIME_COL,
-            title=title,
+            x=self.TIME_COL,
+            title=plot_title,
             x_lbl="Seconds Elapsed",
             y="value",
             hue="series",
             hue_lbl="Device/metric",
             type=PlotType.MEAN,
         )
-        plot_chart(df=melted, plot=cfg, out_fig_name=filename)
+        plot_chart(
+            df=melted, plot=cfg, out_fig_name=os.path.join(self.dir, f"{self.name}-{plot_name}")
+        )
 
     @classmethod
     def __remove_inactive_devices(cls, df: DataFrame) -> DataFrame:
