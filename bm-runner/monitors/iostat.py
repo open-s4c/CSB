@@ -53,13 +53,15 @@ class IoStat(Monitor):
         self.stat.stop()
 
     def collect_results(self) -> str:
+        mean_output = ""
         data = str_to_json(self.stat.read_output())
-        if data is None:
-            return ""
-        dataframe = self.__transform_json_to_df(data)
-        dataframe = self.__remove_inactive_devices(dataframe)
-        self.__dump_plots(dataframe)
-        return self.aggregate_results(dataframe)
+        if data is not None:
+            dataframe = self.__transform_json_to_df(data)
+            if not dataframe.empty and self.DEVICE_COL in dataframe.columns:
+                dataframe = self.__remove_inactive_devices(dataframe)
+                self.__dump_plots(dataframe)
+                mean_output = self.__get_metric_means(dataframe)
+        return mean_output
 
     @classmethod
     def __transform_json_to_df(cls, data: dict[str, Any]) -> DataFrame:
@@ -72,23 +74,21 @@ class IoStat(Monitor):
                 rows.append(row)
         return pd.DataFrame(rows)
 
-    @classmethod
-    def aggregate_results(cls, df: DataFrame) -> str:
-        if df.empty or cls.DEVICE_COL not in df:
-            return ""
+    def __get_metric_means(self, df: DataFrame) -> str:
+        output = ""
+        metric_cols = self.__get_numeric_columns(df)
+        # group by device name, and calculate means
+        means_by_device = df.groupby(self.DEVICE_COL)[metric_cols].mean(numeric_only=True)
+        # iterate and for each device dump key_value names
+        for device, row in means_by_device.iterrows():
+            device_name = self.__sanitize_name(str(device))
+            for metric, value in row.items():
+                key = f"{self.name}_{device_name}_{self.__sanitize_name(metric)}"
+                output += f"{key}={value};"
 
-        results = []
-        metric_cols = cls.metric_columns(df)
-        for device, device_df in df.groupby(cls.DEVICE_COL):
-            means = device_df[metric_cols].mean(numeric_only=True)
-            device_name = cls.safe_name(str(device))
-            for metric, value in means.items():
-                results.append(f"iostat_{device_name}_{cls.safe_name(metric)}={value}")
-        return ";".join(results) + (";" if results else "")
+        return output
 
     def __dump_plots(self, df: DataFrame):
-        if df.empty or self.DEVICE_COL not in df:
-            return
         for plot_title, plot_name, metrics in self.PLOT_SETS:
             # only consider present columns
             columns = [metric for metric in metrics if metric in df.columns]
@@ -140,7 +140,7 @@ class IoStat(Monitor):
         return df
 
     @classmethod
-    def metric_columns(cls, df: DataFrame) -> list[str]:
+    def __get_numeric_columns(cls, df: DataFrame) -> list[str]:
         return [
             col
             for col in df.columns
@@ -148,7 +148,7 @@ class IoStat(Monitor):
         ]
 
     @staticmethod
-    def safe_name(name: str) -> str:
+    def __sanitize_name(name: str) -> str:
         return re.sub(r"[^0-9A-Za-z]+", "_", name).strip("_")
 
     @staticmethod

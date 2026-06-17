@@ -59,16 +59,16 @@ def disk_sample(device, value):
 
 
 def test_iostat_dataframe_from_json_flattens_samples():
-    df = IoStat.__transform_json_to_df(iostat_sample())
-
+    df = IoStat._IoStat__transform_json_to_df(iostat_sample())  # type: ignore[unresolved-attribute]
     assert list(df["time"]) == [0, 0, 1, 1]
     assert list(df["disk_device"]) == ["nvme0n1", "loop0", "nvme0n1", "loop0"]
     assert list(df["r/s"]) == [1.0, 0.0, 3.0, 0.0]
 
 
 def test_iostat_aggregate_results_sanitizes_metric_names():
-    df = IoStat.__transform_json_to_df(iostat_sample())
-    results = IoStat.aggregate_results(df)
+    stat = IoStat("test", [])
+    df = IoStat._IoStat__transform_json_to_df(iostat_sample())  # type: ignore[unresolved-attribute]
+    results = stat._IoStat__get_metric_means(df)  # type: ignore[unresolved-attribute]
     entries = dict(item.split("=", maxsplit=1) for item in results.rstrip(";").split(";"))
 
     assert float(entries["iostat_nvme0n1_r_s"]) == 2.0
