@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 
-from monitors.iostat import IostatStats
+from monitors.iostat import IoStat
 
 
 def iostat_sample():
@@ -59,7 +59,7 @@ def disk_sample(device, value):
 
 
 def test_iostat_cmd_enforces_extended_json_output():
-    assert IostatStats.iostat_cmd(["nvme0n1"]) == [
+    assert IoStat.iostat_cmd(["nvme0n1"]) == [
         "iostat",
         "-x",
         "-o",
@@ -71,7 +71,7 @@ def test_iostat_cmd_enforces_extended_json_output():
 
 
 def test_iostat_dataframe_from_json_flattens_samples():
-    df = IostatStats.dataframe_from_json(iostat_sample())
+    df = IoStat.dataframe_from_json(iostat_sample())
 
     assert list(df["time"]) == [0, 0, 1, 1]
     assert list(df["disk_device"]) == ["nvme0n1", "loop0", "nvme0n1", "loop0"]
@@ -79,8 +79,8 @@ def test_iostat_dataframe_from_json_flattens_samples():
 
 
 def test_iostat_aggregate_results_sanitizes_metric_names():
-    df = IostatStats.dataframe_from_json(iostat_sample())
-    results = IostatStats.aggregate_results(df)
+    df = IoStat.dataframe_from_json(iostat_sample())
+    results = IoStat.aggregate_results(df)
     entries = dict(item.split("=", maxsplit=1) for item in results.rstrip(";").split(";"))
 
     assert float(entries["iostat_nvme0n1_r_s"]) == 2.0

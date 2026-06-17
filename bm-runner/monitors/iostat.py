@@ -15,7 +15,7 @@ from utils.process import BackgroundProcess
 from bm_visualize import plot_chart, PlotConfig, PlotType
 
 
-class IostatStats(Monitor):
+class IoStat(Monitor):
     INTERVAL = 1
     OUTPUT_FILE = "iostat.json"
     DEVICE_COL = "disk_device"
