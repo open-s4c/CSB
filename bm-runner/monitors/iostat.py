@@ -4,7 +4,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 from pandas import DataFrame
@@ -13,11 +13,11 @@ from monitors.monitor import Monitor
 from utils.logger import LogType, bm_log
 from utils.process import BackgroundProcess
 from bm_visualize import plot_chart, PlotConfig, PlotType
+from bm_utils import str_to_json
 
 
 class IoStat(Monitor):
     INTERVAL = 1
-    OUTPUT_FILE = "iostat.json"
     DEVICE_COL = "disk_device"
     TIME_COL = "time"
 
@@ -32,45 +32,33 @@ class IoStat(Monitor):
         ("Merge percentage", "iostat-merge-percent", ["rrqm", "wrqm", "drqm"]),
     ]
 
-    def __init__(self, output_dir: str, args: Optional[list[str]] = None):
-        if args is None:
-            args = []
+    def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
+        cmds = ["iostat", "-x", "-o", "JSON", "-y"]
+        cmds.extend(args)
+        cmds.append(str(self.INTERVAL))
+        self.name = "iostat"
         self.stat = BackgroundProcess(
-            name="iostat",
-            ofile_name=self.OUTPUT_FILE,
-            cmds=self.iostat_cmd(args),
+            name=self.name,
+            ofile_name=f"{self.name}.json",
+            cmds=cmds,
             out_dir=output_dir,
             requires=["iostat"],
             pin=self.get_cpus(),
         )
-
-    @classmethod
-    def iostat_cmd(cls, args: list[str]) -> list[str]:
-        cmds = ["iostat", "-x", "-o", "JSON", "-y"]
-        cmds.extend(args)
-        cmds.append(str(cls.INTERVAL))
-        return cmds
 
     def start(self):
         self.stat.start()
 
     def stop(self):
         self.stat.stop()
-        self.dump_plots_from_file(Path(self.dir) / self.OUTPUT_FILE)
+        self.dump_plots_from_file(Path(self.stat.output_file_name))
 
     def collect_results(self) -> str:
-        data = self.__read_output()
+        data = str_to_json(self.stat.read_output())
         if data is None:
             return ""
         return self.aggregate_results(self.dataframe_from_json(data))
-
-    def __read_output(self) -> Optional[dict[str, Any]]:
-        try:
-            return json.loads(self.stat.read_output())
-        except json.JSONDecodeError as e:
-            bm_log(f"Could not read iostat output as JSON {e}", LogType.ERROR)
-            return None
 
     @classmethod
     def dataframe_from_json(cls, data: dict[str, Any]) -> DataFrame:

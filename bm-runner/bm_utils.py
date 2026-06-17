@@ -15,6 +15,7 @@ from utils.logger import bm_log, LogType
 from benchkit.utils.types import PathType
 from utils.bm_builder import Builder
 import pandas as pd
+from typing import Any
 
 
 def resolve_path(path: PathType, use_in_container: bool = False) -> PathType:
@@ -318,6 +319,14 @@ def read_data_frame_from_csv(
         return df
     except Exception as e:
         bm_log(f"{e} on {file}", LogType.ERROR)
+        return None
+
+
+def str_to_json(string: str) -> Optional[dict[str, Any]]:
+    try:
+        return json.loads(string)
+    except json.JSONDecodeError as e:
+        bm_log(f"Given String is not a valid JSON. {e}", LogType.ERROR)
         return None
 
 

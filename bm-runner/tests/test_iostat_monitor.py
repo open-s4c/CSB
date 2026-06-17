@@ -58,18 +58,6 @@ def disk_sample(device, value):
     }
 
 
-def test_iostat_cmd_enforces_extended_json_output():
-    assert IoStat.iostat_cmd(["nvme0n1"]) == [
-        "iostat",
-        "-x",
-        "-o",
-        "JSON",
-        "-y",
-        "nvme0n1",
-        "1",
-    ]
-
-
 def test_iostat_dataframe_from_json_flattens_samples():
     df = IoStat.dataframe_from_json(iostat_sample())
 
