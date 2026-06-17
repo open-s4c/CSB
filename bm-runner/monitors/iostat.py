@@ -1,7 +1,6 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-import json
 import re
 from pathlib import Path
 from typing import Any
@@ -52,13 +51,14 @@ class IoStat(Monitor):
 
     def stop(self):
         self.stat.stop()
-        self.dump_plots_from_file(Path(self.stat.output_file_name))
 
     def collect_results(self) -> str:
         data = str_to_json(self.stat.read_output())
         if data is None:
             return ""
-        return self.aggregate_results(self.dataframe_from_json(data))
+        dataframe = self.dataframe_from_json(data)
+        self.dump_plots(dataframe, self.dir)
+        return self.aggregate_results(dataframe)
 
     @classmethod
     def dataframe_from_json(cls, data: dict[str, Any]) -> DataFrame:
@@ -84,20 +84,6 @@ class IoStat(Monitor):
             for metric, value in means.items():
                 results.append(f"iostat_{device_name}_{cls.safe_name(metric)}={value}")
         return ";".join(results) + (";" if results else "")
-
-    @classmethod
-    def dump_plots_from_file(cls, json_file: Path):
-        if not json_file.exists():
-            return
-
-        try:
-            with open(json_file, "r") as file:
-                data = json.load(file)
-        except (OSError, json.JSONDecodeError) as e:
-            bm_log(f"Could not read iostat output from {json_file}: {e}", LogType.ERROR)
-            return
-
-        cls.dump_plots(cls.dataframe_from_json(data), json_file.parent)
 
     @classmethod
     def dump_plots(cls, df: DataFrame, output_dir: Path):
