@@ -1,7 +1,6 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-import json
 
 from monitors.iostat import IostatStats
 
@@ -87,19 +86,3 @@ def test_iostat_aggregate_results_sanitizes_metric_names():
     assert float(entries["iostat_nvme0n1_r_s"]) == 2.0
     assert float(entries["iostat_nvme0n1_rareq_sz"]) == 19.0
     assert float(entries["iostat_loop0_util"]) == 21.0
-
-
-def test_iostat_dump_plots_for_tree_generates_plots_for_all_runs(tmp_path):
-    first_run = tmp_path / "container_cnt-1" / "run-1"
-    second_run = tmp_path / "container_cnt-2" / "run-1"
-    first_run.mkdir(parents=True)
-    second_run.mkdir(parents=True)
-    (first_run / IostatStats.OUTPUT_FILE).write_text(json.dumps(iostat_sample()))
-    (second_run / IostatStats.OUTPUT_FILE).write_text(json.dumps(iostat_sample()))
-
-    IostatStats.dump_plots_for_tree(tmp_path)
-
-    for run_dir in [first_run, second_run]:
-        assert (run_dir / "iostat-iops.png").stat().st_size > 0
-        assert (run_dir / "iostat-throughput.png").stat().st_size > 0
-        assert (run_dir / "iostat-util.png").stat().st_size > 0

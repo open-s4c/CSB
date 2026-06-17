@@ -98,11 +98,6 @@ class IostatStats(Monitor):
         return ";".join(results) + (";" if results else "")
 
     @classmethod
-    def dump_plots_for_tree(cls, output_dir: Path):
-        for json_file in glob_iostat_files(output_dir):
-            cls.dump_plots_from_file(json_file)
-
-    @classmethod
     def dump_plots_from_file(cls, json_file: Path):
         if not json_file.exists():
             return
@@ -191,7 +186,3 @@ class IostatStats(Monitor):
         except (KeyError, IndexError, TypeError):
             bm_log("iostat JSON does not contain sysstat.hosts[0].statistics", LogType.ERROR)
             return []
-
-
-def glob_iostat_files(output_dir: Path) -> list[Path]:
-    return sorted(output_dir.glob(f"**/{IostatStats.OUTPUT_FILE}"))
