@@ -6,13 +6,13 @@ import re
 from pathlib import Path
 from typing import Any, Optional
 
-import matplotlib.pyplot as plt
 import pandas as pd
 from pandas import DataFrame
 
 from monitors.monitor import Monitor
 from utils.logger import LogType, bm_log
 from utils.process import BackgroundProcess
+from bm_visualize import plot_chart, PlotConfig, PlotType
 
 
 class IostatStats(Monitor):
@@ -121,7 +121,7 @@ class IostatStats(Monitor):
             present_metrics = [metric for metric in metrics if metric in df.columns]
             if not present_metrics:
                 continue
-            cls.dump_plot(df, title, present_metrics, output_dir / f"{fname}.png")
+            cls.dump_plot(df, title, present_metrics, output_dir / f"{fname}")
 
     @classmethod
     def dump_plot(cls, df: DataFrame, title: str, metrics: list[str], filename: Path):
@@ -133,23 +133,16 @@ class IostatStats(Monitor):
             value_name="value",
         )
         melted["series"] = melted[cls.DEVICE_COL].astype(str) + " " + melted["metric"]
-        wide = melted.pivot_table(
-            index=cls.TIME_COL, columns="series", values="value", aggfunc="mean"
+        cfg = PlotConfig(
+            x=cls.TIME_COL,
+            title=title,
+            x_lbl="Seconds Elapsed",
+            y="value",
+            hue="series",
+            hue_lbl="Device/metric",
+            type=PlotType.MEAN,
         )
-
-        wide.plot()
-        plt.title(title)
-        plt.xlabel("Seconds Elapsed")
-        plt.grid(True)
-        plt.legend(
-            loc="upper left",
-            bbox_to_anchor=(1, 1),
-            borderaxespad=0.3,
-            fontsize=4.5,
-        )
-        plt.tight_layout()
-        plt.savefig(filename)
-        plt.close()
+        plot_chart(df=melted, plot=cfg, out_fig_name=filename)
 
     @classmethod
     def active_devices(cls, df: DataFrame) -> DataFrame:
