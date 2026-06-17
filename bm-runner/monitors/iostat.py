@@ -177,8 +177,7 @@ class IostatStats(Monitor):
         return [
             col
             for col in df.columns
-            if col not in [cls.DEVICE_COL, cls.TIME_COL]
-            and pd.api.types.is_numeric_dtype(df[col])
+            if col not in [cls.DEVICE_COL, cls.TIME_COL] and pd.api.types.is_numeric_dtype(df[col])
         ]
 
     @staticmethod
