@@ -11,7 +11,7 @@ from monitors.monitor import Monitor
 from utils.logger import LogType, bm_log
 from utils.process import BackgroundProcess
 from bm_visualize import plot_chart, PlotConfig, PlotType
-from bm_utils import str_to_json
+from bm_utils import str_to_json, get_block_devices
 import os
 
 
@@ -33,7 +33,8 @@ class IoStat(Monitor):
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
-        cmds = ["iostat", "-x", "-o", "JSON", "-y"]
+        cmds = ["iostat", "-dx", "-o", "JSON", "-y"]
+        cmds.extend(get_block_devices())
         cmds.extend(args)
         cmds.append(str(self.INTERVAL))
         self.name = "iostat"

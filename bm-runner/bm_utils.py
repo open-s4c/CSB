@@ -345,3 +345,21 @@ def get_cgroups_version() -> str:
     ).strip()
     version = "v2" if "cgroup2".lower() in cgroup.lower() else "v1"
     return f"{version}"
+
+
+def get_block_devices() -> list[str]:
+    """
+    Return top-level block devices, excluding loop devices.
+    """
+    device_list = []
+    output = shell_out(
+        "lsblk -dn -o NAME -e7",
+        output_is_log=False,
+        print_output=False,
+        print_file_shell_cmd=False,
+    ).strip()
+
+    if output:
+        device_list = [f"/dev/{device}" for device in output.splitlines()]
+
+    return device_list
