@@ -58,9 +58,10 @@ class IoStat(Monitor):
         if data is not None:
             dataframe = self.__transform_json_to_df(data)
             if not dataframe.empty and self.DEVICE_COL in dataframe.columns:
+                mean_output = self.__get_metric_means(dataframe)
+                # filter out inactive devices for the plots
                 dataframe = self.__remove_inactive_devices(dataframe)
                 self.__dump_plots(dataframe)
-                mean_output = self.__get_metric_means(dataframe)
         return mean_output
 
     @classmethod
