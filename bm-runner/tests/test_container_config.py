@@ -1,8 +1,50 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-from config.container import ContainersConfig
-from utils.logger import bm_log
+from config.container import ContainersConfig, CoreAssignPolicy
+from utils.logger import bm_log, LogType
+
+
+def test_auto_container_list_allocates_enough_cpus(mocker):
+    # 16 CPUs available on the machine
+    mocker.patch(
+        "config.container.Topology.get_cpu_count",
+        return_value=16,
+    )
+    mocker.patch(
+        "config.container.Topology.get_core_count",
+        return_value=16,
+    )
+
+    # Topology.select should return exactly as many CPUs as requested
+    mocker.patch(
+        "config.container.Topology.select",
+        side_effect=lambda count, **kwargs: list(range(count)),
+    )
+
+    mocker.patch("config.container.ContainersConfig._ContainersConfig__ensure_img_exists")
+
+    cfg = ContainersConfig(
+        core_count=2,
+        core_assignment_policy=CoreAssignPolicy(),
+    )
+
+    assert max(cfg.container_list) == 8
+
+    # Should not raise
+    cfg.get_cpus(7)
+
+
+def test_get_cpus():
+    policy = CoreAssignPolicy(one_cpu_per_core=True)
+    container_cfg = ContainersConfig(core_count=2, core_assignment_policy=policy)
+    bm_log(f"Container list {container_cfg.container_list}", LogType.FATAL)
+
+    for c in container_cfg.container_list:
+        for idx in range(c):
+            bm_log(f"{idx} ==> {container_cfg.cpus}")
+
+            container_cfg.get_cpus(eu_idx=idx)
 
 
 def test_gen_container_list_defaults():
