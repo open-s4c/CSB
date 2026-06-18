@@ -45,11 +45,7 @@
     "duration": 1
   },
   "containers": {
-    "core_assignment_policy": {
-      "cpu_order": "desc",
-      "pack_group": "none",
-      "one_cpu_per_core": false
-    }
+    "core_count": 2
   },
   "applications": [
     {
