@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from config.container import ContainersConfig, CoreAssignPolicy
-from utils.logger import bm_log, LogType
+from utils.logger import bm_log
 from itertools import product
 import pytest
 
@@ -26,7 +26,6 @@ def test_get_cpus_with_default_container_list(
     container_core_count,
     one_cpu_per_core,
 ):
-    # 16 CPUs available on the machine
     mocker.patch(
         "config.container.Topology.get_cpu_count",
         return_value=cpu_count,
@@ -40,12 +39,6 @@ def test_get_cpus_with_default_container_list(
         core_count=container_core_count,
         core_assignment_policy=CoreAssignPolicy(one_cpu_per_core=one_cpu_per_core),
     )
-
-    bm_log(
-        f"cores per container:{container_core_count}, #CPU:{cpu_count}, #CORES:{core_count} => {cfg.container_list}",
-        LogType.FATAL,
-    )
-
     # maximum index we can ask for is: last container count - 1
     max_container_count = cfg.container_list[-1]
     max_idx = max_container_count - 1
