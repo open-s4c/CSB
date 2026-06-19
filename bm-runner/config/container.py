@@ -193,6 +193,7 @@ class ContainersConfig(dict):
         last = first + self.core_count  # last index (exclusive)
         assert last <= len(self.cpus)
         cpus_lst = self.cpus[first:last]
+        assert len(cpus_lst) == self.core_count
         cpus_str: str = ",".join(map(str, cpus_lst))
         bm_log(f"Execution Unit#{eu_idx} will be assigned CPUS: {cpus_str}")
         return cpus_str
