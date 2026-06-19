@@ -1,0 +1,4 @@
+tracepoint:syscalls:sys_enter_openat
+{
+    printf("%s\n", comm);
+}

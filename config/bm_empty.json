@@ -42,14 +42,16 @@
         ]
       ]
     },
-    "duration": 1
+    "duration": 1,
+    "monitors": {"bpftrace":[]}
   },
   "containers": {
     "core_assignment_policy": {
       "cpu_order": "desc",
       "pack_group": "none",
       "one_cpu_per_core": false
-    }
+    },
+    "container_list": {"values":[[1]]}
   },
   "applications": [
     {

@@ -43,6 +43,7 @@ class MonitorType(str, Enum):
     SAR_NET = "sar_net"
     PERF_STAT = "perf_stat"
     PERF_LOCK = "perf_lock"
+    BPF_TRACE = "bpftrace"
 
 
 class BenchmarkConfig(dict):

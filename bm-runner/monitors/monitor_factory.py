@@ -10,6 +10,7 @@ from monitors.sarnet import SarNetStats
 from monitors.monitor import Monitor
 from monitors.perfstat import PerfStat
 from monitors.perflock import PerfLock
+from monitors.bpftrace import BpfTrace
 from utils.logger import bm_log, LogType
 import sys
 from config.env_config import EnvUniversalConfig, UniversalConfig
@@ -58,6 +59,8 @@ class MonitorFactory:
                 return PerfStat(output_dir=results_dir, args=args)
             case MonitorType.PERF_LOCK:
                 return PerfLock(output_dir=results_dir, args=args)
+            case MonitorType.BPF_TRACE:
+                return BpfTrace(output_dir=results_dir, args=args)
             case _:
                 bm_log(f"Unsupported monitor type {monitor_type}", LogType.FATAL)
                 sys.exit(1)
