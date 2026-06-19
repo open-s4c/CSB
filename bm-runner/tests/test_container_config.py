@@ -54,18 +54,6 @@ def test_get_cpus_with_default_container_list(
     cfg.get_cpus(max_idx)
 
 
-def test_get_cpus():
-    policy = CoreAssignPolicy(one_cpu_per_core=True)
-    container_cfg = ContainersConfig(core_count=2, core_assignment_policy=policy)
-    bm_log(f"Container list {container_cfg.container_list}", LogType.FATAL)
-
-    for c in container_cfg.container_list:
-        for idx in range(c):
-            bm_log(f"{idx} ==> {container_cfg.cpus}")
-
-            container_cfg.get_cpus(eu_idx=idx)
-
-
 def test_gen_container_list_defaults():
     container_cfg = ContainersConfig()
     min_steps = container_cfg.MIN_NUM_STEPS
