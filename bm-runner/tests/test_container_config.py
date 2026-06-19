@@ -3,36 +3,55 @@
 
 from config.container import ContainersConfig, CoreAssignPolicy
 from utils.logger import bm_log, LogType
+from itertools import product
+import pytest
 
 
-def test_auto_container_list_allocates_enough_cpus(mocker):
+CASES = [
+    (cpu_count, core_count, container_core_count, one_cpu_per_core)
+    for (cpu_count, core_count), container_core_count, one_cpu_per_core in product(
+        [(16, 8), (12, 6), (88, 44), (320, 160), (256, 128)], [1, 2, 3], [False, True]
+    )
+]
+
+
+@pytest.mark.parametrize(
+    "cpu_count,core_count,container_core_count, one_cpu_per_core",
+    CASES,
+)
+def test_get_cpus_with_default_container_list(
+    mocker,
+    cpu_count,
+    core_count,
+    container_core_count,
+    one_cpu_per_core,
+):
     # 16 CPUs available on the machine
     mocker.patch(
         "config.container.Topology.get_cpu_count",
-        return_value=16,
+        return_value=cpu_count,
     )
     mocker.patch(
         "config.container.Topology.get_core_count",
-        return_value=16,
+        return_value=core_count,
     )
-
-    # Topology.select should return exactly as many CPUs as requested
-    mocker.patch(
-        "config.container.Topology.select",
-        side_effect=lambda count, **kwargs: list(range(count)),
-    )
-
-    mocker.patch("config.container.ContainersConfig._ContainersConfig__ensure_img_exists")
 
     cfg = ContainersConfig(
-        core_count=2,
-        core_assignment_policy=CoreAssignPolicy(),
+        core_count=container_core_count,
+        core_assignment_policy=CoreAssignPolicy(one_cpu_per_core=one_cpu_per_core),
     )
 
-    assert max(cfg.container_list) == 8
+    bm_log(
+        f"cores per container:{container_core_count}, #CPU:{cpu_count}, #CORES:{core_count} => {cfg.container_list}",
+        LogType.FATAL,
+    )
 
-    # Should not raise
-    cfg.get_cpus(7)
+    # maximum index we can ask for is: last container count - 1
+    max_container_count = cfg.container_list[-1]
+    max_idx = max_container_count - 1
+    # This function has sanity assertions, that will trigger
+    # if the logic is not sound
+    cfg.get_cpus(max_idx)
 
 
 def test_get_cpus():
