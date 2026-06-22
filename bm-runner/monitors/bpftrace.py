@@ -14,9 +14,12 @@ class BpfTrace(Monitor):
         self.name = "bpftrace"
         cmds = [
             "sudo",
-            "bpftrace",
-            str(resolve_path(os.path.join(self.RESOURCES_PATH, f"{self.name}/block_req.bt"))),
+            "bpftrace"
         ]
+
+        for bt in args:
+            bt_file = str(resolve_path(os.path.join(self.RESOURCES_PATH, f"{self.name}/{bt}")))
+            cmds.append(bt_file)
 
         self.trace = BackgroundProcess(
             name=self.name,

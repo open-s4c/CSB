@@ -33,35 +33,17 @@
   ],
   "benchmark_config": {
     "duration": 60,
-    "monitors": {
-      "mpstat": [
-        "-n",
-        "-u",
-        "-I",
-        "SCPU,SUM",
-        "-P",
-        "0"
-      ],
-      "perf": [
-        "-C",
-        "0"
-      ]
-    }
+    "monitors": {"bpftrace":["bpf_vfs_read_latency.bt"]}
   },
   "containers": {
     "container_list": {
       "values": [
         [
-          1
-        ],
-        {
-          "min": 5,
-          "step": 5,
-          "max": 30
-        }
+          2
+        ]
       ]
     },
-    "core_count": 1
+    "core_count": 2
   },
   "applications": [
     {

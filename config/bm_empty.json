@@ -42,9 +42,9 @@
         ]
       ]
     },
-    "duration": 120,
+    "duration": 4,
     "exec_env": ["native"],
-    "monitors": {"bpftrace":[]}
+    "monitors": {"bpftrace":["bpf_vfs_read_latency.bt"]}
   },
   "containers": {
     "core_assignment_policy": {
