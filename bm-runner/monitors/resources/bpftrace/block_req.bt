@@ -1,0 +1,4 @@
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:pthread_create
+{
+    printf("pid=%d comm=%s pthread_create\n", pid, comm);
+}

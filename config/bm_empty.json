@@ -38,11 +38,12 @@
     "threads": {
       "values": [
         [
-          2
+          1
         ]
       ]
     },
-    "duration": 1,
+    "duration": 120,
+    "exec_env": ["native"],
     "monitors": {"bpftrace":[]}
   },
   "containers": {
