@@ -14,7 +14,7 @@ class Adapter(dict):
     def __init__(self, name: str, path: Optional[Path] = None):
         """
         Adapters used to transform the output of an external benchmark into
-        the format understood by the framework: a line of `<key>:<val>;`
+        the format understood by the framework: a line of `<key>=<val>;`
         pairs e.g. `throughput:1000;latency:20;`.
         If an adapter is used the output of the benchmark is piped
         to the adapter script. See scripts/adapters for examples.
