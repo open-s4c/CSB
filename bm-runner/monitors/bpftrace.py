@@ -4,7 +4,7 @@ from monitors.monitor import Monitor
 from utils.process import BackgroundProcess
 from bm_utils import resolve_path
 import os
-
+from monitors.tmp import plot_perf_hist_for_comm
 
 class BpfTrace(Monitor):
     RESOURCES_PATH = "bm-runner/monitors/resources"
@@ -37,4 +37,5 @@ class BpfTrace(Monitor):
         self.trace.stop()
 
     def collect_results(self) -> str:
+        plot_perf_hist_for_comm(self.trace.output_file_name, "rocksdb_min_roc", os.path.join(self.dir, "bpftrace.png"))
         return ""
