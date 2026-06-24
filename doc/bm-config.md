@@ -35,11 +35,11 @@ An application is either a builtin benchmark binary from the `bench` directory, 
 |cd|bool|:white_check_mark:|`false`|    When set to `true`, it changes the current directory to the given `path`, and     then runs the binary/script with the given `name`. When set to `false` and `path`     is given, the binary is run from the project directory as `path/name`. Use this     configuration with caution! This configuration is useful when running external     benchmarks that require to be run from their own directory, because they use     relative paths like unix bench. |
 
 ## ContainersConfig
-ContainersConfig represents the configuration for multiple containers. Represented as a JSON object. 
+ContainersConfig represents the configuration for multiple containers. Note that the same configuration (excluding image) parameters are used in native runs, where processes run on bare metal instead of inside containers. Represented as a JSON object. 
 <br/>***JSON key: "containers"***
 |Field|Type|Optional|Default|Description|
 |---|---|---|---|---|
-|container_list|[ListConfig](#listconfig)|:white_check_mark:|`dynamically computed.`|    Specifies the number of containers to run. When `container_list` is absent in the configuration,     the default value is dynamically computed based on the number of available CPUs/Cores on the target machine. |
+|container_list|[ListConfig](#listconfig)|:white_check_mark:|`dynamically computed.`|    Specifies the number of containers/processes to run. When `container_list` is absent in the configuration,     the default value is dynamically computed based on the number of available CPUs/Cores on the target machine. |
 |core_assignment_policy|[CoreAssignPolicy](#coreassignpolicy)|:white_check_mark:|`{"pack_group":"none", "cpu_order": "asc", "one_cpu_per_core": false}`|    Configures the CPU assignment policy, i.e. which CPUs can be assigned to execution units (containers/native processes).     Note that the policy is overwritten by `core_affinity_offsets`. If the users wish to use this configuration, they     should make sure not to specify `core_affinity_offsets`. |
 |core_affinity_offsets|[ListConfig](#listconfig)|:white_check_mark:|`core_count * [0, 1, 2, 3, ...]`|    Specifies the cores that should be assigned to the containers.     Note that the assignment of cores happens in ascending order by default.     This configuration overwrites `core_assignment_policy`. |
 |core_count|int|:white_check_mark:|`1`|    Number of cores to assign to each container. |
@@ -85,7 +85,7 @@ NicsConfig configures the assignment of Network Interface Cards (NICs) or their 
 # Types
 
 ## Adapter
-Adapters used to transform the output of an external benchmark into the format understood by the framework: a line of `<key>:<val>;` pairs e.g. `throughput:1000;latency:20;`. If an adapter is used the output of the benchmark is piped to the adapter script. See scripts/adapters for examples.  
+Adapters used to transform the output of an external benchmark into the format understood by the framework: a line of `<key>=<val>;` pairs e.g. `throughput:1000;latency:20;`. If an adapter is used the output of the benchmark is piped to the adapter script. See scripts/adapters for examples.  
 |Field|Type|Optional|Default|Description|
 |---|---|---|---|---|
 |name|str|:x:||    Adapter script filename. |
