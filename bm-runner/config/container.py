@@ -34,11 +34,13 @@ class ContainersConfig(dict):
     ):
         """
         ContainersConfig represents the configuration for multiple containers.
+        Note that the same configuration (excluding image) parameters are used in native runs, where
+        processes run on bare metal instead of inside containers.
         Represented as a JSON object.
         Parameters
         ----------
         container_list: Optional[ListConfig] = dynamically computed.
-            Specifies the number of containers to run. When `container_list` is absent in the configuration,
+            Specifies the number of containers/processes to run. When `container_list` is absent in the configuration,
             the default value is dynamically computed based on the number of available CPUs/Cores on the target machine.
         core_assignment_policy: CoreAssignPolicy = {"pack_group":"none", "cpu_order": "asc", "one_cpu_per_core": false}
             Configures the CPU assignment policy, i.e. which CPUs can be assigned to execution units (containers/native processes).
