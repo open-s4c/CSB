@@ -85,7 +85,7 @@ NicsConfig configures the assignment of Network Interface Cards (NICs) or their 
 # Types
 
 ## Adapter
-Adapters are used to transform the output of an external benchmark into the format understood by the framework: a line of `<key>=<val>;` pairs e.g. `throughput:1000;latency:20;`. If an adapter is used the output of the benchmark is piped to the adapter script. See scripts/adapters for examples.  
+Adapters are used to transform the output of an external benchmark into the format understood by the framework: a line of `<key>=<val>;` pairs e.g. `throughput=1000;latency=20;`. If an adapter is used the output of the benchmark is piped to the adapter script. See scripts/adapters for examples.  
 |Field|Type|Optional|Default|Description|
 |---|---|---|---|---|
 |name|str|:x:||    Adapter script filename. |
