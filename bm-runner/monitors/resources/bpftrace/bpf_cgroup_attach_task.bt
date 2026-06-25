@@ -1,5 +1,5 @@
 kprobe:cgroup_attach_task
-/ __FILTER_CPU__ && __FILTER_PID__ /
+/ __FILTER__ /
 {
     @start[tid] = nsecs;
 }
