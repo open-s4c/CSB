@@ -1,6 +1,6 @@
 
 kprobe:_raw_spin_lock
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kprobe:_raw_spin_unlock

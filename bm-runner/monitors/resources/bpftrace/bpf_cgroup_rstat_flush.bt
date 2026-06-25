@@ -1,6 +1,6 @@
 
 kprobe:mem_cgroup_css_rstat_flush
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

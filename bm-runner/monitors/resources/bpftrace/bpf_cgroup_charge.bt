@@ -1,5 +1,5 @@
 kprobe:__mem_cgroup_charge
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

@@ -1,6 +1,6 @@
 
 kprobe:mutex_lock
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kprobe:mutex_unlock

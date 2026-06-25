@@ -1,5 +1,5 @@
 kprobe:cgroup_attach_task
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

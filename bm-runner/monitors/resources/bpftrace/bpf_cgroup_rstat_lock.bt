@@ -1,7 +1,7 @@
 
 
 tracepoint:cgroup:cgroup_rstat_lock_contended
-/ __FILTER__ /
+__FILTER__
 {
     @contended[pid] = count();
 }

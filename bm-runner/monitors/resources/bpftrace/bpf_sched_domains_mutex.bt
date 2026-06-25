@@ -1,6 +1,6 @@
 
 kprobe:sched_domains_mutex_lock
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

@@ -1,6 +1,6 @@
 kprobe:cgroup_can_fork,
 kprobe:cgroup_fork
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

@@ -1,6 +1,6 @@
 
 kprobe:bpf_copy_from_user
-/ __FILTER__ /
+__FILTER__
 { @start[pid] = nsecs; }
 
 kretprobe:bpf_copy_from_user

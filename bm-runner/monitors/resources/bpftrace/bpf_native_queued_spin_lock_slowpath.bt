@@ -1,5 +1,5 @@
 kprobe:native_queued_spin_lock_slowpath
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kretprobe:native_queued_spin_lock_slowpath

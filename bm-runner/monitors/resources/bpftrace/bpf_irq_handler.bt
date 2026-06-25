@@ -1,6 +1,6 @@
 
 tracepoint:irq:irq_handler_entry
-/ __FILTER__ /
+__FILTER__
 { @start[pid] = nsecs; }
 
 tracepoint:irq:irq_handler_exit

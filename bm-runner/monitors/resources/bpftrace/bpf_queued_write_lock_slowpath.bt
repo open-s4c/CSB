@@ -1,6 +1,6 @@
 
 kprobe:queued_write_lock_slowpath
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kretprobe:queued_write_lock_slowpath

@@ -1,6 +1,6 @@
 
 kprobe:path_init
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kretprobe:path_init

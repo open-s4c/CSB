@@ -1,6 +1,6 @@
 
 kprobe:__cgroup_procs_write
-/ __FILTER__ /
+__FILTER__
 {
     @start[tid] = nsecs;
 }

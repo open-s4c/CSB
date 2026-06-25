@@ -1,5 +1,5 @@
 
 tracepoint:exceptions:page_fault_user
-/ __FILTER__ /
+__FILTER__
 { @fault[pid] = count(); }
 

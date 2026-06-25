@@ -6,13 +6,13 @@
 #endif
 tracepoint:sched:sched_wakeup,
 tracepoint:sched:sched_wakeup_new
-/ __FILTER__ /
+__FILTER__
 {
   @qtime[args.pid] = nsecs;
 }
 
 tracepoint:sched:sched_switch
-/ __FILTER__ /
+__FILTER__
 {
   if (args.prev_state == TASK_RUNNING) {
     @qtime[args.prev_pid] = nsecs;

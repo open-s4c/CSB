@@ -1,6 +1,6 @@
 
 kprobe:rwsem_down_read_slowpath
-/ __FILTER__ /
+__FILTER__
 { @start[tid] = nsecs; }
 
 kretprobe:rwsem_down_read_slowpath
