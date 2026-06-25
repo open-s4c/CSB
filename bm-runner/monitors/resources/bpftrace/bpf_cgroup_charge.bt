@@ -5,7 +5,7 @@ __FILTER__
 }
 kretprobe:__mem_cgroup_charge /@start[tid]/ {
     $duration = (nsecs - @start[tid]) / 1000;
-    @charge_latency[pid] = hist($duration);
+    @charge_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
 

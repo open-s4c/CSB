@@ -5,5 +5,5 @@ __FILTER__
 
 kretprobe:ext4_mb_new_blocks
 / @start[pid] /
-{ @ns[pid] = hist(nsecs - @start[pid]); delete(@start[pid]); }
+{ @ns[pid, comm] = hist(nsecs - @start[pid]); delete(@start[pid]); }
 

@@ -25,7 +25,7 @@ __FILTER__
   if ($ns) {
     @nsecs = hist(nsecs - $ns);
     // Swallowing deletion failures as they are expected
-    $ignore = delete(@qtime, args->next_pid);
+    $ignore = delete(@qtime[args->next_pid]);
   }
 }
 

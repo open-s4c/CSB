@@ -6,7 +6,7 @@ __FILTER__
 }
 kretprobe:__cgroup_procs_write /@start[tid]/ {
     $duration = (nsecs - @start[tid]) / 1000;
-    @migration_latency[pid] = hist($duration);
+    @migration_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
 

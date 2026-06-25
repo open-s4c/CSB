@@ -8,7 +8,7 @@ kretprobe:sched_domains_mutex_lock
 / @start[tid] /
 {
     $wait_ns = nsecs - @start[tid];
-    @wait_time[pid] = hist($wait_ns);
+    @wait_time[pid, comm] = hist($wait_ns);
     delete(@start[tid]);
 }
 

@@ -1,7 +1,11 @@
 kprobe:native_queued_spin_lock_slowpath
 __FILTER__
-{ @start[tid] = nsecs; }
+{
+    @start[tid] = nsecs;
+}
 
 kretprobe:native_queued_spin_lock_slowpath
 / @start[tid] /
-{ @ns[pid] = hist(nsecs - @start[tid]); delete(@start[tid]); }
+{
+    @ns[pid] = hist(nsecs - @start[tid]); delete(@start[tid]);
+}

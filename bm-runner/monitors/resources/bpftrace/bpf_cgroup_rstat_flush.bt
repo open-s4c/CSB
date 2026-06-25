@@ -6,7 +6,7 @@ __FILTER__
 }
 kretprobe:mem_cgroup_css_rstat_flush /@start[tid]/ {
     $duration = (nsecs - @start[tid]) / 1000;
-    @flush_latency[pid] = hist($duration);
+    @flush_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
 

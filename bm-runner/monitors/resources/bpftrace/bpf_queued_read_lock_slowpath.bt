@@ -5,5 +5,5 @@ __FILTER__
 
 kretprobe:queued_read_lock_slowpath
 / @start[tid] /
-{ @ns[pid] = hist(nsecs - @start[tid]); delete(@start[tid]); }
+{ @ns[pid, comm] = hist(nsecs - @start[tid]); delete(@start[tid]); }
 

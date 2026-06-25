@@ -7,7 +7,7 @@ __FILTER__
 kretprobe:cgroup_can_fork,
 kretprobe:cgroup_fork /@start[tid]/ {
     $duration = (nsecs - @start[tid]) / 1000;
-    @fork_latency[pid] = hist($duration);
+    @fork_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
 

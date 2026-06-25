@@ -5,5 +5,5 @@ __FILTER__
 
 tracepoint:irq:irq_handler_exit
 / @start[pid] /
-{ @ns[pid] = hist(nsecs - @start[pid]); delete(@start[pid]); }
+{ @ns[pid, comm] = hist(nsecs - @start[pid]); delete(@start[pid]); }
 

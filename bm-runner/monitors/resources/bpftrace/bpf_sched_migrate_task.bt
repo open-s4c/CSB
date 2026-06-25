@@ -1,5 +1,7 @@
 
 tracepoint:sched:sched_migrate_task
 __FILTER__
-{@migrations[pid] = count();}
+{
+    @migrations[pid, comm] = count();
+}
 

@@ -1,5 +1,5 @@
 
 kprobe:flush_tlb_mm_range
 __FILTER__
-{ @tlb[pid] = count(); }
+{ @tlb[pid, comm] = count(); }
 
