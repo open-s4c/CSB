@@ -62,7 +62,7 @@
         "bpf_sched_domains_mutex.bt",
         "bpf_sched_fork.bt",
         "bpf_sched_latency.bt",
-        "bpf_sched_migrate_task.bt",
+        "bpf_sched_migrate_task_count.bt",
         "bpf_vfs_read_latency.bt"
       ]
     }

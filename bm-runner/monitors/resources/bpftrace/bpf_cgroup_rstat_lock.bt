@@ -1,5 +1,3 @@
-
-
 tracepoint:cgroup:cgroup_rstat_lock_contended
 __FILTER__
 {

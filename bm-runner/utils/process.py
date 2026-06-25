@@ -136,13 +136,13 @@ class BackgroundProcess:
         )
         self.process.wait()
 
-    def stop(self, timeout=TIMEOUT_SEC):
+    def stop(self, timeout=TIMEOUT_SEC) -> int:
         """
         Sends ctrl+c signal to the process if it is still running.
         On timeout the process will be terminated.
         """
         if self.process is None:
-            return
+            return 0
         bm_log(f"[{self.name}] stopping, timeout given {timeout}s")
         self.process.send_signal(signal.SIGINT)
         try:
@@ -155,6 +155,7 @@ class BackgroundProcess:
             self.__terminate()
             self.__close_file(self.ofile)
             self.__close_file(self.efile)
+        return self.process.returncode
 
     def read_output(self):
         """
@@ -173,3 +174,10 @@ class BackgroundProcess:
         Returns the full path of the output file name of the process.
         """
         return self.ofile_name
+
+    @property
+    def err_file_name(self):
+        """
+        Returns the full path of the error file name of the process.
+        """
+        return self.efile_name

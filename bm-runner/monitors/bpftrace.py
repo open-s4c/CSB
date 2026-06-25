@@ -4,6 +4,9 @@ from monitors.monitor import Monitor
 from utils.process import BackgroundProcess
 from bm_utils import resolve_path
 import os
+from utils.logger import bm_log, LogType
+
+# TODO: pass along information about apps names to the monitors?
 
 
 class BpfTrace(Monitor):
@@ -12,7 +15,7 @@ class BpfTrace(Monitor):
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
         self.name = "bpftrace"
-        self.traces = []
+        self.traces = {}
         for bt in args:
             cmds = ["sudo", "bpftrace"]
             out_name = f"{bt}.txt"
@@ -33,15 +36,20 @@ class BpfTrace(Monitor):
                     requires=["bpftrace"],
                     pin=self.get_cpus(),
                 )
-                self.traces.append(trace)
+                self.traces[bt] = trace
 
     def start(self):
-        for trace in self.traces:
+        for trace in self.traces.values():
             trace.start()
 
     def stop(self):
-        for trace in self.traces:
-            trace.stop()
+        for name, trace in self.traces.items():
+            ret = trace.stop()
+            if ret != 0:
+                bm_log(
+                    f"bpftrace program {name} failed. With error code {ret}. Check {trace.err_file_name}",
+                    LogType.ERROR,
+                )
 
     def collect_results(self) -> str:
         # plot_perf_hist_for_comm(self.trace.output_file_name, "rocksdb_min_roc", os.path.join(self.dir, "bpftrace.png"))
