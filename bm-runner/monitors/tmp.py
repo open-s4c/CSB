@@ -3,12 +3,12 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pathlib import Path
-from utils.logger import bm_log, LogType
+
 _UNITS = {
     "": 1,
     "K": 1024,
-    "M": 1024 ** 2,
-    "G": 1024 ** 3,
+    "M": 1024**2,
+    "G": 1024**3,
 }
 
 _HEADER_RE = re.compile(r"^@(?P<name>\w+)\[(?P<keys>.*)\]:")
@@ -52,14 +52,16 @@ def plot_perf_hist_for_comm(filename: str, comm: str, plot_file: Path):
             high = _scaled_number(bucket.group("high"), bucket.group("high_unit"))
             count = int(bucket.group("count"))
 
-            rows.append({
-                **current,
-                "low": low,
-                "high": high,
-                "midpoint": (low + high) / 2,
-                "count": count,
-                "bucket": f"[{low}, {high})",
-            })
+            rows.append(
+                {
+                    **current,
+                    "low": low,
+                    "high": high,
+                    "midpoint": (low + high) / 2,
+                    "count": count,
+                    "bucket": f"[{low}, {high})",
+                }
+            )
 
     if not rows:
         raise ValueError(f"No histogram buckets found for comm={comm!r}")
@@ -82,7 +84,7 @@ def plot_perf_hist_for_comm(filename: str, comm: str, plot_file: Path):
     plt.tight_layout()
     plt.savefig(plot_file, transparent=False)
 
-    bm_log(filename, LogType.FATAL)
-    bm_log(plot_file, LogType.FATAL)
-    print(df)
+    # bm_log(filename, LogType.FATAL)
+    # bm_log(plot_file, LogType.FATAL)
+    # print(df)
     return df
