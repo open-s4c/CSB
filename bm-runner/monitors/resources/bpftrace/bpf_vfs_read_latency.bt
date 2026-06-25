@@ -1,4 +1,5 @@
 kprobe:vfs_read
+__FILTER__
 {
     @start[tid] = nsecs;
 }

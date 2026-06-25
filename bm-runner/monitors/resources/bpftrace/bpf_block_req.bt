@@ -1,3 +1,5 @@
 tracepoint:block:block_rq_complete
 __FILTER__
-{ @requests[pid] = hist(args->nr_sector * 512) }
+{
+    @requests[pid, comm] = hist(args->nr_sector * 512)
+}

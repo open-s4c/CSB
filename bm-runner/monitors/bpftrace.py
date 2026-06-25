@@ -20,7 +20,8 @@ class BpfTrace(Monitor):
             bt_file = str(resolve_path(os.path.join(self.RESOURCES_PATH, f"{self.name}/{bt}")))
 
             with open(bt_file, "r") as f:
-                contents = f.read().replace("__FILTER__", "")
+                # only first 16 chars (including null terminator) are in comm.
+                contents = f.read().replace("__FILTER__", '/ comm == "rocksdb_min_roc" /')
                 cmds.append("-e")
                 cmds.append(contents)
                 trace = BackgroundProcess(
