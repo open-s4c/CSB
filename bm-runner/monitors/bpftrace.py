@@ -18,17 +18,21 @@ class BpfTrace(Monitor):
             out_name = f"{bt}.txt"
             err_name = f"{bt}.err"
             bt_file = str(resolve_path(os.path.join(self.RESOURCES_PATH, f"{self.name}/{bt}")))
-            cmds.append(bt_file)
-            trace = BackgroundProcess(
-                name=self.name,
-                ofile_name=out_name,
-                efile_name=err_name,
-                cmds=cmds,
-                out_dir=output_dir,
-                requires=["bpftrace"],
-                pin=self.get_cpus(),
-            )
-            self.traces.append(trace)
+
+            with open(bt_file, "r") as f:
+                contents = f.read().replace("__FILTER__", "")
+                cmds.append("-e")
+                cmds.append(contents)
+                trace = BackgroundProcess(
+                    name=self.name,
+                    ofile_name=out_name,
+                    efile_name=err_name,
+                    cmds=cmds,
+                    out_dir=output_dir,
+                    requires=["bpftrace"],
+                    pin=self.get_cpus(),
+                )
+                self.traces.append(trace)
 
     def start(self):
         for trace in self.traces:
