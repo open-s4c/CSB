@@ -8,8 +8,10 @@ from utils.logger import bm_log, LogType
 import re
 import pandas as pd
 from bm_visualize import plot_chart, PlotConfig
+import bm_config
 
 # TODO: pass along information about apps names to the monitors?
+import sys
 
 
 class BpfTrace(Monitor):
@@ -30,7 +32,7 @@ class BpfTrace(Monitor):
 
             with open(bt_file, "r") as f:
                 # only first 16 chars (including null terminator) are in comm.
-                contents = f.read().replace("__FILTER__", '/ comm == "rocksdb_min_roc" /')
+                contents = f.read().replace("__FILTER__", self.__get_filter())
                 cmds.append("-e")
                 cmds.append(contents)
                 trace = BackgroundProcess(
@@ -43,6 +45,21 @@ class BpfTrace(Monitor):
                     pin=self.get_cpus(),
                 )
                 self.traces[bt] = trace
+
+    def __get_filter(self) -> str:
+        if bm_config.g_config is None:
+            bm_log(
+                "Configuration object is not set. Unexpected behavior encountered!", LogType.FATAL
+            )
+            sys.exit(1)
+            return ""
+        apps = bm_config.g_config.get_apps()
+        if len(apps) > 1:
+            bm_log(f"{self.name} does not support multi app mode", LogType.FATAL)
+        # 16 chars because that's the maximum length of comm
+        # TODO: check if it can be read from env-vars or somewhere reliable.
+        comm = apps[0].name[:15].strip()
+        return f'/ comm == "{comm}" /'
 
     def start(self):
         for trace in self.traces.values():
@@ -73,16 +90,26 @@ class BpfTrace(Monitor):
                 if not df.empty:
                     counter_subject = df["name"].unique()
                     if len(counter_subject) > 1:
-                        bm_log("Multiple counters detected, this case is not handled", LogType.FATAL)
-                        os.sys.exit(1)
+                        bm_log(
+                            "Multiple counters detected, this case is not handled", LogType.FATAL
+                        )
+                        sys.exit(1)
                     assert len(counter_subject) == 1, "No counter detected!"
                     counter_subject = counter_subject[0]
-                    cfg = PlotConfig(x="pid", x_lbl="PID", y_lbl="Count", y="count", hue="pid", shape="barplot", title=counter_subject)
+                    cfg = PlotConfig(
+                        x="pid",
+                        x_lbl="PID",
+                        y_lbl="Count",
+                        y="count",
+                        hue="pid",
+                        shape="barplot",
+                        title=counter_subject,
+                    )
                     df["count"] = df["count"].astype(int)
                     plot_chart(plot=cfg, df=df, out_fig_name=trace.output_file_name)
                     count_col = df["count"]
-                    output+= f"{counter_subject}_sum={count_col.sum()};"
-                    output+= f"{counter_subject}_avg={count_col.mean()};"
-                    output+= f"{counter_subject}_min={count_col.min()};"
-                    output+= f"{counter_subject}_max={count_col.max()};"
+                    output += f"{counter_subject}_sum={count_col.sum()};"
+                    output += f"{counter_subject}_avg={count_col.mean()};"
+                    output += f"{counter_subject}_min={count_col.min()};"
+                    output += f"{counter_subject}_max={count_col.max()};"
         return output
