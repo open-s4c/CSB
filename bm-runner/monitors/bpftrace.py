@@ -4,18 +4,23 @@ from monitors.monitor import Monitor
 from utils.process import BackgroundProcess
 from bm_utils import resolve_path
 import os
+from pathlib import Path
 from utils.logger import bm_log, LogType
-
+import re
+import pandas as pd
+from bm_visualize import plot_chart, PlotConfig
 # TODO: pass along information about apps names to the monitors?
 
 
 class BpfTrace(Monitor):
     RESOURCES_PATH = "bm-runner/monitors/resources"
 
+
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
         self.name = "bpftrace"
         self.traces = {}
+        self.count_pattern = re.compile(r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>\w+)\]:\s*(?P<count>\d+)")
         for bt in args:
             cmds = ["sudo", "bpftrace"]
             out_name = f"{bt}.txt"
@@ -52,5 +57,25 @@ class BpfTrace(Monitor):
                 )
 
     def collect_results(self) -> str:
+        for name, trace in self.traces.items():
+            self.__parse_trace(name, trace)
         # plot_perf_hist_for_comm(self.trace.output_file_name, "rocksdb_min_roc", os.path.join(self.dir, "bpftrace.png"))
         return ""
+
+
+    def __parse_trace(self, name: str, trace: BackgroundProcess) -> str:
+        count_trace = name.endswith("_count.bt")
+        if count_trace:
+            with open(trace.output_file_name, "r") as f:
+                contents = f.read()
+                df  = pd.DataFrame(
+                    m.groupdict()  for m in self.count_pattern.finditer(contents)
+                )
+                if not df.empty:
+                    cfg = PlotConfig(x="pid", y="count", hue="pid", shape="barplot", title=name)
+                    df["count"] = df["count"].astype(int)
+                    print(df)
+                    plot_chart(plot=cfg, df=df, out_fig_name=trace.output_file_name)
+                    bm_log(f"{trace.output_file_name}", LogType.FATAL)
+
+
