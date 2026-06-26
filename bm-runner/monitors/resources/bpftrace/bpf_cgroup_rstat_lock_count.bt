@@ -3,4 +3,3 @@ __FILTER__
 {
     @cgroup_rstat_lock_contended[pid, comm] = count();
 }
-

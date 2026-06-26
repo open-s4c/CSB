@@ -1,4 +1,3 @@
-
 tracepoint:exceptions:page_fault_user
 __FILTER__
 {
