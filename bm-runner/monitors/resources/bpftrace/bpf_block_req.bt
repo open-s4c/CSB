@@ -1,5 +1,0 @@
-tracepoint:block:block_rq_complete
-__FILTER__
-{
-    @requests[pid, comm] = hist(args->nr_sector * 512)
-}

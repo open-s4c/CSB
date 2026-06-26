@@ -88,28 +88,44 @@
   "benchmark_config": {
     "duration": 10,
     "monitors": {
-      "mpstat": [
-        "-n",
-        "-u",
-        "-I",
-        "SCPU,SUM",
-        "-P",
-        "0,1"
-      ],
-      "perf": [
-        "-C",
-        "0,1"
-      ],
-      "perf_stat": []
+      "bpftrace": [
+        "bpf_block_req_hist.bt",
+        "bpf_cgroup_attach_task.bt",
+        "bpf_cgroup_charge.bt",
+        "bpf_cgroup_fork.bt",
+        "bpf_cgroup_procs_write.bt",
+        "bpf_cgroup_rstat_flush.bt",
+        "bpf_copy_from_user.bt",
+        "bpf_copy_to_user.bt",
+        "bpf_cgroup_rstat_lock_count.bt",
+        "bpf_ext4_mb_new_blocks.bt",
+        "bpf_flush_tlb_mm_range_count.bt",
+        "bpf_irq_handler.bt",
+        "bpf_mutex_lock.bt",
+        "bpf_native_queued_spin_lock_slowpath.bt",
+        "bpf_page_fault_io_count.bt",
+        "bpf_page_fault_kernel_count.bt",
+        "bpf_page_fault_kvm_count.bt",
+        "bpf_page_fault_user_count.bt",
+        "bpf_path_init.bt",
+        "bpf_queued_read_lock_slowpath.bt",
+        "bpf_queued_write_lock_slowpath.bt",
+        "bpf_raw_spin_lock.bt",
+        "bpf_rwsem_down_read_slowpath.bt",
+        "bpf_rwsem_down_write_slowpath.bt",
+        "bpf_sched_domains_mutex.bt",
+        "bpf_sched_fork_count.bt",
+        "bpf_sched_latency.bt",
+        "bpf_sched_migrate_task_count.bt",
+        "bpf_vfs_read_latency.bt"
+      ]
     }
   },
   "containers": {
     "container_list": {
       "values": [
         [
-          1,
-          5,
-          10
+          5
         ]
       ]
     },
@@ -135,14 +151,6 @@
         "{n_units}",
         "{homedir}/build/bench/start",
         "{homedir}/build/bench"
-      ]
-    },
-    {
-      "name": "collect_strace.sh",
-      "exec_time": "with",
-      "path": "scripts/plugins",
-      "args": [
-        "{res_dir}/test_strace-cnt{index}.log"
       ]
     }
   ]

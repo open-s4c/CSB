@@ -35,7 +35,7 @@
     "duration": 60,
     "monitors": {
       "bpftrace": [
-        "bpf_block_req.bt",
+        "bpf_block_req_hist.bt",
         "bpf_cgroup_attach_task.bt",
         "bpf_cgroup_charge.bt",
         "bpf_cgroup_fork.bt",
