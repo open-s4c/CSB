@@ -1,0 +1,6 @@
+tracepoint:sched:sched_process_fork
+__FILTER__
+{
+    @sched_process_fork[args->parent_pid, comm] = count();
+}
+

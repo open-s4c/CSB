@@ -2,6 +2,6 @@
 tracepoint:iommu:io_page_fault
 __FILTER__
 {
-    @fault[pid, comm] = count();
+    @io_page_fault[pid, comm] = count();
 }
 
