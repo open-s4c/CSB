@@ -29,9 +29,7 @@ class BpfTrace(Monitor):
             r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>\w+)\]:\s*(?P<count>\d+)"
         )
 
-        self.hist_header = re.compile(
-            r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:"
-        )
+        self.hist_header = re.compile(r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:")
         self.hist_bucket = re.compile(
             r"\[(?P<bucket>[^\]\)]+(?:,\s*[^\)\]]+)?)[])]\s+(?P<count>\d+)"
         )
@@ -102,21 +100,18 @@ class BpfTrace(Monitor):
         with open(trace.output_file_name, "r") as f:
             content = f.read()
             if count_trace:
-               return self.__parse_count(content, trace.output_file_name)
+                return self.__parse_count(content, trace.output_file_name)
             elif hist_trace:
                 return self.__parse_hist(content, trace.output_file_name)
         return ""
 
-
-    def __parse_count(self, content:str, fname) -> str:
+    def __parse_count(self, content: str, fname) -> str:
         output = ""
         df = pd.DataFrame(m.groupdict() for m in self.count_pattern.finditer(content))
         if not df.empty:
             counter_subject = df["name"].unique()
             if len(counter_subject) > 1:
-                bm_log(
-                    "Multiple counters detected, this case is not handled", LogType.FATAL
-                )
+                bm_log("Multiple counters detected, this case is not handled", LogType.FATAL)
                 sys.exit(1)
             assert len(counter_subject) == 1, "No counter detected!"
             counter_subject = counter_subject[0]
@@ -138,10 +133,10 @@ class BpfTrace(Monitor):
             output += f"{counter_subject}_max={count_col.max()};"
         return output
 
-    def __parse_hist(self, content:str, fname) -> str:
+    def __parse_hist(self, content: str, fname) -> str:
         bm_log(f"Histogram parsing: {fname}", LogType.FATAL)
 
-        rows    = []
+        rows = []
         current = {}
 
         for line in content.splitlines():
@@ -155,7 +150,7 @@ class BpfTrace(Monitor):
                 current["comm"] = m["comm"]
             elif m := self.hist_bucket.match(line):
                 low, sep, high = m["bucket"].partition(",")
-                low  = low.strip()
+                low = low.strip()
                 high = low if high.strip() == "" else high.strip()
                 current[f"[{low},{high})"] = int(m["count"])
 
