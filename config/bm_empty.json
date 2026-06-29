@@ -42,28 +42,13 @@
         ]
       ]
     },
-    "duration": 4,
-    "exec_env": [
-      "native"
-    ],
-    "monitors": {
-      "bpftrace": [
-        "bpf_vfs_read_latency.bt"
-      ]
-    }
+    "duration": 1
   },
   "containers": {
     "core_assignment_policy": {
       "cpu_order": "desc",
       "pack_group": "none",
       "one_cpu_per_core": false
-    },
-    "container_list": {
-      "values": [
-        [
-          1
-        ]
-      ]
     }
   },
   "applications": [
