@@ -21,6 +21,7 @@ class Application(dict):
         path: Optional[Path] = None,
         args: Optional[str] = None,
         adapter: Optional[Adapter] = None,
+        sudo: bool = False,
         cd: bool = False,
     ):
         """
@@ -65,15 +66,19 @@ class Application(dict):
             configuration with caution! This configuration is useful when running external
             benchmarks that require to be run from their own directory, because they use
             relative paths like unix bench.
+        sudo: bool = false
+            whether to run the given application with `sudo` or not. Use only if `sudo`
+            permissions are needed.
         -
         """
         super().__init__(
-            name=name, path=path, op_distributions=operations, args=args, adapter=adapter, cd=cd
+            name=name, path=path, op_distributions=operations, args=args, adapter=adapter, cd=cd, sudo=sudo
         )
         self.name = name
         self.path = path
         self.operations = operations
         self.cd = cd
+        self.sudo = sudo
         # Set default framework arguments
         self.args = (
             "-t={threads} -n={noise} -d={duration} -s={initial_size}" if args is None else args
@@ -102,7 +107,7 @@ class Application(dict):
             # if path is None, then we are either running a builtin benchmark
             # or one that is available system wide
             fname = ensure_exists(name=self.name, dir=self.BUILTIN_APP_DIR)
-        return f"{fname}"
+        return f"sudo {fname}" if self.sudo else f"{fname}"
 
     def get_cmd(
         self,
