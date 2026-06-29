@@ -18,7 +18,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "youki create time"
+      "title": "runc create time"
     },
     {
       "x": "container_cnt",
@@ -28,7 +28,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "youki delete time"
+      "title": "runc delete time"
     },
     {
       "x": "container_cnt",
@@ -126,9 +126,9 @@
     {
       "path": "bm-external/cgroups",
       "name": "bm-cgroups.py",
-      "sudo" : true,
+      "sudo": true,
       "cd": true,
-      "args": "./bm-external/cgroups/bm-cgroups.py --index {index} --units {n_units} --iterations 100 --runtime youki --root ."
+      "args": "--index {index} --units {n_units} --iterations 100 --runtime runc --root ."
     }
   ]
 }
