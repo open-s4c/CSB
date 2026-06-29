@@ -15,6 +15,7 @@ import sys
 
 
 class BpfTrace(Monitor):
+    # TODO: move to scripts
     RESOURCES_PATH = "bm-runner/monitors/resources"
 
     def __init__(self, output_dir: str, args: list[str] = []):
@@ -22,10 +23,12 @@ class BpfTrace(Monitor):
         self.name = "bpftrace"
         self.traces = {}
         # regular expression to parse the following format
-        # 
+        #   @<name>[<pid>, <comm>]: <count>
+        # e.g. @page_fault_user[1975977, rocksdb_min_roc]: 2
         self.count_pattern = re.compile(
             r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>\w+)\]:\s*(?P<count>\d+)"
         )
+
         for bt in args:
             cmds = ["sudo", "bpftrace"]
             out_name = f"{bt}.txt"
