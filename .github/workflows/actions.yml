@@ -131,7 +131,7 @@ jobs:
           -  { prepare_cmd: "" , config: rocksdb/rocksdb_aggregated }
           -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
           -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
-          -  { prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-cgroups-runc }
+          -  { prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: cgroups/bm-cgroups-runc }
     steps:
       - uses: actions/checkout@v4
         with:
