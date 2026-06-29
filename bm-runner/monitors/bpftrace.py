@@ -12,6 +12,12 @@ import bm_config
 import sys
 
 
+###################################
+# Current limitations:
+# 1) does not support multi-app benchmarks
+# 2) filters traces based on app name/comm first 16 chars
+#
+###################################
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
 
@@ -19,14 +25,19 @@ class BpfTrace(Monitor):
         super().__init__(dir=output_dir, args=args)
         self.name = "bpftrace"
         self.traces = {}
+        # we do it in the constructor for early error detection.
+        self.__set_app_name()
+        assert self.app_name is not None, "Post condition failed! app_name is not set!"
         # regular expression to parse the following format
         #   @<name>[<pid>, <comm>]: <count>
         # e.g. @page_fault_user[1975977, rocksdb_min_roc]: 2
         self.count_pattern = re.compile(
-            r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>\w+)\]:\s*(?P<count>\d+)"
+            r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:\s*(?P<count>\d+)"
         )
-
+        # regular expression to parse header line of each histogram
+        #   @<name>[<pid>, <comm>]:
         self.hist_header = re.compile(r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:")
+        # regular expression to parse bucket line of a histogram
         self.hist_bucket = re.compile(
             r"\[(?P<bucket>[^\]\)]+(?:,\s*[^\)\]]+)?)[])]\s+(?P<count>\d+)"
         )
@@ -57,7 +68,7 @@ class BpfTrace(Monitor):
                 bm_log(f"{self.name} cannot read/parse {bt_file}. Exception {e}", LogType.FATAL)
                 sys.exit(1)
 
-    def __get_filter(self) -> str:
+    def __set_app_name(self) -> str:
         if bm_config.g_config is None:
             bm_log(
                 "Configuration object is not set. Unexpected behavior encountered!", LogType.FATAL
@@ -67,9 +78,14 @@ class BpfTrace(Monitor):
         apps = bm_config.g_config.get_apps()
         if len(apps) > 1:
             bm_log(f"{self.name} does not support multi app mode", LogType.FATAL)
+            sys.exit(1)
+        self.app_name = apps[0].name
+        return self.app_name
+
+    def __get_filter(self) -> str:
         # 16 chars because that's the maximum length of comm
         # TODO: check if it can be read from env-vars or somewhere reliable.
-        comm = apps[0].name[:15].strip()
+        comm = self.app_name[:15].strip()
         return f'/ comm == "{comm}" /'
 
     def start(self):
@@ -92,6 +108,9 @@ class BpfTrace(Monitor):
         return output
 
     def __parse_trace(self, name: str, trace: BackgroundProcess) -> str:
+        # we rely on the encoded meta data in the program name
+        # `_count` suffix indicates that only count is collected
+        # `_hist` suffix indicates that only histogram data is collected
         count_trace = name.endswith("_count.bt")
         hist_trace = name.endswith("_hist.bt")
         with open(trace.output_file_name, "r") as f:
@@ -106,12 +125,7 @@ class BpfTrace(Monitor):
         output = ""
         df = pd.DataFrame(m.groupdict() for m in self.count_pattern.finditer(content))
         if not df.empty:
-            counter_subject = df["name"].unique()
-            if len(counter_subject) > 1:
-                bm_log("Multiple counters detected, this case is not handled", LogType.FATAL)
-                sys.exit(1)
-            assert len(counter_subject) == 1, "No counter detected!"
-            counter_subject = counter_subject[0]
+            trace_point = self.__get_trace_point_name(df)
             cfg = PlotConfig(
                 x="pid",
                 x_lbl="PID",
@@ -119,20 +133,35 @@ class BpfTrace(Monitor):
                 y="count",
                 hue="pid",
                 shape="barplot",
-                title=counter_subject,
+                title=trace_point,
             )
             df["count"] = df["count"].astype(int)
             plot_chart(plot=cfg, df=df, out_fig_name=fname)
             count_col = df["count"]
-            output += f"{counter_subject}_sum={count_col.sum()};"
-            output += f"{counter_subject}_avg={count_col.mean()};"
-            output += f"{counter_subject}_min={count_col.min()};"
-            output += f"{counter_subject}_max={count_col.max()};"
+            output += f"{trace_point}_sum={count_col.sum()};"
+            output += f"{trace_point}_avg={count_col.mean()};"
+            output += f"{trace_point}_min={count_col.min()};"
+            output += f"{trace_point}_max={count_col.max()};"
         return output
 
-    def __parse_hist(self, content: str, fname) -> str:
-        bm_log(f"Histogram parsing: {fname}", LogType.FATAL)
+    def __get_trace_point_name(self, df: pd.DataFrame) -> str:
+        if "name" in df.columns:
+            names = df["name"].unique()
+            if len(names) == 1:
+                return names[0]
+            else:
+                bm_log(
+                    f"{self.name} produced data-frame has multiple unique values of name, which is unexpected.",
+                    LogType.FATAL,
+                )
+        else:
+            bm_log(
+                f"{self.name} produced data-frame does not contain trace point `name` column.",
+                LogType.FATAL,
+            )
+        return ""
 
+    def __parse_hist(self, content: str, fname) -> str:
         rows = []
         current = {}
 
@@ -159,8 +188,7 @@ class BpfTrace(Monitor):
         df = pd.DataFrame(rows).fillna(0)
         if df.empty:
             return ""
-        print(df)
-        title = df["name"].unique()[0]
+        title = self.__get_trace_point_name(df)
         bucket_cols = [c for c in df.columns if c.startswith("[")]
         plot_df = df.melt(
             id_vars=["pid", "comm"],
