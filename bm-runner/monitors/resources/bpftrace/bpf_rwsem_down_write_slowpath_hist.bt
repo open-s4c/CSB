@@ -1,9 +1,13 @@
-
 kprobe:rwsem_down_write_slowpath
 __FILTER__
-{ @start[tid] = nsecs; }
+{
+    @start[tid] = nsecs;
+}
 
 kretprobe:rwsem_down_write_slowpath
 / @start[tid] /
-{ @ns[pid, comm] = hist(nsecs - @start[tid]); delete(@start[tid]); }
+{
+    @rwsem_down_write_slowpath_ns[pid, comm] = hist(nsecs - @start[tid]);
+    delete(@start[tid]);
+}
 

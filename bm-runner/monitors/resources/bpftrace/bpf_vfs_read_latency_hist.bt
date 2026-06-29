@@ -7,6 +7,6 @@ __FILTER__
 kretprobe:vfs_read
 /@start[tid]/
 {
-    @ns[pid, comm] = hist(nsecs - @start[tid]);
+    @vfs_read_ns[pid, comm] = hist(nsecs - @start[tid]);
     delete(@start[tid]);
 }

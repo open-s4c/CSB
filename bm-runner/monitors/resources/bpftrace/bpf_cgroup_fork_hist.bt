@@ -9,7 +9,7 @@ kretprobe:cgroup_fork
 /@start[tid]/
 {
     $duration = (nsecs - @start[tid]) / 1000;
-    @fork_latency[pid, comm] = hist($duration);
+    @cgroup_fork_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
 

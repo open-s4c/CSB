@@ -1,12 +1,12 @@
-
 kprobe:mem_cgroup_css_rstat_flush
 __FILTER__
 {
     @start[tid] = nsecs;
 }
-kretprobe:mem_cgroup_css_rstat_flush /@start[tid]/ {
+kretprobe:mem_cgroup_css_rstat_flush
+/@start[tid]/
+{
     $duration = (nsecs - @start[tid]) / 1000;
-    @flush_latency[pid, comm] = hist($duration);
+    @mem_cgroup_css_rstat_flush_latency[pid, comm] = hist($duration);
     delete(@start[tid]);
 }
-

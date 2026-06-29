@@ -1,4 +1,3 @@
-
 kprobe:mutex_lock
 __FILTER__
 {

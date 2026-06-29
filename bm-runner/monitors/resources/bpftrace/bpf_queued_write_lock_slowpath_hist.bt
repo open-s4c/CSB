@@ -1,9 +1,11 @@
-
 kprobe:queued_write_lock_slowpath
 __FILTER__
 { @start[tid] = nsecs; }
 
 kretprobe:queued_write_lock_slowpath
 / @start[tid] /
-{ @ns[pid, comm] = hist(nsecs - @start[tid]); delete(@start[tid]); }
+{
+    @queued_write_lock_slowpath_ns[pid, comm] = hist(nsecs - @start[tid]);
+    delete(@start[tid]);
+}
 

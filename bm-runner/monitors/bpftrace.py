@@ -140,17 +140,50 @@ class BpfTrace(Monitor):
 
     def __parse_hist(self, content:str, fname) -> str:
         bm_log(f"Histogram parsing: {fname}", LogType.FATAL)
+
+        rows    = []
+        current = {}
+
         for line in content.splitlines():
             line = line.strip()
             if m := self.hist_header.match(line):
-                metric = m["name"]
-                pid = int(m["pid"])
-                comm = m["comm"]
-                bm_log(f"metric {metric} pid {pid} comm {comm}", LogType.ERROR)
+                if current:
+                    rows.append(current)
+                current = {}
+                current["name"] = m["name"]
+                current["pid"] = int(m["pid"])
+                current["comm"] = m["comm"]
             elif m := self.hist_bucket.match(line):
-                bucket = m["bucket"]
-                count  = m["count"]
-                bm_log(f"bucket {bucket} count {count}", LogType.FATAL)
+                low, sep, high = m["bucket"].partition(",")
+                low  = low.strip()
+                high = low if high.strip() == "" else high.strip()
+                current[f"[{low},{high})"] = int(m["count"])
 
-        sys.exit(1)
+        # append last row
+        if current:
+            rows.append(current)
+
+        # convert to a dataframe and fill absent (NaN) bucket counts with 0
+        df = pd.DataFrame(rows).fillna(0)
+        if df.empty:
+            return ""
+        print(df)
+        title = df["name"].unique()[0]
+        bucket_cols = [c for c in df.columns if c.startswith("[")]
+        plot_df = df.melt(
+            id_vars=["pid", "comm"],
+            value_vars=bucket_cols,
+            var_name="bucket",
+            value_name="count",
+        )
+        cfg = PlotConfig(
+            x="bucket",
+            x_lbl="Bucket",
+            y_lbl="Count",
+            y="count",
+            hue="pid",
+            shape="barplot",
+            title=title,
+        )
+        plot_chart(plot=cfg, df=plot_df, out_fig_name=fname)
         return ""

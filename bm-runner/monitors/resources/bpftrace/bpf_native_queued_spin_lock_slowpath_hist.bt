@@ -7,5 +7,6 @@ __FILTER__
 kretprobe:native_queued_spin_lock_slowpath
 / @start[tid] /
 {
-    @ns[pid] = hist(nsecs - @start[tid]); delete(@start[tid]);
+    @native_queued_spin_lock_slowpath_ns[pid,comm] = hist(nsecs - @start[tid]);
+    delete(@start[tid]);
 }

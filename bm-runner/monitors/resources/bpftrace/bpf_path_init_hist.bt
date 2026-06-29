@@ -1,4 +1,3 @@
-
 kprobe:path_init
 __FILTER__
 {
@@ -8,6 +7,6 @@ __FILTER__
 kretprobe:path_init
 / @start[tid] /
 {
-    @ns[pid, comm] = hist(nsecs - @start[tid]);
+    @path_init_ns[pid, comm] = hist(nsecs - @start[tid]);
     delete(@start[tid]);
 }

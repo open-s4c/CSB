@@ -1,9 +1,14 @@
 
 kprobe:bpf_copy_to_user
 __FILTER__
-{ @start[pid] = nsecs; }
+{
+    @start[pid] = nsecs;
+}
 
 kretprobe:bpf_copy_to_user
 / @start[pid] /
-{ @ns[pid, comm] = hist(nsecs - @start[pid]); delete(@start[pid]); }
+{
+    @bpf_copy_to_user_ns[pid, comm] = hist(nsecs - @start[pid]);
+    delete(@start[pid]);
+}
 

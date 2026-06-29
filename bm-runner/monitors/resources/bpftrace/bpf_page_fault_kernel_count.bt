@@ -1,4 +1,3 @@
-
 tracepoint:exceptions:page_fault_kernel
 __FILTER__
 {

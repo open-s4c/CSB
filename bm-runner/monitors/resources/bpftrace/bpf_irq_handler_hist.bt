@@ -1,9 +1,13 @@
-
 tracepoint:irq:irq_handler_entry
 __FILTER__
-{ @start[pid] = nsecs; }
+{
+    @start[pid] = nsecs;
+}
 
 tracepoint:irq:irq_handler_exit
 / @start[pid] /
-{ @ns[pid, comm] = hist(nsecs - @start[pid]); delete(@start[pid]); }
+{
+    @irq_handler_ns[pid, comm] = hist(nsecs - @start[pid]);
+    delete(@start[pid]);
+}
 

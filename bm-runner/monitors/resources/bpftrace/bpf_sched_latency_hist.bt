@@ -23,7 +23,7 @@ __FILTER__
 
   $ns = @qtime[args->next_pid];
   if ($ns) {
-    @nsecs = hist(nsecs - $ns);
+    @sched_switch_ns[pid, comm] = hist(nsecs - $ns);
     // Swallowing deletion failures as they are expected
     delete(@qtime[args->next_pid]);
   }
