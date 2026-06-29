@@ -9,14 +9,11 @@ import re
 import pandas as pd
 from bm_visualize import plot_chart, PlotConfig
 import bm_config
-
-# TODO: pass along information about apps names to the monitors?
 import sys
 
 
 class BpfTrace(Monitor):
-    # TODO: move to scripts
-    RESOURCES_PATH = "bm-runner/monitors/resources"
+    RESOURCES_PATH = "scripts"
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
