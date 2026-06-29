@@ -33,7 +33,7 @@ class BpfTrace(Monitor):
             r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:"
         )
         self.hist_bucket = re.compile(
-            r"\[(?P<bucket>[^\]]+)\]\s+(?P<count>\d+)"
+            r"\[(?P<bucket>[^\]\)]+(?:,\s*[^\)\]]+)?)[])]\s+(?P<count>\d+)"
         )
 
         for bt in args:
@@ -104,7 +104,7 @@ class BpfTrace(Monitor):
             if count_trace:
                return self.__parse_count(content, trace.output_file_name)
             elif hist_trace:
-                return self.__parse_hist(content)
+                return self.__parse_hist(content, trace.output_file_name)
         return ""
 
 
@@ -138,6 +138,19 @@ class BpfTrace(Monitor):
             output += f"{counter_subject}_max={count_col.max()};"
         return output
 
-    def __parse_hist(self, content:str) -> str:
-        bm_log("Histogram parsing", LogType.FATAL)
+    def __parse_hist(self, content:str, fname) -> str:
+        bm_log(f"Histogram parsing: {fname}", LogType.FATAL)
+        for line in content.splitlines():
+            line = line.strip()
+            if m := self.hist_header.match(line):
+                metric = m["name"]
+                pid = int(m["pid"])
+                comm = m["comm"]
+                bm_log(f"metric {metric} pid {pid} comm {comm}", LogType.ERROR)
+            elif m := self.hist_bucket.match(line):
+                bucket = m["bucket"]
+                count  = m["count"]
+                bm_log(f"bucket {bucket} count {count}", LogType.FATAL)
+
+        sys.exit(1)
         return ""
