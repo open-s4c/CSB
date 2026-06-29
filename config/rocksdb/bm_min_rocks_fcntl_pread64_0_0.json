@@ -34,36 +34,17 @@
   "benchmark_config": {
     "duration": 60,
     "monitors": {
-      "bpftrace": [
-        "bpf_block_req_hist.bt",
-        "bpf_cgroup_attach_task_hist.bt",
-        "bpf_cgroup_charge_hist.bt",
-        "bpf_cgroup_fork_hist.bt",
-        "bpf_cgroup_procs_write_hist.bt",
-        "bpf_cgroup_rstat_flush_hist.bt",
-        "bpf_copy_from_user_hist.bt",
-        "bpf_copy_to_user_hist.bt",
-        "bpf_cgroup_rstat_lock_count.bt",
-        "bpf_ext4_mb_new_blocks_hist.bt",
-        "bpf_flush_tlb_mm_range_count.bt",
-        "bpf_irq_handler_hist.bt",
-        "bpf_mutex_lock_hist.bt",
-        "bpf_native_queued_spin_lock_slowpath_hist.bt",
-        "bpf_page_fault_io_count.bt",
-        "bpf_page_fault_kernel_count.bt",
-        "bpf_page_fault_kvm_count.bt",
-        "bpf_page_fault_user_count.bt",
-        "bpf_path_init_hist.bt",
-        "bpf_queued_read_lock_slowpath_hist.bt",
-        "bpf_queued_write_lock_slowpath_hist.bt",
-        "bpf_raw_spin_lock_hist.bt",
-        "bpf_rwsem_down_read_slowpath_hist.bt",
-        "bpf_rwsem_down_write_slowpath_hist.bt",
-        "bpf_sched_domains_mutex_hist.bt",
-        "bpf_sched_fork_count.bt",
-        "bpf_sched_latency_hist.bt",
-        "bpf_sched_migrate_task_count.bt",
-        "bpf_vfs_read_latency_hist.bt"
+      "mpstat": [
+        "-n",
+        "-u",
+        "-I",
+        "SCPU,SUM",
+        "-P",
+        "0"
+      ],
+      "perf": [
+        "-C",
+        "0"
       ]
     }
   },
@@ -71,11 +52,16 @@
     "container_list": {
       "values": [
         [
-          2
-        ]
+          1
+        ],
+        {
+          "min": 5,
+          "step": 5,
+          "max": 30
+        }
       ]
     },
-    "core_count": 2
+    "core_count": 1
   },
   "applications": [
     {
