@@ -72,7 +72,13 @@ class Application(dict):
         -
         """
         super().__init__(
-            name=name, path=path, op_distributions=operations, args=args, adapter=adapter, cd=cd, sudo=sudo
+            name=name,
+            path=path,
+            op_distributions=operations,
+            args=args,
+            adapter=adapter,
+            cd=cd,
+            sudo=sudo,
         )
         self.name = name
         self.path = path
