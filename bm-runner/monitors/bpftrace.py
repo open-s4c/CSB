@@ -21,6 +21,8 @@ class BpfTrace(Monitor):
         super().__init__(dir=output_dir, args=args)
         self.name = "bpftrace"
         self.traces = {}
+        # regular expression to parse the following format
+        # 
         self.count_pattern = re.compile(
             r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>\w+)\]:\s*(?P<count>\d+)"
         )

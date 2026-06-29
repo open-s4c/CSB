@@ -3,8 +3,10 @@ __FILTER__
 {
     @start[tid] = nsecs;
 }
-kretprobe:cgroup_attach_task /@start[tid]/ {
+kretprobe:cgroup_attach_task
+/@start[tid]/
+{
     $duration = (nsecs - @start[tid]) / 1000;
-    @attach_latency[pid] = hist($duration);
+    @cgroup_attach_task[pid] = hist($duration);
     delete(@start[tid]);
 }
