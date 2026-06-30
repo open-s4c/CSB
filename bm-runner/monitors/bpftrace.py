@@ -10,6 +10,7 @@ import pandas as pd
 from bm_visualize import plot_chart, PlotConfig
 import bm_config
 import sys
+from pathlib import Path
 
 
 ###################################
@@ -46,8 +47,9 @@ class BpfTrace(Monitor):
 
         for bt in args:
             cmds = ["sudo", "bpftrace"]
-            out_name = f"{bt}.txt"
-            err_name = f"{bt}.err"
+            prefix = Path(bt).stem
+            out_name = f"{prefix}.txt"
+            err_name = f"{prefix}.err"
             bt_file = str(resolve_path(os.path.join(self.RESOURCES_PATH, f"{self.name}/{bt}")))
 
             try:
@@ -65,7 +67,7 @@ class BpfTrace(Monitor):
                         requires=["bpftrace"],
                         pin=self.get_cpus(),
                     )
-                    self.traces[bt] = trace
+                    self.traces[prefix] = trace
             except Exception as e:
                 bm_log(f"{self.name} cannot read/parse {bt_file}. Exception {e}", LogType.FATAL)
                 sys.exit(1)
@@ -95,35 +97,35 @@ class BpfTrace(Monitor):
             trace.start()
 
     def stop(self):
-        for name, trace in self.traces.items():
+        for prefix, trace in self.traces.items():
             ret = trace.stop()
             if ret != 0:
                 bm_log(
-                    f"bpftrace program {name} failed. With error code {ret}. Check {trace.err_file_name}",
+                    f"bpftrace program {prefix} failed. With error code {ret}. Check {trace.err_file_name}",
                     LogType.ERROR,
                 )
 
     def collect_results(self) -> str:
         output = ""
-        for name, trace in self.traces.items():
-            output += self.__parse_trace(name, trace)
+        for prefix, trace in self.traces.items():
+            output += self.__parse_trace(prefix, trace)
         return output
 
-    def __parse_trace(self, name: str, trace: BackgroundProcess) -> str:
+    def __parse_trace(self, prefix: str, trace: BackgroundProcess) -> str:
         # we rely on the encoded meta data in the program name
         # `_count` suffix indicates that only count is collected
         # `_hist` suffix indicates that only histogram data is collected
-        count_trace = name.endswith("_count.bt")
-        hist_trace = name.endswith("_hist.bt")
+        count_trace = prefix.endswith("_count")
+        hist_trace = prefix.endswith("_hist")
         with open(trace.output_file_name, "r") as f:
             content = f.read()
             if count_trace:
-                return self.__parse_count(content, trace.output_file_name)
+                return self.__parse_count(prefix, content, trace.output_file_name)
             elif hist_trace:
-                return self.__parse_hist(content, trace.output_file_name)
+                return self.__parse_hist(prefix, content, trace.output_file_name)
         return ""
 
-    def __parse_count(self, content: str, fname) -> str:
+    def __parse_count(self, prefix: str, content: str, fname) -> str:
         output = ""
         df = pd.DataFrame(m.groupdict() for m in self.count_pattern.finditer(content))
         if df.empty:
@@ -142,10 +144,10 @@ class BpfTrace(Monitor):
             df["count"] = df["count"].astype(int)
             plot_chart(plot=cfg, df=df, out_fig_name=fname)
             count_col = df["count"]
-            output += f"{trace_point}_sum={count_col.sum()};"
-            output += f"{trace_point}_avg={count_col.mean()};"
-            output += f"{trace_point}_min={count_col.min()};"
-            output += f"{trace_point}_max={count_col.max()};"
+            output += f"{prefix}_sum={count_col.sum()};"
+            output += f"{prefix}_avg={count_col.mean()};"
+            output += f"{prefix}_min={count_col.min()};"
+            output += f"{prefix}_max={count_col.max()};"
         return output
 
     def __get_trace_point_name(self, df: pd.DataFrame) -> str:
@@ -165,7 +167,7 @@ class BpfTrace(Monitor):
             )
         return ""
 
-    def __parse_hist(self, content: str, fname) -> str:
+    def __parse_hist(self, prefix: str, content: str, fname) -> str:
         rows = []
         current = {}
         for line in content.splitlines():
@@ -214,7 +216,8 @@ class BpfTrace(Monitor):
             hist_data = ""
             for _, row in sum_df.iterrows():
                 hist_data = ",".join(
-                    f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}" for col, val in row[bucket_cols].items()
+                    f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
+                    for col, val in row[bucket_cols].items()
                 )
-            output = f"{trace_point}_hist={hist_data};"
+            output = f"{prefix}_hist={hist_data};"
         return output
