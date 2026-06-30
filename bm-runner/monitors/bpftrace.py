@@ -127,6 +127,10 @@ class BpfTrace(Monitor):
 
     def __parse_count(self, prefix: str, content: str, fname) -> str:
         output = ""
+        sum = 0
+        avg = 0
+        min = 0
+        max = 0
         df = pd.DataFrame(m.groupdict() for m in self.count_pattern.finditer(content))
         if df.empty:
             bm_log(f"No count data collected in {fname}", LogType.WARNING)
@@ -144,10 +148,17 @@ class BpfTrace(Monitor):
             df["count"] = df["count"].astype(int)
             plot_chart(plot=cfg, df=df, out_fig_name=fname)
             count_col = df["count"]
-            output += f"{prefix}_sum={count_col.sum()};"
-            output += f"{prefix}_avg={count_col.mean()};"
-            output += f"{prefix}_min={count_col.min()};"
-            output += f"{prefix}_max={count_col.max()};"
+            sum=count_col.sum()
+            avg=count_col.mean()
+            min=count_col.min()
+            max=count_col.max()
+        # we always append to the output, even if the dataframe is empty
+        # this way we can maintain a sound CSV with each row has same
+        # number of columns, even when an error occurs.
+        output += f"{prefix}_sum={sum};"
+        output += f"{prefix}_avg={avg};"
+        output += f"{prefix}_min={min};"
+        output += f"{prefix}_max={max};"
         return output
 
     def __get_trace_point_name(self, df: pd.DataFrame) -> str:
@@ -219,5 +230,5 @@ class BpfTrace(Monitor):
                     f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
                     for col, val in row[bucket_cols].items()
                 )
-            output = f"{prefix}_hist={hist_data};"
+            output = f"{prefix}={hist_data};"
         return output

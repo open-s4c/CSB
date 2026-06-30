@@ -32,7 +32,7 @@
     }
   ],
   "benchmark_config": {
-    "duration": 60,
+    "duration": 10,
     "monitors": {
       "bpftrace": [
         "bpf_block_req_hist.bt",
@@ -67,7 +67,9 @@
       ]
     }
   },
-  "containers": {},
+  "containers": {
+    "container_list": {"values": [[1, 10]]}
+  },
   "applications": [
     {
       "name": "rocksdb_min_rocks_fcntl_pread64_0_0",
