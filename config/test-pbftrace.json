@@ -68,7 +68,14 @@
     }
   },
   "containers": {
-    "container_list": {"values": [[1, 10]]}
+    "container_list": {
+      "values": [
+        [
+          1,
+          10
+        ]
+      ]
+    }
   },
   "applications": [
     {
