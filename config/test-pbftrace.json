@@ -41,9 +41,9 @@
         "bpf_cgroup_fork_hist.bt",
         "bpf_cgroup_procs_write_hist.bt",
         "bpf_cgroup_rstat_flush_hist.bt",
+        "bpf_cgroup_rstat_lock_count.bt",
         "bpf_copy_from_user_hist.bt",
         "bpf_copy_to_user_hist.bt",
-        "bpf_cgroup_rstat_lock_count.bt",
         "bpf_ext4_mb_new_blocks_hist.bt",
         "bpf_flush_tlb_mm_range_count.bt",
         "bpf_irq_handler_hist.bt",
@@ -68,14 +68,6 @@
     }
   },
   "containers": {
-    "container_list": {
-      "values": [
-        [
-          2
-        ]
-      ]
-    },
-    "core_count": 2
   },
   "applications": [
     {
