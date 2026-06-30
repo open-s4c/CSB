@@ -11,6 +11,7 @@ from bm_visualize import plot_chart, PlotConfig
 import bm_config
 import sys
 from pathlib import Path
+from config.env_config import UniversalConfig, EnvUniversalConfig
 
 
 ###################################
@@ -87,10 +88,13 @@ class BpfTrace(Monitor):
         return self.app_name
 
     def __get_filter(self) -> str:
-        # 16 chars because that's the maximum length of comm
-        # TODO: check if it can be read from env-vars or somewhere reliable.
-        comm = self.app_name[:15].strip()
-        return f'/ comm == "{comm}" /'
+        filter = EnvUniversalConfig.get(UniversalConfig.CSB_BPFTRACE_FILTER)
+        if filter is None:
+            # Note that comm is defined to be 16 chars including null terminator
+            # hence we take the first real 15 chars.
+            comm = self.app_name[:15].strip()
+            filter = f'/ comm == "{comm}" /'
+        return filter
 
     def start(self):
         for trace in self.traces.values():
@@ -148,10 +152,10 @@ class BpfTrace(Monitor):
             df["count"] = df["count"].astype(int)
             plot_chart(plot=cfg, df=df, out_fig_name=fname)
             count_col = df["count"]
-            sum=count_col.sum()
-            avg=count_col.mean()
-            min=count_col.min()
-            max=count_col.max()
+            sum = count_col.sum()
+            avg = count_col.mean()
+            min = count_col.min()
+            max = count_col.max()
         # we always append to the output, even if the dataframe is empty
         # this way we can maintain a sound CSV with each row has same
         # number of columns, even when an error occurs.
