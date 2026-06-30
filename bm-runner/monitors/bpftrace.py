@@ -20,6 +20,8 @@ import sys
 ###################################
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
+    BUCKET_COL_SEPARATOR = "-"
+    BUCKET_EQUAL_CHAR = "!"
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
@@ -124,7 +126,9 @@ class BpfTrace(Monitor):
     def __parse_count(self, content: str, fname) -> str:
         output = ""
         df = pd.DataFrame(m.groupdict() for m in self.count_pattern.finditer(content))
-        if not df.empty:
+        if df.empty:
+            bm_log(f"No count data collected in {fname}", LogType.WARNING)
+        else:
             trace_point = self.__get_trace_point_name(df)
             cfg = PlotConfig(
                 x="pid",
@@ -164,7 +168,6 @@ class BpfTrace(Monitor):
     def __parse_hist(self, content: str, fname) -> str:
         rows = []
         current = {}
-
         for line in content.splitlines():
             line = line.strip()
             if m := self.hist_header.match(line):
@@ -178,32 +181,40 @@ class BpfTrace(Monitor):
                 low, sep, high = m["bucket"].partition(",")
                 low = low.strip()
                 high = low if high.strip() == "" else high.strip()
-                current[f"[{low},{high})"] = int(m["count"])
-
+                current[f"{low}{self.BUCKET_COL_SEPARATOR}{high}"] = int(m["count"])
         # append last row
         if current:
             rows.append(current)
 
+        output = ""
         # convert to a dataframe and fill absent (NaN) bucket counts with 0
         df = pd.DataFrame(rows).fillna(0)
         if df.empty:
-            return ""
-        title = self.__get_trace_point_name(df)
-        bucket_cols = [c for c in df.columns if c.startswith("[")]
-        plot_df = df.melt(
-            id_vars=["pid", "comm"],
-            value_vars=bucket_cols,
-            var_name="bucket",
-            value_name="count",
-        )
-        cfg = PlotConfig(
-            x="bucket",
-            x_lbl="Bucket",
-            y_lbl="Count",
-            y="count",
-            hue="pid",
-            shape="barplot",
-            title=title,
-        )
-        plot_chart(plot=cfg, df=plot_df, out_fig_name=fname)
-        return ""
+            bm_log(f"No histogram data collected in {fname}", LogType.WARNING)
+        else:
+            trace_point = self.__get_trace_point_name(df)
+            bucket_cols = [c for c in df.columns if self.BUCKET_COL_SEPARATOR in c]
+            plot_df = df.melt(
+                id_vars=["pid", "comm"],
+                value_vars=bucket_cols,
+                var_name="bucket",
+                value_name="count",
+            )
+            cfg = PlotConfig(
+                x="bucket",
+                x_lbl="Bucket",
+                y_lbl="Count",
+                y="count",
+                hue="pid",
+                shape="barplot",
+                title=trace_point,
+            )
+            plot_chart(plot=cfg, df=plot_df, out_fig_name=fname)
+            sum_df = df.drop(columns="pid").groupby(["name", "comm"], as_index=False).sum()
+            hist_data = ""
+            for _, row in sum_df.iterrows():
+                hist_data = ",".join(
+                    f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}" for col, val in row[bucket_cols].items()
+                )
+            output = f"{trace_point}_hist={hist_data};"
+        return output
