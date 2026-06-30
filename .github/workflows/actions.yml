@@ -126,12 +126,12 @@ jobs:
     strategy:
       matrix:
         benchmark:
-          -  { prepare_cmd: "" , config: bm_empty }
-          -  { prepare_cmd: "" , config: bm_server_redis }
-          -  { prepare_cmd: "" , config: rocksdb/rocksdb_aggregated }
-          -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
-          -  { prepare_cmd: "" , config: mysql/mysql-aggregated }
-          -  { prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-external/bm-cgroups-runc }
+          -  { prefix: "", prepare_cmd: "" , config: bm_empty }
+          -  { prefix: "", prepare_cmd: "" , config: bm_server_redis }
+          -  { prefix: "", prepare_cmd: "" , config: rocksdb/rocksdb_aggregated }
+          -  { prefix: "", prepare_cmd: "" , config: mysql/mysql-aggregated }
+          -  { prefix: "", prepare_cmd: "" , config: mysql/mysql-aggregated }
+          -  { prefix: "CSB_BPFTRACE_FILTER='/ comm == \"runc\" /'", prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-external/bm-cgroups-runc }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -149,7 +149,7 @@ jobs:
           ${{ matrix.benchmark.prepare_cmd }}
       - name: Run Benchmark ${{ matrix.benchmark.config }}
         run: |
-          sudo ./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
+          ${{ matrix.benchmark.prefix }} ./scripts/run-single.sh config/${{ matrix.benchmark.config }}.json
       - name: Fix artifact permissions
         if: always()
         run: |
