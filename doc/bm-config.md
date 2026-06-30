@@ -159,3 +159,4 @@ CSB bm-runner has universal configuration that can overwrite default behavior an
 - `"CSB_PIN_MONITORS"`:  When set to `true`, all monitors will be pinned to a specific CPU.
 - `"CSB_RESULTS_GROUP"`:  when set to <dir-name>, bm-runner dumps all results under results/<dir-name>.
 - `"CSB_ARM_SPE"`:  when set to `true`, it checks of availability of arm_spe perf event and captures these events.
+- `"CSB_BPFTRACE_FILTER"`:  can be used to overwrite the default filter bpftrace filter`/ comm == "<comm>" /`. Note that `<comm>` is replaced by the first 16chars of the benchmark application name.
