@@ -69,4 +69,3 @@ echo "=========================================="
 CONTAINER_NAME="test-container"
 sudo runc run -d $CONTAINER_NAME
 sudo runc delete -f $CONTAINER_NAME
-
