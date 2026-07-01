@@ -13,13 +13,6 @@ import sys
 from pathlib import Path
 from config.env_config import UniversalConfig, EnvUniversalConfig
 
-
-###################################
-# Current limitations:
-# 1) does not support multi-app benchmarks
-# 2) filters traces based on app name/comm first 16 chars
-#
-###################################
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
     BUCKET_COL_SEPARATOR = "-"
@@ -27,6 +20,37 @@ class BpfTrace(Monitor):
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
+        """
+        Launches `bpftrace` with the given `bpftrace` programs (`args`).
+
+        This monitor relies on the follow conventions:
+            - given programs exist under `scripts/bpftrace`.
+            - if the program name has suffix `_count.bt` its output is parsed under the assumption
+            it respects the following format `@name[pid, comm]: count`
+            - if the program name has suffix `_hist.bt` its output is parsed under the assumption
+            it respects the following format `@name[pid, comm]:` followed by bucket lines
+            - if neither `_count.bt` nor `_hist.bt` is used as a suffix, the output will not be parsed and
+            no plots will be generated.
+            - Every .bt program should include `__FILTER__` where the process filter belongs. The monitor
+            auto replaces that with '/ comm == "<app-name>" /' where `<app-name>` is the first 15 characters
+            of the benchmark application name. Users can overwrite the filter by setting env var
+            `CSB_BPFTRACE_FILTER` to the desired filter. e.g. `export CSB_BPFTRACE_FILTER='/ comm == "runc" /'`
+
+        Current Limitations:
+            - At the moment, this monitor does not support multi-app mode of CSB.
+            - By default, it filters based on the value of `comm`, which is defined to be of 16 character length
+            including null terminator, hence only the first 15 chars of the application name is considered.
+            This can yield inaccurate results if one or more applications share the first `15` characters.
+
+        Parameters
+        ----------
+        output_dir: [str]
+            Where output and error logs of the current run should be dumped.
+        args: list[str]
+            a list of `bpftrace` program file names, e.g. `<program>.bt` to be run with `bpftrace`.
+            For each program there will be an instance of `bpftrace` launched.
+            The program pool to choose from or add to is under `scripts/bpftrace`.
+        """
         self.name = "bpftrace"
         self.traces = {}
         # we do it in the constructor for early error detection.
