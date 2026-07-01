@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from config.env_config import UniversalConfig, EnvUniversalConfig
 
+
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
     BUCKET_COL_SEPARATOR = "-"
@@ -136,24 +137,29 @@ class BpfTrace(Monitor):
     def collect_results(self) -> str:
         output = ""
         for prefix, trace in self.traces.items():
-            output += self.__parse_trace(prefix, trace)
+            output += self.__parse_output(prefix, trace)
         return output
 
-    def __parse_trace(self, prefix: str, trace: BackgroundProcess) -> str:
-        # we rely on the encoded meta data in the program name
-        # `_count` suffix indicates that only count is collected
-        # `_hist` suffix indicates that only histogram data is collected
-        count_trace = prefix.endswith("_count")
-        hist_trace = prefix.endswith("_hist")
-        with open(trace.output_file_name, "r") as f:
-            content = f.read()
-            if count_trace:
-                return self.__parse_count(prefix, content, trace.output_file_name)
-            elif hist_trace:
-                return self.__parse_hist(prefix, content, trace.output_file_name)
+    def __parse_output(self, prefix: str, trace: BackgroundProcess) -> str:
+        try:
+            with open(trace.output_file_name, "r") as f:
+                content = f.read()
+                if prefix.endswith("_count"):
+                    return self.__parse_count_output(prefix, content, trace.output_file_name)
+                elif prefix.endswith("_hist"):
+                    return self.__parse_hist_output(prefix, content, trace.output_file_name)
+                else:
+                    bm_log(
+                        f"{self.name}: Could not determine parser for {prefix}. Output will not be parsed. Consider adding `_count` or `_hist` as a program suffix, or implement a suitable parser.",
+                        LogType.WARNING,
+                    )
+        except Exception as e:
+            bm_log(
+                f"{self.name} Parsing of {trace.output_file_name} failed. Error: {e}", LogType.ERROR
+            )
         return ""
 
-    def __parse_count(self, prefix: str, content: str, fname) -> str:
+    def __parse_count_output(self, prefix: str, content: str, fname) -> str:
         output = ""
         sum = 0
         avg = 0
@@ -206,7 +212,7 @@ class BpfTrace(Monitor):
             )
         return ""
 
-    def __parse_hist(self, prefix: str, content: str, fname) -> str:
+    def __parse_hist_output(self, prefix: str, content: str, fname) -> str:
         rows = []
         current = {}
         for line in content.splitlines():
