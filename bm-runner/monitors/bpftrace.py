@@ -18,6 +18,10 @@ class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
     BUCKET_COL_SEPARATOR = "-"
     BUCKET_EQUAL_CHAR = "!"
+    PID = "pid"
+    COMM = "comm"
+    NAME = "name"
+    COUNT = "count"
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
@@ -212,30 +216,34 @@ class BpfTrace(Monitor):
             )
         return ""
 
-    def __parse_hist_output(self, prefix: str, content: str, fname) -> str:
+    def __parse_hist_df(self, content: str) -> pd.DataFrame:
         rows = []
-        current = {}
+        row = {}
         for line in content.splitlines():
             line = line.strip()
+            # Parse histogram header information
             if m := self.hist_header.match(line):
-                if current:
-                    rows.append(current)
-                current = {}
-                current["name"] = m["name"]
-                current["pid"] = int(m["pid"])
-                current["comm"] = m["comm"]
+                if row:
+                    rows.append(row)
+                row = {}
+                row["name"] = m["name"]
+                row["pid"] = int(m["pid"])
+                row["comm"] = m["comm"]
+            # Parse buckets information
             elif m := self.hist_bucket.match(line):
                 low, sep, high = m["bucket"].partition(",")
                 low = low.strip()
                 high = low if high.strip() == "" else high.strip()
-                current[f"{low}{self.BUCKET_COL_SEPARATOR}{high}"] = int(m["count"])
+                row[f"{low}{self.BUCKET_COL_SEPARATOR}{high}"] = int(m["count"])
         # append last row
-        if current:
-            rows.append(current)
-
-        output = ""
+        if row:
+            rows.append(row)
         # convert to a dataframe and fill absent (NaN) bucket counts with 0
-        df = pd.DataFrame(rows).fillna(0)
+        return pd.DataFrame(rows).fillna(0)
+
+    def __parse_hist_output(self, prefix: str, content: str, fname) -> str:
+        output = ""
+        df = self.__parse_hist_df(content)
         if df.empty:
             bm_log(f"No histogram data collected in {fname}", LogType.WARNING)
         else:
