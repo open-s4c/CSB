@@ -175,17 +175,17 @@ class BpfTrace(Monitor):
         else:
             trace_point = self.__get_trace_point_name(df)
             cfg = PlotConfig(
-                x="pid",
+                x=self.PID,
                 x_lbl="PID",
                 y_lbl="Count",
-                y="count",
-                hue="pid",
+                y=self.COUNT,
+                hue=self.PID,
                 shape="barplot",
                 title=trace_point,
             )
-            df["count"] = df["count"].astype(int)
+            df[self.COUNT] = df[self.COUNT].astype(int)
             plot_chart(plot=cfg, df=df, out_fig_name=fname)
-            count_col = df["count"]
+            count_col = df[self.COUNT]
             sum = count_col.sum()
             avg = count_col.mean()
             min = count_col.min()
@@ -200,8 +200,8 @@ class BpfTrace(Monitor):
         return output
 
     def __get_trace_point_name(self, df: pd.DataFrame) -> str:
-        if "name" in df.columns:
-            names = df["name"].unique()
+        if self.NAME in df.columns:
+            names = df[self.NAME].unique()
             if len(names) == 1:
                 return names[0]
             else:
@@ -226,15 +226,15 @@ class BpfTrace(Monitor):
                 if row:
                     rows.append(row)
                 row = {}
-                row["name"] = m["name"]
-                row["pid"] = int(m["pid"])
-                row["comm"] = m["comm"]
+                row[self.NAME] = m[self.NAME]
+                row[self.PID] = int(m[self.PID])
+                row[self.COMM] = m[self.COMM]
             # Parse buckets information
             elif m := self.hist_bucket.match(line):
                 low, sep, high = m["bucket"].partition(",")
                 low = low.strip()
                 high = low if high.strip() == "" else high.strip()
-                row[f"{low}{self.BUCKET_COL_SEPARATOR}{high}"] = int(m["count"])
+                row[f"{low}{self.BUCKET_COL_SEPARATOR}{high}"] = int(m[self.COUNT])
         # append last row
         if row:
             rows.append(row)
@@ -250,22 +250,22 @@ class BpfTrace(Monitor):
             trace_point = self.__get_trace_point_name(df)
             bucket_cols = [c for c in df.columns if self.BUCKET_COL_SEPARATOR in c]
             plot_df = df.melt(
-                id_vars=["pid", "comm"],
+                id_vars=[self.PID, self.COMM],
                 value_vars=bucket_cols,
                 var_name="bucket",
-                value_name="count",
+                value_name=self.COUNT,
             )
             cfg = PlotConfig(
                 x="bucket",
                 x_lbl="Bucket",
                 y_lbl="Count",
-                y="count",
-                hue="pid",
+                y=self.COUNT,
+                hue=self.PID,
                 shape="barplot",
                 title=trace_point,
             )
             plot_chart(plot=cfg, df=plot_df, out_fig_name=fname)
-            sum_df = df.drop(columns="pid").groupby(["name", "comm"], as_index=False).sum()
+            sum_df = df.drop(columns=self.PID).groupby([self.NAME, self.COMM], as_index=False).sum()
             hist_data = ""
             for _, row in sum_df.iterrows():
                 hist_data = ",".join(
