@@ -119,7 +119,14 @@
         "-C",
         "0"
       ],
-      "iostat": []
+      "iostat": [],
+      "bpftrace": [
+        "bpf_cgroup_attach_task_hist.bt",
+        "bpf_cgroup_charge_hist.bt",
+        "bpf_cgroup_fork_hist.bt",
+        "bpf_cgroup_procs_write_hist.bt",
+        "bpf_cgroup_rstat_flush_hist.bt"
+      ]
     }
   },
   "containers": {
