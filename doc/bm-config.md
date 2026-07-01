@@ -122,7 +122,7 @@ Monitors are used to monitor performance. They can be used to analyze the behavi
 - `"sar_net"`:  monitors network traffic.
 - `"perf_stat"`:  Runs perf stat.
 - `"perf_lock"`:  Runs perf lock, and perf lock contention if supported. Lock-contention output is generated when the kernel exposes the required `perf lock` trace-points.
-- `"bpftrace"`:  Runs bpftrace with the given programs. Users may list programs from scripts/bpftrace. Giving multiple programs as arguments, will result in launching multiple instances of bpftrace.
+- `"bpftrace"`:  Runs [bpftrace](https://bpftrace.org/docs/release_025/stdlib) with the given programs. Users may list programs from scripts/bpftrace. Giving multiple programs as arguments, will result in launching multiple instances of bpftrace.
 ## PlotType
 Supported types of plots.  <br/>Supported values:
 - `"normal"`:  Plots according to the config no post processing of data.
