@@ -297,6 +297,8 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
                 create_linearity_plot(df=df, plot=plot, dir=dir)
             case PlotType.MEAN:
                 create_mean_plot(df=df, plot=plot, dir=dir)
+            case PlotType.BPFTRACE_HIST:
+                create_bpftrace_hist_plot(df=df, plot=plot, dir=dir)
             case _:
                 bm_log(f"unsupported plot type: {plot.type} skipped!", LogType.WARNING)
 
@@ -350,6 +352,41 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
         estimator="mean",
     )
 
+def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
+    df = df[[plot.x, plot.hue, plot.y]].copy()
+    print(df)
+    stripped = df[plot.y].str.strip("'")
+    parsed = stripped.apply(
+        lambda x: {
+            k: int(v)
+            for item in x.split(",")
+            if item
+            for k, v in [item.split("!")]
+        }
+    )
+    hist_df  = pd.DataFrame(parsed.tolist()).fillna(0).astype(int)
+    df = df.drop(columns=plot.y).join(hist_df)
+    print(df)
+    bucket_cols = list(dict.fromkeys(
+        k
+        for d in parsed
+        for k in d
+    ))
+    print(bucket_cols)
+    df_long = df.melt(
+        id_vars=[plot.x, plot.hue],
+        value_vars=bucket_cols,
+        var_name="bucket",
+        value_name="count",
+    )
+    print(df_long)
+    plot.y = "count"
+    plot.y_lbl = "Count"
+    plot_chart(
+        plot=plot,
+        df=df_long,
+        out_fig_name=f"{dir}/{plot.title}",
+    )
 
 def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):
     count_col: str = plot.x  # e.g. container count
