@@ -243,7 +243,7 @@ class BpfTrace(Monitor):
         return pd.DataFrame(rows).fillna(0)
 
     def __parse_hist_output(self, prefix: str, content: str, fname) -> str:
-        output = ""
+        hist_data = ""
         df = self.__parse_hist_df(content)
         if df.empty:
             bm_log(f"No histogram data collected in {fname}", LogType.WARNING)
@@ -274,12 +274,12 @@ class BpfTrace(Monitor):
             if len(sum_df) > 1:
                 bm_log("multi comm/trace point is not supported", LogType.ERROR)
             else:
-                hist_data = ""
                 # we compress the data of all buckets into on string
                 for _, row in sum_df.iterrows():
                     hist_data = ",".join(
                         f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
                         for col, val in row[bucket_cols].items()
                     )
-                output = f"{prefix}={hist_data};"
+        # always output to maintain same number of cols in CSV
+        output = f"{prefix}='{hist_data}';"
         return output
