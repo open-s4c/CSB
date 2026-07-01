@@ -22,6 +22,9 @@ class BpfTrace(Monitor):
     COMM = "comm"
     NAME = "name"
     COUNT = "count"
+    BUCKET = "bucket"
+
+    HEADER_REGEX = f"@(?P<{NAME}>\w+)\[(?P<{PID}>\d+),\s*(?P<{COMM}>[^\]]+)\]:"
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
@@ -64,15 +67,13 @@ class BpfTrace(Monitor):
         # regular expression to parse the following format
         #   @<name>[<pid>, <comm>]: <count>
         # e.g. @page_fault_user[1975977, rocksdb_min_roc]: 2
-        self.count_pattern = re.compile(
-            r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:\s*(?P<count>\d+)"
-        )
+        self.count_pattern = re.compile(rf"{self.HEADER_REGEX}\s*(?P<{self.COUNT}>\d+)")
         # regular expression to parse header line of each histogram
         #   @<name>[<pid>, <comm>]:
-        self.hist_header = re.compile(r"@(?P<name>\w+)\[(?P<pid>\d+),\s*(?P<comm>[^\]]+)\]:")
+        self.hist_header = re.compile(rf"{self.HEADER_REGEX}")
         # regular expression to parse bucket line of a histogram
         self.hist_bucket = re.compile(
-            r"\[(?P<bucket>[^\]\)]+(?:,\s*[^\)\]]+)?)[])]\s+(?P<count>\d+)"
+            rf"\[(?P<{self.BUCKET}>[^\]\)]+(?:,\s*[^\)\]]+)?)[])]\s+(?P<{self.COUNT}>\d+)"
         )
 
         for bt in args:
