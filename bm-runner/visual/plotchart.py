@@ -1,3 +1,6 @@
+# Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 from config.plot import PlotConfig
 import matplotlib.pyplot as plt
 from pandas import DataFrame
