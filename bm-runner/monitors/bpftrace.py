@@ -268,7 +268,7 @@ class BpfTrace(Monitor):
             PlotChart.plot(plot=cfg, df=plot_df, out_fig_name=fname)
             if len(df[self.COMM].unique()) > 1:
                 bm_log(
-                    "Multiple COMM values detected. All will be treated as same process!",
+                    f"{fname}: Multiple COMM values detected. All will be treated as same process!",
                     LogType.WARNING,
                 )
             # In order to create data that summarizes the full run
