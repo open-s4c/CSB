@@ -118,4 +118,4 @@ class PerfLock(Monitor):
                 shape="barplot",
             )
             plot_file = os.path.join(self.dir, f"perf_lock_{y}")
-            PlotChart.plot_chart(cfg, df, plot_file)
+            PlotChart.plot(cfg, df, plot_file)

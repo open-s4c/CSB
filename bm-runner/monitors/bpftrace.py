@@ -185,7 +185,7 @@ class BpfTrace(Monitor):
                 title=trace_point,
             )
             df[self.COUNT] = df[self.COUNT].astype(int)
-            PlotChart.plot_chart(plot=cfg, df=df, out_fig_name=fname)
+            PlotChart.plot(plot=cfg, df=df, out_fig_name=fname)
             count_col = df[self.COUNT]
             sum = count_col.sum()
             avg = count_col.mean()
@@ -265,7 +265,7 @@ class BpfTrace(Monitor):
                 shape="barplot",
                 title=trace_point,
             )
-            PlotChart.plot_chart(plot=cfg, df=plot_df, out_fig_name=fname)
+            PlotChart.plot(plot=cfg, df=plot_df, out_fig_name=fname)
             # In order to create data that summarizes the full run
             # we remove PID col, and sum up data of all processes
             sum_df = df.drop(columns=self.PID).groupby([self.NAME, self.COMM], as_index=False).sum()

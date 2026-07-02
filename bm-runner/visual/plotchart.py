@@ -98,7 +98,7 @@ class PlotChart:
         return True
 
     @staticmethod
-    def plot_chart(
+    def plot(
         plot: PlotConfig,
         df: DataFrame,
         out_fig_name,

@@ -117,7 +117,7 @@ def create_success_rate_plot(org_df, config: PlotConfig, dir):
     )
     # overwrite
     config.y = succ_percent
-    PlotChart.plot_chart(plot=config, df=df, out_fig_name=f"{dir}/{prefix}_succ_percent")
+    PlotChart.plot(plot=config, df=df, out_fig_name=f"{dir}/{prefix}_succ_percent")
 
 
 ###########################################################################
@@ -277,7 +277,7 @@ def create_histogram_plot(df, plot: PlotConfig, dir):
     implicit_add_columns(trans_df, subdf, histo, plot.x, plot.hue)
     ############################################################
     plot.y = "latency"  # TODO configure
-    PlotChart.plot_chart(plot=plot, df=trans_df, out_fig_name=f"{dir}/{histo}_boxplot")
+    PlotChart.plot(plot=plot, df=trans_df, out_fig_name=f"{dir}/{histo}_boxplot")
 
 
 ###########################################################################
@@ -286,7 +286,7 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
         match plot.type:
             case PlotType.NORMAL:
                 fig_name = f"{dir}/{plot.x}_vs_{plot.y}_{info}"
-                PlotChart.plot_chart(plot=plot, df=df, out_fig_name=fig_name)
+                PlotChart.plot(plot=plot, df=df, out_fig_name=fig_name)
             case PlotType.MIN_MAX_AVG:
                 create_min_max_avg_plot(org_df=df, config=plot, dir=dir)
             case PlotType.SUCCESS_PERCENT:
@@ -342,7 +342,7 @@ def split_data_frame(df: DataFrame) -> dict:
 
 
 def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
-    PlotChart.plot_chart(
+    PlotChart.plot(
         plot=plot,
         df=df,
         out_fig_name=f"{dir}/{plot.y}_mean",
@@ -391,7 +391,7 @@ def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):
 
     plot.y = "linearity"
     plot.y_lbl = "Linearity"
-    PlotChart.plot_chart(plot=plot, df=lin_df, out_fig_name=f"{dir}/linearity")
+    PlotChart.plot(plot=plot, df=lin_df, out_fig_name=f"{dir}/linearity")
 
 
 ###########################################################################

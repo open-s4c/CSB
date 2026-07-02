@@ -116,7 +116,7 @@ class IoStat(Monitor):
             hue_lbl="Device/metric",
             type=PlotType.MEAN,
         )
-        PlotChart.plot_chart(
+        PlotChart.plot(
             df=melted, plot=cfg, out_fig_name=os.path.join(self.dir, f"{self.name}-{plot_name}")
         )
 
