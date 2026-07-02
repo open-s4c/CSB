@@ -3,6 +3,7 @@
 
 from config.plot import PlotConfig
 import matplotlib.pyplot as plt
+import pandas as pd
 from pandas import DataFrame
 from utils.logger import LogType, bm_log
 import seaborn as sns
@@ -68,7 +69,7 @@ class PlotChart:
 
         chart.set(xlabel=plot.x_lbl, ylabel=plot.y_lbl)
         chart.grid(True)
-        new_ylim = 1.2 * max(df[plot.y])
+        new_ylim = 1.2 * pd.to_numeric(df[plot.y], errors="coerce").max()
         chart.set_ylim(0, 1 if new_ylim == 0 else new_ylim)
 
         plt.legend(
