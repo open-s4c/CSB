@@ -373,14 +373,23 @@ class BpfTrace(Monitor):
             bm_log(f"Cannot plot {plot.title}. Dataframe is empty!", LogType.WARNING)
             return
 
-        fig, axes = plt.subplots(1, 2, figsize=(16, 5), sharey=True)
-        for ax, etype in zip(
-            axes,
-            df[hue_col].unique(),
-        ):
+        hues = df[hue_col].unique()
+
+        fig, axes = plt.subplots(
+            1,
+            len(hues),
+            figsize=(8 * len(hues), 5),
+            sharey=True,
+        )
+
+        if len(hues) == 1:
+            axes = [axes]
+
+        for subplot, hue_val in zip(axes, hues):
+            df_hue = df_long[df_long[hue_col].astype(str) == str(hue_val)]
+
             heatmap_data = (
-                df_long[df_long[hue_col].astype(str) == etype]
-                .pivot_table(
+                df_hue.pivot_table(
                     index="bucket",
                     columns=x_col,
                     values="count",
@@ -389,10 +398,20 @@ class BpfTrace(Monitor):
                 .reindex(index=bucket_cols)
                 .fillna(0)
             )
-            sns.heatmap(heatmap_data, annot=True, fmt=".0f", ax=ax, cmap="magma")
-            ax.set_title(f"{plot.title} ({etype})")
-            ax.set_xlabel(plot.x_lbl)
-            ax.set_ylabel("Buckets")
+
+            sns.heatmap(
+                heatmap_data,
+                annot=True,
+                fmt=".0f",
+                ax=subplot,
+                cmap="magma",
+            )
+
+            subplot.set(
+                title=f"{plot.title} ({hue_val})",
+                xlabel=plot.x_lbl,
+                ylabel="Buckets",
+            )
 
         fig.tight_layout()
         fig.savefig(f"{output_dir}/{plot.title}.png", dpi=300, bbox_inches="tight")
