@@ -279,7 +279,7 @@ class BpfTrace(Monitor):
             # since we expect the data to be related to one trace point, we expect to have
             # only one row.
             if len(sum_df) > 1:
-                bm_log("multi trace points is not supported", LogType.ERROR)
+                bm_log(f"{fname}: multi trace points is not supported", LogType.ERROR)
             else:
                 # we compress the data of all buckets into on string
                 for _, row in sum_df.iterrows():
