@@ -37,9 +37,290 @@
       "y_lbl": "Block Request Complete",
       "hue_lbl": "Environment",
       "hue": "execution_type",
-      "shape": "barplot",
       "title": "block_rq_complete",
-      "type" : "bpftrace_hist"
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_block_req_hist",
+      "y_lbl": "Block Request",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "block_req",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_attach_task_hist",
+      "y_lbl": "Cgroup Attach Task",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_attach_task",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_charge_hist",
+      "y_lbl": "Cgroup Charge",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_charge",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_fork_hist",
+      "y_lbl": "Cgroup Fork",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_fork",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_procs_write_hist",
+      "y_lbl": "Cgroup Procs Write",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_procs_write",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_rstat_flush_hist",
+      "y_lbl": "Cgroup Rstat Flush",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_rstat_flush",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_cgroup_rstat_lock_count_avg",
+      "y_lbl": "Cgroup Rstat Lock",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "cgroup_rstat_lock"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_copy_from_user_hist",
+      "y_lbl": "Copy From User",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "copy_from_user",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_copy_to_user_hist",
+      "y_lbl": "Copy To User",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "copy_to_user",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_ext4_mb_new_blocks_hist",
+      "y_lbl": "Ext4 New Blocks",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "ext4_mb_new_blocks",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_flush_tlb_mm_range_count_avg",
+      "y_lbl": "Flush TLB MM Range",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "flush_tlb_mm_range"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_irq_handler_hist",
+      "y_lbl": "IRQ Handler",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "irq_handler",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_mutex_lock_hist",
+      "y_lbl": "Mutex Lock",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "mutex_lock",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_native_queued_spin_lock_slowpath_hist",
+      "y_lbl": "Queued Spin Lock Slowpath",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "native_queued_spin_lock_slowpath",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_page_fault_io_count_avg",
+      "y_lbl": "Page Fault IO",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "page_fault_io"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_page_fault_kernel_count_avg",
+      "y_lbl": "Page Fault Kernel",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "page_fault_kernel"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_page_fault_kvm_count_avg",
+      "y_lbl": "Page Fault KVM",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "page_fault_kvm"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_page_fault_user_count_avg",
+      "y_lbl": "Page Fault User",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "page_fault_user"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_path_init_hist",
+      "y_lbl": "Path Init",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "path_init",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_queued_read_lock_slowpath_hist",
+      "y_lbl": "Queued Read Lock Slowpath",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "queued_read_lock_slowpath",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_queued_write_lock_slowpath_hist",
+      "y_lbl": "Queued Write Lock Slowpath",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "queued_write_lock_slowpath",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_raw_spin_lock_hist",
+      "y_lbl": "Raw Spin Lock",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "raw_spin_lock",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_rwsem_down_read_slowpath_hist",
+      "y_lbl": "RWSEM Down Read Slowpath",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "rwsem_down_read_slowpath",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_rwsem_down_write_slowpath_hist",
+      "y_lbl": "RWSEM Down Write Slowpath",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "rwsem_down_write_slowpath",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_sched_domains_mutex_hist",
+      "y_lbl": "Sched Domains Mutex",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "sched_domains_mutex",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_sched_fork_count_avg",
+      "y_lbl": "Sched Fork",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "sched_fork"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_sched_latency_hist",
+      "y_lbl": "Sched Latency",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "sched_latency",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_sched_migrate_task_count_avg",
+      "y_lbl": "Sched Migrate Task",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "sched_migrate_task"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "bpf_vfs_read_latency_hist",
+      "y_lbl": "VFS Read Latency",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
+      "title": "vfs_read_latency",
+      "type": "bpftrace_hist"
     }
   ],
   "benchmark_config": {
