@@ -389,12 +389,10 @@ class BpfTrace(Monitor):
                 .reindex(index=bucket_cols)
                 .fillna(0)
             )
-
             sns.heatmap(heatmap_data, annot=True, fmt=".0f", ax=ax, cmap="magma")
-
-            ax.set_title(etype)
-            ax.set_xlabel("Bucket")
-            ax.set_ylabel("# containers")
+            ax.set_title(f"{plot.title} ({etype})")
+            ax.set_xlabel(plot.x_lbl)
+            ax.set_ylabel("Buckets")
 
         fig.tight_layout()
         fig.savefig(f"{output_dir}/{plot.title}.png", dpi=300, bbox_inches="tight")
