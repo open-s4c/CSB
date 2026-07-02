@@ -352,6 +352,31 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
         estimator="mean",
     )
 
+def parse_size_to_bytes(s: str) -> int:
+    s = str(s).strip().upper()
+
+    match = re.fullmatch(r"(\d+)([KMGTP]?)", s)
+    if not match:
+        return math.inf
+
+    value = int(match.group(1))
+    unit = match.group(2)
+
+    scale = {
+        "": 1,
+        "K": 1024,
+        "M": 1024**2,
+        "G": 1024**3,
+        "T": 1024**4,
+        "P": 1024**5,
+    }
+
+    return value * scale[unit]
+
+def bucket_sort_key(bucket: str) -> int:
+    lower = str(bucket).split("-", 1)[0]
+    return parse_size_to_bytes(lower)
+
 def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
     x_col = plot.x              # container_cnt
     hue_col = plot.hue          # execution_type
@@ -370,11 +395,10 @@ def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
         }
     )
 
-    bucket_cols = list(dict.fromkeys(
-        k
-        for d in parsed
-        for k in d
-    ))
+    bucket_cols = sorted(
+        dict.fromkeys(k for d in parsed for k in d),
+        key=bucket_sort_key,
+    )
 
     hist_df = (
         pd.DataFrame(parsed.tolist(), columns=bucket_cols)
