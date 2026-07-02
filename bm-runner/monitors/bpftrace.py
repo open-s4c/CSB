@@ -276,14 +276,17 @@ class BpfTrace(Monitor):
             sum_df = (
                 df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).sum()
             )
-            # since we expect the data to be related to one COMM and trace point, we expect to have
+            # since we expect the data to be related to one trace point, we expect to have
             # only one row.
-            # we compress the data of all buckets into on string
-            for _, row in sum_df.iterrows():
-                hist_data = ",".join(
-                    f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
-                    for col, val in row[bucket_cols].items()
-                )
+            if len(sum_df) > 1:
+                bm_log("multi trace points is not supported", LogType.ERROR)
+            else:
+                # we compress the data of all buckets into on string
+                for _, row in sum_df.iterrows():
+                    hist_data = ",".join(
+                        f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
+                        for col, val in row[bucket_cols].items()
+                    )
         # always output to maintain same number of cols in CSV
         output = f"{prefix}='{hist_data}';"
         return output
