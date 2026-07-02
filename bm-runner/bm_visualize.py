@@ -365,31 +365,34 @@ def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
 
     df_long, bucket_cols = BpfTrace.parse_hist_col_into_buckets(df, hist_col)
 
+
     fig, axes = plt.subplots(1, 2, figsize=(16, 5), sharey=True)
 
     print(df_long)
     print(hue_col)
     for ax, etype in zip(
         axes,
-        ["ExecutionType.NATIVE", "ExecutionType.CONTAINER"],
+        df[hue_col].unique(),
     ):
         heatmap_data = (
             df_long[df_long[hue_col].astype(str) == etype]
             .pivot_table(
-                index=x_col,
-                columns="bucket",
+                index="bucket",
+                columns=x_col,
                 values="count",
                 aggfunc="first",
             )
-            .reindex(columns=bucket_cols)
+            .reindex(index=bucket_cols)
             .fillna(0)
         )
+        heatmap_data = heatmap_data.sort_index(ascending=False)
 
         sns.heatmap(
             heatmap_data,
             annot=True,
             fmt=".0f",
             ax=ax,
+            cmap="magma"
         )
 
         ax.set_title(etype)
