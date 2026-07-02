@@ -5,7 +5,8 @@ import os
 import argparse
 import pandas as pd
 from utils.logger import bm_log, LogType
-from bm_visualize import plot_chart, dump_graphs_to_doc, _add_css_style
+from visual.plotchart import PlotChart
+from bm_visualize import dump_graphs_to_doc, _add_css_style
 from config.plot import PlotConfig, PlotType
 from dominate import document
 from bm_utils import write_to_file, get_all_files_by_ext, read_data_frame_from_csv
@@ -172,7 +173,9 @@ def generate_comparison_plot(
         title=f"{bm_name}({env})",
         type=plot_type,
     )
-    plot_chart(plot=plot_cfg, df=df, out_fig_name=f"{output_dir_name}/{bm_name}-{env}-{y_lbl}")
+    PlotChart.plot_chart(
+        plot=plot_cfg, df=df, out_fig_name=f"{output_dir_name}/{bm_name}-{env}-{y_lbl}"
+    )
 
 
 def add_to_linearity_summary(df, bm, env, idx, tolerance=0.1) -> str:

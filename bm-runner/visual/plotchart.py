@@ -1,9 +1,10 @@
 from config.plot import PlotConfig
-from config.plot import PlotType
 import matplotlib.pyplot as plt
 from pandas import DataFrame
 from utils.logger import LogType, bm_log
 import seaborn as sns
+import time
+
 
 class PlotChart:
     def __init__(self, plot: PlotConfig):

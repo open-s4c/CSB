@@ -10,7 +10,8 @@ from pandas import DataFrame
 from monitors.monitor import Monitor
 from utils.logger import LogType, bm_log
 from utils.process import BackgroundProcess
-from bm_visualize import plot_chart, PlotConfig, PlotType
+from config.plot import PlotType, PlotConfig
+from visual.plotchart import PlotChart
 from bm_utils import str_to_json, get_block_devices
 import os
 
@@ -115,7 +116,7 @@ class IoStat(Monitor):
             hue_lbl="Device/metric",
             type=PlotType.MEAN,
         )
-        plot_chart(
+        PlotChart.plot_chart(
             df=melted, plot=cfg, out_fig_name=os.path.join(self.dir, f"{self.name}-{plot_name}")
         )
 

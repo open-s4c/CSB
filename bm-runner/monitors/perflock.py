@@ -8,7 +8,7 @@ from utils.logger import bm_log, LogType
 from utils.process import BackgroundProcess
 from benchkit.shell.shell import shell_out
 from bm_utils import read_data_frame_from_csv
-from bm_visualize import plot_chart, PlotConfig
+from visual.plotchart import PlotConfig, PlotChart
 
 
 class PerfLock(Monitor):
@@ -118,4 +118,4 @@ class PerfLock(Monitor):
                 shape="barplot",
             )
             plot_file = os.path.join(self.dir, f"perf_lock_{y}")
-            plot_chart(cfg, df, plot_file)
+            PlotChart.plot_chart(cfg, df, plot_file)
