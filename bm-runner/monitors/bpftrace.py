@@ -12,7 +12,7 @@ import bm_config
 import sys
 from pathlib import Path
 from config.env_config import UniversalConfig, EnvUniversalConfig
-
+import math
 
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
@@ -290,3 +290,68 @@ class BpfTrace(Monitor):
         # always output to maintain same number of cols in CSV
         output = f"{prefix}='{hist_data}';"
         return output
+
+    @staticmethod
+    def __parse_size_to_bytes(bucket_desc: str) -> int:
+        bucket_desc = str(bucket_desc).strip().upper()
+        match = re.fullmatch(r"(\d+)([KMGTP]?)", bucket_desc)
+        if not match:
+            return math.inf
+
+        value = int(match.group(1))
+        unit = match.group(2)
+
+        scale = {
+            "": 1,
+            "K": 1024,
+            "M": 1024**2,
+            "G": 1024**3,
+            "T": 1024**4,
+            "P": 1024**5,
+        }
+
+        return value * scale[unit]
+
+    @staticmethod
+    def __sort_bucket_key(bucket: str) -> int:
+        lower = str(bucket).split("-", 1)[0]
+        return BpfTrace.__parse_size_to_bytes(lower)
+
+    @staticmethod
+    def parse_hist_col_into_buckets(df: pd.DataFrame, hist_col_name: str) -> pd.DataFrame:
+        # fill empty values with an empty string, convert to string
+        # strip away leading or trailing single quotes.
+        stripped = df[hist_col_name].fillna("").astype(str).str.strip("'")
+
+        # Parse hist data column value into separate buckets.
+        parsed = stripped.apply(
+            lambda hist_data: {
+                # key is the bucket description e.g. 512-1024
+                # value is the count associated with the bucket
+                k: int(v)
+                for bucket in hist_data.split(",")
+                if bucket
+                for k, v in [bucket.split(BpfTrace.BUCKET_EQUAL_CHAR)]
+            }
+        )
+
+        bucket_cols = sorted(
+            dict.fromkeys(k for d in parsed for k in d),
+            key=BpfTrace.__sort_bucket_key,
+        )
+
+        hist_df = (
+            pd.DataFrame(parsed.tolist(), columns=bucket_cols)
+            .fillna(0)
+            .astype(int)
+        )
+
+        df = df.drop(columns=hist_col_name).join(hist_df)
+
+        df_long = df.melt(
+            value_vars=bucket_cols,
+            var_name="bucket",
+            value_name="count",
+        )
+
+        return df_long
