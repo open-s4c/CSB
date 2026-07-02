@@ -382,11 +382,37 @@ def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
     print(df_long)
     plot.y = "count"
     plot.y_lbl = "Count"
-    plot_chart(
-        plot=plot,
-        df=df_long,
-        out_fig_name=f"{dir}/{plot.title}",
+    data = (
+        df_long[df_long["execution_type"] == "native"]
+        .pivot_table(
+            index="container_cnt",
+            columns="bucket",
+            values="count",
+            aggfunc="first",
+        )
     )
+    fig, axes = plt.subplots(1, 2, figsize=(16, 5))
+
+    for ax, etype in zip(
+        axes,
+        ["ExecutionType.NATIVE", "ExecutionType.CONTAINER"]
+    ):
+        data = (
+            df_long[df_long["execution_type"] == etype]
+            .pivot_table(
+                index="container_cnt",
+                columns="bucket",
+                values="count",
+                aggfunc="first",
+            )
+        )
+
+        sns.heatmap(data, annot=True, fmt=".0f", ax=ax)
+        ax.set_title(etype)
+        fig.tight_layout()
+        fig.savefig(f"{dir}/bpftrace_hist_heatmap.png", dpi=300, bbox_inches="tight")
+        plt.close()
+
 
 def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):
     count_col: str = plot.x  # e.g. container count

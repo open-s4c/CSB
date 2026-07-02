@@ -35,8 +35,8 @@
       "x_lbl": "#Containers",
       "y": "bpf_block_req_hist",
       "y_lbl": "Block Request Complete",
-      "hue_lbl": "Executer",
-      "hue": "execution_unit",
+      "hue_lbl": "Environment",
+      "hue": "execution_type",
       "shape": "barplot",
       "title": "block_rq_complete",
       "type" : "bpftrace_hist"
