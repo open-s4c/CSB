@@ -359,8 +359,7 @@
       ]
     }
   },
-  "containers": {
-  },
+  "containers": {},
   "applications": [
     {
       "name": "rocksdb_min_rocks_fcntl_pread64_0_0",
