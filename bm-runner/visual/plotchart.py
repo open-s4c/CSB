@@ -69,7 +69,7 @@ class PlotChart:
 
         chart.set(xlabel=plot.x_lbl, ylabel=plot.y_lbl)
         chart.grid(True)
-        new_ylim = 1.2 * pd.to_numeric(df[plot.y], errors="coerce").max()
+        new_ylim = 1.2 * pd.to_numeric(df[plot.y], errors="coerce").dropna().max()
         chart.set_ylim(0, 1 if new_ylim == 0 else new_ylim)
 
         plt.legend(
