@@ -18,6 +18,9 @@ from pathlib import Path
 import re
 from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
+from monitors.bpftrace import BpfTrace
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 # TODO: refactor histogram building not to use global vars
@@ -352,71 +355,20 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
         estimator="mean",
     )
 
-def parse_size_to_bytes(s: str) -> int:
-    s = str(s).strip().upper()
-
-    match = re.fullmatch(r"(\d+)([KMGTP]?)", s)
-    if not match:
-        return math.inf
-
-    value = int(match.group(1))
-    unit = match.group(2)
-
-    scale = {
-        "": 1,
-        "K": 1024,
-        "M": 1024**2,
-        "G": 1024**3,
-        "T": 1024**4,
-        "P": 1024**5,
-    }
-
-    return value * scale[unit]
-
-def bucket_sort_key(bucket: str) -> int:
-    lower = str(bucket).split("-", 1)[0]
-    return parse_size_to_bytes(lower)
 
 def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
-    x_col = plot.x              # container_cnt
-    hue_col = plot.hue          # execution_type
-    hist_col = plot.y           # bpftrace histogram column
+    x_col = plot.x  # container_cnt
+    hue_col = plot.hue  # execution_type
+    hist_col = plot.y  # bpftrace histogram column
 
     df = df[[x_col, hue_col, hist_col]].copy()
 
-    stripped = df[hist_col].fillna("").astype(str).str.strip("'")
-
-    parsed = stripped.apply(
-        lambda x: {
-            k: int(v)
-            for item in x.split(",")
-            if item
-            for k, v in [item.split("!")]
-        }
-    )
-
-    bucket_cols = sorted(
-        dict.fromkeys(k for d in parsed for k in d),
-        key=bucket_sort_key,
-    )
-
-    hist_df = (
-        pd.DataFrame(parsed.tolist(), columns=bucket_cols)
-        .fillna(0)
-        .astype(int)
-    )
-
-    df = df.drop(columns=hist_col).join(hist_df)
-
-    df_long = df.melt(
-        id_vars=[x_col, hue_col],
-        value_vars=bucket_cols,
-        var_name="bucket",
-        value_name="count",
-    )
+    df_long, bucket_cols = BpfTrace.parse_hist_col_into_buckets(df, hist_col)
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 5), sharey=True)
 
+    print(df_long)
+    print(hue_col)
     for ax, etype in zip(
         axes,
         ["ExecutionType.NATIVE", "ExecutionType.CONTAINER"],

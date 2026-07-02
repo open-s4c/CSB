@@ -14,6 +14,7 @@ from pathlib import Path
 from config.env_config import UniversalConfig, EnvUniversalConfig
 import math
 
+
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
     BUCKET_COL_SEPARATOR = "-"
@@ -292,7 +293,7 @@ class BpfTrace(Monitor):
         return output
 
     @staticmethod
-    def __parse_size_to_bytes(bucket_desc: str) -> int:
+    def __parse_size_to_bytes(bucket_desc: str) -> int | float:
         bucket_desc = str(bucket_desc).strip().upper()
         match = re.fullmatch(r"(\d+)([KMGTP]?)", bucket_desc)
         if not match:
@@ -313,12 +314,14 @@ class BpfTrace(Monitor):
         return value * scale[unit]
 
     @staticmethod
-    def __sort_bucket_key(bucket: str) -> int:
+    def __sort_bucket_key(bucket: str) -> int | float:
         lower = str(bucket).split("-", 1)[0]
         return BpfTrace.__parse_size_to_bytes(lower)
 
     @staticmethod
-    def parse_hist_col_into_buckets(df: pd.DataFrame, hist_col_name: str) -> pd.DataFrame:
+    def parse_hist_col_into_buckets(
+        df: pd.DataFrame, hist_col_name: str
+    ) -> tuple[pd.DataFrame, list]:
         # fill empty values with an empty string, convert to string
         # strip away leading or trailing single quotes.
         stripped = df[hist_col_name].fillna("").astype(str).str.strip("'")
@@ -335,23 +338,21 @@ class BpfTrace(Monitor):
             }
         )
 
-        bucket_cols = sorted(
+        bucket_cols: list[str] = sorted(
             dict.fromkeys(k for d in parsed for k in d),
             key=BpfTrace.__sort_bucket_key,
         )
 
-        hist_df = (
-            pd.DataFrame(parsed.tolist(), columns=bucket_cols)
-            .fillna(0)
-            .astype(int)
-        )
+        hist_df = pd.DataFrame(parsed.tolist(), columns=pd.Index(bucket_cols)).fillna(0).astype(int)
 
         df = df.drop(columns=hist_col_name).join(hist_df)
 
+        id_vars = [c for c in df.columns if c not in bucket_cols]
         df_long = df.melt(
+            id_vars=id_vars,
             value_vars=bucket_cols,
             var_name="bucket",
             value_name="count",
         )
 
-        return df_long
+        return df_long, bucket_cols
