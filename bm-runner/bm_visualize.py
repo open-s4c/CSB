@@ -19,8 +19,6 @@ import re
 from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 # TODO: refactor histogram building not to use global vars
@@ -301,7 +299,7 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
             case PlotType.MEAN:
                 create_mean_plot(df=df, plot=plot, dir=dir)
             case PlotType.BPFTRACE_HIST:
-                create_bpftrace_hist_plot(df=df, plot=plot, dir=dir)
+                BpfTrace.dump_hist_data_heat_map(df=df, plot=plot, output_dir=dir)
             case _:
                 bm_log(f"unsupported plot type: {plot.type} skipped!", LogType.WARNING)
 
@@ -354,50 +352,6 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
         add_points=True,
         estimator="mean",
     )
-
-
-def create_bpftrace_hist_plot(df: DataFrame, plot: PlotConfig, dir):
-    x_col = plot.x  # container_cnt
-    hue_col = plot.hue  # execution_type
-    hist_col = plot.y  # bpftrace histogram column
-
-    df = df[[x_col, hue_col, hist_col]].copy()
-
-    df_long, bucket_cols = BpfTrace.parse_hist_col_into_buckets(df, hist_col)
-
-    if df_long.empty:
-        bm_log(f"Skipping {plot.title}", LogType.WARNING)
-        return
-
-    fig, axes = plt.subplots(1, 2, figsize=(16, 5), sharey=True)
-
-    print(df_long)
-    print(hue_col)
-    for ax, etype in zip(
-        axes,
-        df[hue_col].unique(),
-    ):
-        heatmap_data = (
-            df_long[df_long[hue_col].astype(str) == etype]
-            .pivot_table(
-                index="bucket",
-                columns=x_col,
-                values="count",
-                aggfunc="first",
-            )
-            .reindex(index=bucket_cols)
-            .fillna(0)
-        )
-
-        sns.heatmap(heatmap_data, annot=True, fmt=".0f", ax=ax, cmap="magma")
-
-        ax.set_title(etype)
-        ax.set_xlabel("Bucket")
-        ax.set_ylabel("# containers")
-
-    fig.tight_layout()
-    fig.savefig(f"{dir}/{plot.title}.png", dpi=300, bbox_inches="tight")
-    plt.close(fig)
 
 
 def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):

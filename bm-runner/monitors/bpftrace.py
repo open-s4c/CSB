@@ -13,6 +13,8 @@ import sys
 from pathlib import Path
 from config.env_config import UniversalConfig, EnvUniversalConfig
 import math
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class BpfTrace(Monitor):
@@ -319,7 +321,7 @@ class BpfTrace(Monitor):
         return BpfTrace.__parse_size_to_bytes(lower)
 
     @staticmethod
-    def parse_hist_col_into_buckets(
+    def __parse_hist_col_into_buckets(
         df: pd.DataFrame, hist_col_name: str
     ) -> tuple[pd.DataFrame, list]:
         # fill empty values with an empty string, convert to string
@@ -356,3 +358,44 @@ class BpfTrace(Monitor):
         )
 
         return df_long, bucket_cols
+
+    @staticmethod
+    def dump_hist_data_heat_map(df: pd.DataFrame, plot: PlotConfig, output_dir: str):
+        x_col = plot.x  # container_cnt
+        hue_col = plot.hue  # execution_type
+        hist_col = plot.y  # bpftrace histogram column
+
+        df = df[[x_col, hue_col, hist_col]].copy()
+
+        df_long, bucket_cols = BpfTrace.__parse_hist_col_into_buckets(df, hist_col)
+
+        if df_long.empty:
+            bm_log(f"Cannot plot {plot.title}. Dataframe is empty!", LogType.WARNING)
+            return
+
+        fig, axes = plt.subplots(1, 2, figsize=(16, 5), sharey=True)
+        for ax, etype in zip(
+            axes,
+            df[hue_col].unique(),
+        ):
+            heatmap_data = (
+                df_long[df_long[hue_col].astype(str) == etype]
+                .pivot_table(
+                    index="bucket",
+                    columns=x_col,
+                    values="count",
+                    aggfunc="first",
+                )
+                .reindex(index=bucket_cols)
+                .fillna(0)
+            )
+
+            sns.heatmap(heatmap_data, annot=True, fmt=".0f", ax=ax, cmap="magma")
+
+            ax.set_title(etype)
+            ax.set_xlabel("Bucket")
+            ax.set_ylabel("# containers")
+
+        fig.tight_layout()
+        fig.savefig(f"{output_dir}/{plot.title}.png", dpi=300, bbox_inches="tight")
+        plt.close(fig)
