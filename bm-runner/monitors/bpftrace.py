@@ -24,7 +24,7 @@ class BpfTrace(Monitor):
     COUNT = "count"
     BUCKET = "bucket"
 
-    HEADER_REGEX = f"@(?P<{NAME}>\w+)\[(?P<{PID}>\d+),\s*(?P<{COMM}>[^\]]+)\]:"
+    HEADER_REGEX = rf"@(?P<{NAME}>\w+)\[(?P<{PID}>\d+),\s*(?P<{COMM}>.+)\]:"
 
     def __init__(self, output_dir: str, args: list[str] = []):
         super().__init__(dir=output_dir, args=args)
@@ -266,20 +266,24 @@ class BpfTrace(Monitor):
                 title=trace_point,
             )
             PlotChart.plot(plot=cfg, df=plot_df, out_fig_name=fname)
+            if len(df[self.COMM].unique()) > 1:
+                bm_log(
+                    "Multiple COMM values detected. All will be treated as same process!",
+                    LogType.WARNING,
+                )
             # In order to create data that summarizes the full run
             # we remove PID col, and sum up data of all processes
-            sum_df = df.drop(columns=self.PID).groupby([self.NAME, self.COMM], as_index=False).sum()
+            sum_df = (
+                df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).sum()
+            )
             # since we expect the data to be related to one COMM and trace point, we expect to have
             # only one row.
-            if len(sum_df) > 1:
-                bm_log("multi comm/trace point is not supported", LogType.ERROR)
-            else:
-                # we compress the data of all buckets into on string
-                for _, row in sum_df.iterrows():
-                    hist_data = ",".join(
-                        f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
-                        for col, val in row[bucket_cols].items()
-                    )
+            # we compress the data of all buckets into on string
+            for _, row in sum_df.iterrows():
+                hist_data = ",".join(
+                    f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
+                    for col, val in row[bucket_cols].items()
+                )
         # always output to maintain same number of cols in CSV
         output = f"{prefix}='{hist_data}';"
         return output
