@@ -173,9 +173,7 @@ def generate_comparison_plot(
         title=f"{bm_name}({env})",
         type=plot_type,
     )
-    PlotChart.plot(
-        plot=plot_cfg, df=df, out_fig_name=f"{output_dir_name}/{bm_name}-{env}-{y_lbl}"
-    )
+    PlotChart.plot(plot=plot_cfg, df=df, out_fig_name=f"{output_dir_name}/{bm_name}-{env}-{y_lbl}")
 
 
 def add_to_linearity_summary(df, bm, env, idx, tolerance=0.1) -> str:
