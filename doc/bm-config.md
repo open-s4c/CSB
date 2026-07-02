@@ -131,6 +131,7 @@ Supported types of plots.  <br/>Supported values:
 - `"histogram"`:  Experimental, Plots the distribution of operations.
 - `"success_percent"`:  Experimental, Plots the percentage of successful operations.
 - `"linearity"`:  Calculates and plots the linearity of the benchmark results.
+- `"bpftrace_hist"`:  A plot that is aware of the format of bpftrace histogram data.
 ## ExecutionTime
 Execution time of the plugin script/process.  <br/>Supported values:
 - `"pre"`:  The script/process will be launched before the start signal.
