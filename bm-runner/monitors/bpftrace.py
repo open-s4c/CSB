@@ -276,9 +276,9 @@ class BpfTrace(Monitor):
                     LogType.WARNING,
                 )
             # In order to create data that summarizes the full run
-            # we remove PID col, and sum up data of all processes
+            # we remove PID, COMM cols and sum up data of all processes.
             avg_df = (
-                df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).mean()
+                df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).sum()
             )
             # since we expect the data to be related to one trace point, we expect to have
             # only one row.
