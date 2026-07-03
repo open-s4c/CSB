@@ -286,6 +286,9 @@
   ],
   "benchmark_config": {
     "duration": 10,
+    "exec_env": [
+      "native"
+    ],
     "monitors": {
       "bpftrace": [
         "bpf_block_req_hist.bt",
@@ -317,7 +320,13 @@
     }
   },
   "containers": {
-    "container_list" : {"values": [[10]]}
+    "container_list": {
+      "values": [
+        [
+          10
+        ]
+      ]
+    }
   },
   "applications": [
     {
