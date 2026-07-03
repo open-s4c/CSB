@@ -1,6 +1,0 @@
-tracepoint:kvm:kvm_page_fault
-__FILTER__
-{
-    @kvm_page_fault[pid, comm] = count();
-}
-
