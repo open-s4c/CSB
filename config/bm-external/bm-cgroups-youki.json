@@ -89,6 +89,51 @@
       "hue_lbl": "Execution Env",
       "title": "Lock avg wait vs. #Benchmark Instances",
       "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_cgroup_attach_task_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup_attach_task",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_cgroup_charge_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup_charge",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_cgroup_fork_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup_fork",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_cgroup_procs_write_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup_procs_write",
+      "type": "bpftrace_hist"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_cgroup_rstat_flush_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "cgroup_rstat_flush",
+      "type": "bpftrace_hist"
     }
   ],
   "benchmark_config": {
