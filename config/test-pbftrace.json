@@ -142,16 +142,6 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "bpf_mutex_lock_hist",
-      "y_lbl": "Mutex Lock",
-      "hue_lbl": "Environment",
-      "hue": "execution_type",
-      "title": "mutex_lock",
-      "type": "bpftrace_hist"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
       "y": "bpf_native_queued_spin_lock_slowpath_hist",
       "y_lbl": "Queued Spin Lock Slowpath",
       "hue_lbl": "Environment",
@@ -308,7 +298,6 @@
         "bpf_ext4_mb_new_blocks_hist.bt",
         "bpf_flush_tlb_mm_range_count.bt",
         "bpf_irq_handler_hist.bt",
-        "bpf_mutex_lock_hist.bt",
         "bpf_native_queued_spin_lock_slowpath_hist.bt",
         "bpf_page_fault_io_count.bt",
         "bpf_page_fault_kernel_count.bt",
