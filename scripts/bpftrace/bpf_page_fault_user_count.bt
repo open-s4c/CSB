@@ -1,6 +1,0 @@
-tracepoint:exceptions:page_fault_user
-__FILTER__
-{
-    @page_fault_user[pid, comm] = count();
-}
-
