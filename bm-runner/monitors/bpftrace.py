@@ -277,16 +277,16 @@ class BpfTrace(Monitor):
                 )
             # In order to create data that summarizes the full run
             # we remove PID col, and sum up data of all processes
-            sum_df = (
-                df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).sum()
+            avg_df = (
+                df.drop(columns=[self.PID, self.COMM]).groupby([self.NAME], as_index=False).mean()
             )
             # since we expect the data to be related to one trace point, we expect to have
             # only one row.
-            if len(sum_df) > 1:
+            if len(avg_df) > 1:
                 bm_log(f"{fname}: multi trace points is not supported", LogType.ERROR)
             else:
                 # we compress the data of all buckets into on string
-                for _, row in sum_df.iterrows():
+                for _, row in avg_df.iterrows():
                     hist_data = ",".join(
                         f"{col}{self.BUCKET_EQUAL_CHAR}{int(val)}"
                         for col, val in row[bucket_cols].items()
@@ -394,7 +394,7 @@ class BpfTrace(Monitor):
                     index="bucket",
                     columns=x_col,
                     values="count",
-                    aggfunc="first",
+                    aggfunc="mean",
                 )
                 .reindex(index=bucket_cols)
                 .fillna(0)
