@@ -8,6 +8,7 @@ from utils.logger import bm_log, LogType
 from typing import Optional
 from bm_utils import ensure_exists
 from bm_utils import stop_process
+import time
 
 
 class BackgroundProcess:
@@ -181,3 +182,29 @@ class BackgroundProcess:
         Returns the full path of the error file name of the process.
         """
         return self.efile_name
+
+    def await_token(self, token: str, timeout=10) -> bool:
+        """
+        Wait until the first line of the output file contains `token` or the
+        timeout expires.
+
+        Returns
+        -------
+        bool
+            True if the token is detected in the first line of the output file.
+
+            False if the timeout expires, the process exits before the token is
+            detected, or an error prevents reading the output file.
+        """
+        deadline = time.monotonic() + timeout
+        if self.process:
+            # as long as the process is running
+            while self.process.poll() is None and time.monotonic() < deadline:
+                try:
+                    with open(self.output_file_name, "r") as f:
+                        line = f.readline()
+                        if token in line:
+                            return True
+                except Exception:
+                    pass
+        return False

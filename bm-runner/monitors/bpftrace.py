@@ -133,6 +133,14 @@ class BpfTrace(Monitor):
     def start(self):
         for trace in self.traces.values():
             trace.start()
+        self.__await_probes_attached()
+
+    def __await_probes_attached(self):
+        for prefix, trace in self.traces.items():
+            if trace.await_token("Attaching"):
+                bm_log(f"{self.name}:{prefix} probe attached successfully.")
+            else:
+                bm_log(f"{self.name}:{prefix} cannot confirm probe is attached!", LogType.ERROR)
 
     def stop(self):
         for prefix, trace in self.traces.items():
