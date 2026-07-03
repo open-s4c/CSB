@@ -1,6 +1,0 @@
-tracepoint:exceptions:page_fault_kernel
-__FILTER__
-{
-    @page_fault_kernel[pid, comm] = count();
-}
-
