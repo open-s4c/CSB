@@ -123,15 +123,6 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "bpf_flush_tlb_mm_range_count_avg",
-      "y_lbl": "Flush TLB MM Range",
-      "hue_lbl": "Environment",
-      "hue": "execution_type",
-      "title": "flush_tlb_mm_range"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
       "y": "bpf_irq_handler_hist",
       "y_lbl": "IRQ Handler",
       "hue_lbl": "Environment",
@@ -157,33 +148,6 @@
       "hue_lbl": "Environment",
       "hue": "execution_type",
       "title": "page_fault_io"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
-      "y": "bpf_page_fault_kernel_count_avg",
-      "y_lbl": "Page Fault Kernel",
-      "hue_lbl": "Environment",
-      "hue": "execution_type",
-      "title": "page_fault_kernel"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
-      "y": "bpf_page_fault_kvm_count_avg",
-      "y_lbl": "Page Fault KVM",
-      "hue_lbl": "Environment",
-      "hue": "execution_type",
-      "title": "page_fault_kvm"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
-      "y": "bpf_page_fault_user_count_avg",
-      "y_lbl": "Page Fault User",
-      "hue_lbl": "Environment",
-      "hue": "execution_type",
-      "title": "page_fault_user"
     },
     {
       "x": "container_cnt",
@@ -299,13 +263,9 @@
         "bpf_cgroup_rstat_flush_hist.bt",
         "bpf_copy_from_user_hist.bt",
         "bpf_ext4_mb_new_blocks_hist.bt",
-        "bpf_flush_tlb_mm_range_count.bt",
         "bpf_irq_handler_hist.bt",
         "bpf_native_queued_spin_lock_slowpath_hist.bt",
         "bpf_page_fault_io_count.bt",
-        "bpf_page_fault_kernel_count.bt",
-        "bpf_page_fault_kvm_count.bt",
-        "bpf_page_fault_user_count.bt",
         "bpf_path_init_hist.bt",
         "bpf_queued_read_lock_slowpath_hist.bt",
         "bpf_queued_write_lock_slowpath_hist.bt",
