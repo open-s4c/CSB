@@ -15,7 +15,7 @@ from config.env_config import UniversalConfig, EnvUniversalConfig
 import math
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import time
 
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
@@ -414,5 +414,5 @@ class BpfTrace(Monitor):
             )
 
         fig.tight_layout()
-        fig.savefig(f"{output_dir}/{plot.title}.png", dpi=300, bbox_inches="tight")
+        fig.savefig(f"{output_dir}/{plot.title}_{time.perf_counter()}.png", dpi=300, bbox_inches="tight")
         plt.close(fig)
