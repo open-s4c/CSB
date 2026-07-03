@@ -17,6 +17,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import time
 
+
 class BpfTrace(Monitor):
     RESOURCES_PATH = "scripts"
     BUCKET_COL_SEPARATOR = "-"
@@ -414,5 +415,7 @@ class BpfTrace(Monitor):
             )
 
         fig.tight_layout()
-        fig.savefig(f"{output_dir}/{plot.title}_{time.perf_counter()}.png", dpi=300, bbox_inches="tight")
+        fig.savefig(
+            f"{output_dir}/{plot.title}_{time.perf_counter()}.png", dpi=300, bbox_inches="tight"
+        )
         plt.close(fig)

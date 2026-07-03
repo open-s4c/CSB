@@ -17,7 +17,7 @@ class PlotType(str, Enum):
     HISTOGRAM: Experimental, Plots the distribution of operations.
     SUCCESS_PERCENT: Experimental, Plots the percentage of successful operations.
     LINEARITY: Calculates and plots the linearity of the benchmark results.
-    BPFTRACE_HIST: A plot that is aware of the format of bpftrace histogram data.
+    BPFTRACE_HIST: Exclusive graph for `bpftrace` monitor. To be used with programs that generate histogram data. Use the program name without `.bt` suffix in the plot `y` field. The plot will represent the summary of the collected data over all runs.
     """
 
     NORMAL = "normal"
