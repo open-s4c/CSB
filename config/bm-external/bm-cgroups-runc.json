@@ -97,7 +97,7 @@
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
       "title": "cgroup_attach_task",
-      "shape": "bpftrace_hist"
+      "type": "bpftrace_hist"
     },
     {
       "x": "container_cnt",
@@ -106,7 +106,7 @@
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
       "title": "cgroup_charge",
-      "shape": "bpftrace_hist"
+      "type": "bpftrace_hist"
     },
     {
       "x": "container_cnt",
@@ -115,7 +115,7 @@
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
       "title": "cgroup_fork",
-      "shape": "bpftrace_hist"
+      "type": "bpftrace_hist"
     },
     {
       "x": "container_cnt",
@@ -124,7 +124,7 @@
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
       "title": "cgroup_procs_write",
-      "shape": "bpftrace_hist"
+      "type": "bpftrace_hist"
     },
     {
       "x": "container_cnt",
@@ -133,7 +133,7 @@
       "hue": "execution_type",
       "hue_lbl": "Execution Env",
       "title": "cgroup_rstat_flush",
-      "shape": "bpftrace_hist"
+      "type": "bpftrace_hist"
     }
   ],
   "benchmark_config": {
