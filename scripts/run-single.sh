@@ -42,4 +42,4 @@ ulimit -n $FD_LIMIT
 python3 main.py --title "$TITLE" --config "$CONFIG" $*
 
 # cleanup benchkit file
-sudo rm -f /tmp/benchkit.sh
+rm -f /tmp/benchkit.sh
