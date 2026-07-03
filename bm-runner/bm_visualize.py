@@ -284,24 +284,30 @@ def create_histogram_plot(df, plot: PlotConfig, dir):
 ###########################################################################
 def create_plots(df, plots: list[PlotConfig], dir, info: str):
     for plot in plots:
-        match plot.type:
-            case PlotType.NORMAL:
-                fig_name = f"{dir}/{plot.x}_vs_{plot.y}_{info}"
-                PlotChart.plot(plot=plot, df=df, out_fig_name=fig_name)
-            case PlotType.MIN_MAX_AVG:
-                create_min_max_avg_plot(org_df=df, config=plot, dir=dir)
-            case PlotType.SUCCESS_PERCENT:
-                create_success_rate_plot(org_df=df, config=plot, dir=dir)
-            case PlotType.HISTOGRAM:
-                create_histogram_plot(df=df, plot=plot, dir=dir)
-            case PlotType.LINEARITY:
-                create_linearity_plot(df=df, plot=plot, dir=dir)
-            case PlotType.MEAN:
-                create_mean_plot(df=df, plot=plot, dir=dir)
-            case PlotType.BPFTRACE_HIST:
-                BpfTrace.dump_hist_data_heat_map(df=df, plot=plot, output_dir=dir)
-            case _:
-                bm_log(f"unsupported plot type: {plot.type} skipped!", LogType.WARNING)
+        try:
+            match plot.type:
+                case PlotType.NORMAL:
+                    fig_name = f"{dir}/{plot.x}_vs_{plot.y}_{info}"
+                    PlotChart.plot(plot=plot, df=df, out_fig_name=fig_name)
+                case PlotType.MIN_MAX_AVG:
+                    create_min_max_avg_plot(org_df=df, config=plot, dir=dir)
+                case PlotType.SUCCESS_PERCENT:
+                    create_success_rate_plot(org_df=df, config=plot, dir=dir)
+                case PlotType.HISTOGRAM:
+                    create_histogram_plot(df=df, plot=plot, dir=dir)
+                case PlotType.LINEARITY:
+                    create_linearity_plot(df=df, plot=plot, dir=dir)
+                case PlotType.MEAN:
+                    create_mean_plot(df=df, plot=plot, dir=dir)
+                case PlotType.BPFTRACE_HIST:
+                    BpfTrace.dump_hist_data_heat_map(df=df, plot=plot, output_dir=dir)
+                case _:
+                    bm_log(f"unsupported plot type: {plot.type} skipped!", LogType.WARNING)
+        except Exception as e:
+            bm_log(
+                f"Failed to generate plot {plot.title}. The following error occurred {e}.",
+                LogType.ERROR,
+            )
 
 
 ###########################################################################
