@@ -20,6 +20,7 @@ from utils.bm_builder import Builder
 from benchkit.shell.shell import shell_out
 from bm_bwrap import Bubblewraps
 
+
 class ScalabilityBenchmark(Benchmark):
     common_info: dict = {}
 

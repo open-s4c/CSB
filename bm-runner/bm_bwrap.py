@@ -3,7 +3,6 @@
 
 import os
 import resource
-import shlex
 import subprocess
 import sys
 
@@ -37,34 +36,44 @@ class Bubblewrap(ExecutionUnit):
 
         args = [
             "bwrap",
-
             # Namespace isolation.
             "--unshare-pid",
             "--unshare-ipc",
             "--unshare-uts",
             "--unshare-cgroup",
-
             # Keep network shared by default to match current native/container behavior
             # unless CSB later adds explicit networking policy.
             "--share-net",
-
             # Basic runtime filesystems.
-            "--proc", "/proc",
-            "--dev", "/dev",
-            "--tmpfs", "/tmp",
-
+            "--proc",
+            "/proc",
+            "--dev",
+            "/dev",
+            "--tmpfs",
+            "/tmp",
             # Host resources needed by CSB benchmarks.
-            "--bind", host_home, "/home",
-            "--ro-bind", "/usr", "/usr",
-            "--ro-bind", "/bin", "/bin",
-            "--ro-bind", "/lib", "/lib",
-            "--ro-bind", "/lib64", "/lib64",
-
+            "--bind",
+            host_home,
+            "/home",
+            "--ro-bind",
+            "/usr",
+            "/usr",
+            "--ro-bind",
+            "/bin",
+            "/bin",
+            "--ro-bind",
+            "/lib",
+            "/lib",
+            "--ro-bind",
+            "/lib64",
+            "/lib64",
             # These are writable/readable in current Docker container mode.
             # Keep them conservative at first; loosen only if specific benchmarks need it.
-            "--ro-bind", "/etc", "/etc",
-
-            "--chdir", "/home",
+            "--ro-bind",
+            "/etc",
+            "/etc",
+            "--chdir",
+            "/home",
         ]
 
         # Some distros do not have /lib64.
@@ -103,30 +112,28 @@ class Bubblewrap(ExecutionUnit):
         change_dir = ""
         if self.app.cd:
             assert self.app.path is not None, "path is not set while change directory is requested!"
-            change_dir = f"cd {shlex.quote(self.app.path)} && "
+            change_dir = f"cd {self.app.path} && "
 
         # CSB command is a shell string already, so run bash inside bwrap.
         inner_command = (
             f"{self.CMD_WHILE_NOT_START} "
             f"{change_dir}"
-            f"taskset --cpu-list {shlex.quote(str(self.core_set))} {command} "
-            f"> {shlex.quote(resolve_path(self.output_file, use_in_container=True))} "
-            f"2> {shlex.quote(resolve_path(self.err_file, use_in_container=True))}"
+            f"taskset --cpu-list {self.core_set} {command}"
         )
 
-        argv = self._bwrap_args() + ["/bin/bash", "-lc", inner_command]
+        commands = self._bwrap_args() + ["/bin/bash", "-lc", inner_command]
 
         with open(resolve_path(self.err_file), "w") as err_file:
             with open(resolve_path(self.output_file), "w") as outfile:
                 self.process = subprocess.Popen(
-                    argv,
+                    commands,
                     stdout=outfile,
                     stderr=err_file,
                     preexec_fn=preexec_process,
                     cwd=self.home_dir,
                 )
 
-        bm_log(f"launched bwrap {self.name} with {' '.join(shlex.quote(x) for x in argv)}")
+        bm_log(f"launched bwrap {self.name} with {commands}")
         return True
 
     def wait(self):
