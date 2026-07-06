@@ -36,7 +36,7 @@ class Bubblewrap(ExecutionUnit):
         # Inside bwrap, CSB project dir is mounted at /home.
         return str(resolve_path(self.record_data_dir, use_in_container=True))
 
-    def _bwrap_args(self) -> list[str]:
+    def __bwrap_prefix(self) -> list[str]:
         host_home = resolve_path(self.home_dir)
         args: list[str] = [
             "bwrap",
@@ -74,10 +74,14 @@ class Bubblewrap(ExecutionUnit):
             assert self.app.path is not None, "path is not set while change directory is requested!"
             change_dir = f"cd {self.app.path} && "
 
-        # CSB command is a shell string already, so run bash inside bwrap.
+        # # CSB command is a shell string already, so run bash inside bwrap.
         inner_command = f"{self.CMD_WHILE_NOT_START} " f"{change_dir}" f" {command}"
 
-        commands = self._bwrap_args() + ["/bin/bash", "-c", inner_command]
+        commands = self.__bwrap_prefix() + [
+            "/bin/bash",
+            "-c",
+            inner_command
+        ]
 
         self.process = BackgroundProcess(
             name=self.name,
@@ -92,15 +96,14 @@ class Bubblewrap(ExecutionUnit):
         return True
 
     def wait(self):
-        if self.process is None:
-            return
-        returncode = self.process.wait_indefinitely()
-        if returncode != 0:
-            bm_log(
-                f"bwrap process {self.name} failed/crashed with return code {returncode}",
-                LogType.FATAL,
-            )
-            sys.exit(1)
+        if self.process:
+            returncode = self.process.wait_indefinitely()
+            if returncode != 0:
+                bm_log(
+                    f"bwrap process {self.name} failed/crashed with return code {returncode}",
+                    LogType.FATAL,
+                )
+                sys.exit(1)
 
     def stop(self):
         if self.process is not None:
