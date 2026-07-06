@@ -43,7 +43,7 @@
       ]
     },
     "duration": 1,
-    "exec_env": ["bwrap", "native", "container"]
+    "exec_env": ["bwrap"]
   },
   "containers": {
     "core_assignment_policy": {

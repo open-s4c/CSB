@@ -9,6 +9,7 @@ from typing import Optional
 from bm_utils import ensure_exists
 from bm_utils import stop_process
 import time
+import resource
 
 
 class BackgroundProcess:
@@ -75,11 +76,19 @@ class BackgroundProcess:
         for tool in requires:
             ensure_exists(tool)
 
+    @staticmethod
+    def __preexec_fn():
+        os.setpgrp()
+        fd_soft, fd_hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        resource.setrlimit(resource.RLIMIT_NOFILE, (fd_hard, fd_hard))
+
     def start(self):
         """
         Starts the process in the background.
         """
         assert self.process is None, "it seems, it has already been started!"
+        bm_log(f"{self.ofile_name}", LogType.ERROR)
+        bm_log(f"{self.efile_name}", LogType.ERROR)
         self.ofile = open(self.ofile_name, "w")
         self.efile = open(self.efile_name, "w")
         self.process = subprocess.Popen(
@@ -87,7 +96,7 @@ class BackgroundProcess:
             stdout=self.ofile,
             stderr=self.efile,
             env=self.Env,
-            preexec_fn=os.setpgrp,
+            preexec_fn=self.__preexec_fn,
             cwd=self.wdir,
         )
         cmd_str = " ".join(self.cmds)
@@ -125,17 +134,17 @@ class BackgroundProcess:
         bm_log(f"{self.name} is not alive!", LogType.ERROR)
         return False
 
-    def wait_indefinitely(self):
+    def wait_indefinitely(self) -> int:
         """
         Waits for the process to finish without timeout.
         This method can block for a long time and will not attempt to cancel or terminate the process.
         """
         if self.process is None:
-            return
+            return 0
         bm_log(
             f"Waiting for {self.name} without timeout, with PID = {self.process.pid} to terminate"
         )
-        self.process.wait()
+        return self.process.wait()
 
     def stop(self, timeout=TIMEOUT_SEC) -> int:
         """

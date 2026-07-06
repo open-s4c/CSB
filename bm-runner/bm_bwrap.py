@@ -2,23 +2,16 @@
 # SPDX-License-Identifier: MIT
 
 import os
-import resource
-import subprocess
 import sys
 
 from bm_executer import Executer, ExecutionUnit
-from bm_utils import resolve_path, stop_process
+from bm_utils import resolve_path
 from config.application import Application
 from config.benchmark import ExecutionType
 from config.container import ContainersConfig
 from utils.logger import bm_log, LogType
 from pathlib import Path
-
-
-def preexec_process():
-    os.setpgrp()
-    fd_soft, fd_hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (fd_hard, fd_hard))
+from utils.process import BackgroundProcess
 
 
 class Bubblewrap(ExecutionUnit):
@@ -80,42 +73,36 @@ class Bubblewrap(ExecutionUnit):
             change_dir = f"cd {self.app.path} && "
 
         # CSB command is a shell string already, so run bash inside bwrap.
-        inner_command = (
-            f"{self.CMD_WHILE_NOT_START} "
-            f"{change_dir}"
-            f"taskset --cpu-list {self.core_set} {command}"
-        )
+        inner_command = f"{self.CMD_WHILE_NOT_START} " f"{change_dir}" f" {command}"
 
         commands = self._bwrap_args() + ["/bin/bash", "-c", inner_command]
 
-        with open(resolve_path(self.err_file), "w") as err_file:
-            with open(resolve_path(self.output_file), "w") as outfile:
-                self.process = subprocess.Popen(
-                    commands,
-                    stdout=outfile,
-                    stderr=err_file,
-                    preexec_fn=preexec_process,
-                    cwd=self.home_dir,
-                )
-
-        bm_log(f"launched bwrap {self.name} with {commands}")
+        self.process = BackgroundProcess(
+            name=self.name,
+            cmds=commands,
+            out_dir=str(resolve_path(Path(self.output_file).parent)),
+            efile_name=Path(self.err_file).name,
+            ofile_name=Path(self.output_file).name,
+            wdir=self.home_dir,
+            pin=self.core_set,
+        )
+        self.process.start()
         return True
 
     def wait(self):
         if self.process is None:
             return
-
-        self.process.wait()
-        if self.process.returncode != 0:
+        returncode = self.process.wait_indefinitely()
+        if returncode != 0:
             bm_log(
-                f"bwrap process {self.name} failed/crashed with return code {self.process.returncode}",
+                f"bwrap process {self.name} failed/crashed with return code {returncode}",
                 LogType.FATAL,
             )
             sys.exit(1)
 
     def stop(self):
         if self.process is not None:
-            stop_process(self.process.pid)
+            self.process.force_stop()
 
 
 class Bubblewraps(Executer):
