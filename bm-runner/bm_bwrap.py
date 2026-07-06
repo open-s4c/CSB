@@ -12,6 +12,7 @@ from config.application import Application
 from config.benchmark import ExecutionType
 from config.container import ContainersConfig
 from utils.logger import bm_log, LogType
+from pathlib import Path
 
 
 def preexec_process():
@@ -21,6 +22,15 @@ def preexec_process():
 
 
 class Bubblewrap(ExecutionUnit):
+
+    ro_binding_map: dict[str, str] = {
+        "/usr": "/usr",
+        "/bin": "/bin",
+        "/lib": "/lib",
+        "/lib64": "/lib64",
+        "/etc": "/etc",
+    }
+
     def __init__(self, idx, home_dir, record_data_dir, core_set, app: Application):
         super().__init__(idx=idx, home_dir=home_dir, app=app, type=ExecutionType.BWRAP)
         self.record_data_dir = record_data_dir
@@ -32,9 +42,8 @@ class Bubblewrap(ExecutionUnit):
         return str(resolve_path(self.record_data_dir, use_in_container=True))
 
     def _bwrap_args(self) -> list[str]:
-        host_home = os.path.abspath(self.home_dir)
-
-        args = [
+        host_home = resolve_path(self.home_dir)
+        args: list[str] = [
             "bwrap",
             # Namespace isolation.
             "--unshare-pid",
@@ -53,60 +62,16 @@ class Bubblewrap(ExecutionUnit):
             "/tmp",
             # Host resources needed by CSB benchmarks.
             "--bind",
-            host_home,
+            str(host_home),
             "/home",
-            "--ro-bind",
-            "/usr",
-            "/usr",
-            "--ro-bind",
-            "/bin",
-            "/bin",
-            "--ro-bind",
-            "/lib",
-            "/lib",
-            "--ro-bind",
-            "/lib64",
-            "/lib64",
-            # These are writable/readable in current Docker container mode.
-            # Keep them conservative at first; loosen only if specific benchmarks need it.
-            "--ro-bind",
-            "/etc",
-            "/etc",
             "--chdir",
             "/home",
         ]
-
-        # Some distros do not have /lib64.
-        args = self._filter_existing_bind_sources(args)
+        for src, dst in self.ro_binding_map.items():
+            if os.path.exists(Path(src)):
+                args.extend(["--ro-bind", src, dst])
 
         return args
-
-    @staticmethod
-    def _filter_existing_bind_sources(args: list[str]) -> list[str]:
-        filtered = []
-        i = 0
-        bind_flags = {
-            "--bind",
-            "--ro-bind",
-            "--dev-bind",
-            "--dev-bind-try",
-            "--ro-bind-try",
-            "--bind-try",
-        }
-
-        while i < len(args):
-            item = args[i]
-            if item in bind_flags and i + 2 < len(args):
-                src = args[i + 1]
-                dst = args[i + 2]
-                if item.endswith("-try") or os.path.exists(src):
-                    filtered.extend([item, src, dst])
-                i += 3
-            else:
-                filtered.append(item)
-                i += 1
-
-        return filtered
 
     def exec(self, command: str) -> bool:
         change_dir = ""
@@ -121,7 +86,7 @@ class Bubblewrap(ExecutionUnit):
             f"taskset --cpu-list {self.core_set} {command}"
         )
 
-        commands = self._bwrap_args() + ["/bin/bash", "-lc", inner_command]
+        commands = self._bwrap_args() + ["/bin/bash", "-c", inner_command]
 
         with open(resolve_path(self.err_file), "w") as err_file:
             with open(resolve_path(self.output_file), "w") as outfile:
