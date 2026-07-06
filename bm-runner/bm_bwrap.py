@@ -12,6 +12,7 @@ from config.container import ContainersConfig
 from utils.logger import bm_log, LogType
 from pathlib import Path
 from utils.process import BackgroundProcess
+from bm_utils import ensure_exists
 
 
 class Bubblewrap(ExecutionUnit):
@@ -29,6 +30,7 @@ class Bubblewrap(ExecutionUnit):
         self.record_data_dir = record_data_dir
         self.core_set = core_set
         self.process = None
+        ensure_exists("bwrap")
 
     def get_results_dir(self) -> str:
         # Inside bwrap, CSB project dir is mounted at /home.

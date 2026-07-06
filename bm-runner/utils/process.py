@@ -87,8 +87,6 @@ class BackgroundProcess:
         Starts the process in the background.
         """
         assert self.process is None, "it seems, it has already been started!"
-        bm_log(f"{self.ofile_name}", LogType.ERROR)
-        bm_log(f"{self.efile_name}", LogType.ERROR)
         self.ofile = open(self.ofile_name, "w")
         self.efile = open(self.efile_name, "w")
         self.process = subprocess.Popen(
