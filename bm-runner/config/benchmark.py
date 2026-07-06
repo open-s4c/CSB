@@ -18,6 +18,7 @@ class ExecutionType(str, Enum):
 
     NATIVE = "native"  # indicates that the benchmark should run natively
     CONTAINER = "container"  # indicates that the benchmark should run inside the container
+    BWRAP = "bwrap" # indicates that the benchmark should run with bubblewrap
 
 
 class MonitorType(str, Enum):

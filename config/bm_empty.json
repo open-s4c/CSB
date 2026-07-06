@@ -42,13 +42,14 @@
         ]
       ]
     },
-    "duration": 1
+    "duration": 1,
+    "exec_env": ["bwrap", "native", "container"]
   },
   "containers": {
     "core_assignment_policy": {
       "cpu_order": "desc",
       "pack_group": "none",
-      "one_cpu_per_core": false
+      "one_cpu_per_core": true
     }
   },
   "applications": [

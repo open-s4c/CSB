@@ -18,7 +18,7 @@ from bm_executer import Executer
 from utils.logger import bm_log, LogType
 from utils.bm_builder import Builder
 from benchkit.shell.shell import shell_out
-
+from bm_bwrap import Bubblewraps
 
 class ScalabilityBenchmark(Benchmark):
     common_info: dict = {}
@@ -116,6 +116,14 @@ class ScalabilityBenchmark(Benchmark):
                 )
             case ExecutionType.NATIVE:
                 executer = Processes(
+                    config=self.container_cfg,
+                    count=container_cnt,
+                    home_dir=self.csb_dir,
+                    apps=apps,
+                    record_data_dir=record_data_dir,
+                )
+            case ExecutionType.BWRAP:
+                executer = Bubblewraps(
                     config=self.container_cfg,
                     count=container_cnt,
                     home_dir=self.csb_dir,
