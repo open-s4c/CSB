@@ -11,7 +11,7 @@ from abc import abstractmethod
 from config.plugin import ExecutionTime
 import bm_config
 from config.application import Application
-from config.benchmark import ExecutionType
+from config.benchmark import ExecutionType, EXECUTION_TYPE_PREFIX
 from bm_utils import is_port_free_to_use
 from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
@@ -28,7 +28,7 @@ class ExecutionUnit:
         self.idx = idx
         self.type = type
         self.home_dir = home_dir
-        self.name = "C" if type == ExecutionType.CONTAINER else "N"
+        self.name = EXECUTION_TYPE_PREFIX[type]
         self.name += f"{idx:03d}_{app.name}"
         self.output_file = os.path.join(Application.BUILTIN_APP_DIR, self.name)
         self.err_file = os.path.join(Application.BUILTIN_APP_DIR, f"{self.name}_err")
