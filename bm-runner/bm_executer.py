@@ -89,6 +89,7 @@ class Executer:
                     record_data_dir=self.results_dir,
                     port=self.config.port,
                     app=self.apps[idx],
+                    nic=self.nics.get_cfg(idx) if self.nics else None,
                 )
             case ExecutionType.NATIVE:
                 return Process(

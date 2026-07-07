@@ -314,7 +314,7 @@ def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
             return BpfTrace.dump_hist_data_heat_map(df=df, plot=plot, output_dir=dir)
         case _:
             bm_log(f"unsupported plot type: {plot.type} skipped!", LogType.WARNING)
-            return None
+            return ""
 
 
 ###########################################################################
