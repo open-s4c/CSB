@@ -46,10 +46,10 @@ class Executer:
             MonitorFactory.create(monitor_type=type, results_dir=results_dir, args=args)
             for type, args in bm_config.g_config.get_benchmark_cfg().monitors.items()
         ]
-        assert len(apps) >= count, "#apps should be >= count"
+        assert len(apps) == count, "[BUG] Application list length must be equal to count"
         for idx in range(self.count):
             eu = self.__create_eu(type, idx)
-            self.add_exec_unit(eu)
+            self.exec_units.append(eu)
 
     def __call_plugins(self, exec_time):
         plugins = [plugin for plugin in self.plugins if plugin.exec_time == exec_time]
@@ -110,9 +110,6 @@ class Executer:
             case _:
                 bm_log(f"Unsupported execution type = {type}", LogType.FATAL)
                 sys.exit(1)
-
-    def add_exec_unit(self, unit):
-        self.exec_units.append(unit)
 
     def __stop_plugins(self):
         for plugin in self.plugins:
