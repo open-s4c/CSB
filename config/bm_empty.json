@@ -8,7 +8,8 @@
       "hue_lbl": "Executer",
       "hue": "execution_unit",
       "shape": "barplot",
-      "title": "Throughput vs. #Containers"
+      "title": "Throughput vs. #Containers",
+      "palette": "rocket"
     },
     {
       "x": "container_cnt",

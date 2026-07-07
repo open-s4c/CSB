@@ -28,7 +28,10 @@ class PlotChart:
         # prep hue, we want to generate enough colors
         cnt = df[plot.hue].nunique()
         sorted_gp = sorted(df[plot.hue].unique())
-        palette = sns.color_palette(palette="hls", n_colors=cnt)
+        if isinstance(plot.palette, str):
+            palette = sns.color_palette(palette=plot.palette, n_colors=cnt)
+        else:
+            palette = plot.palette
         sns_plot_fun = getattr(sns, plot.shape)
 
         if (

@@ -3,6 +3,7 @@
 
 from enum import Enum
 from typing import Optional
+from typing import TypeAlias
 
 
 class PlotType(str, Enum):
@@ -29,6 +30,9 @@ class PlotType(str, Enum):
     BPFTRACE_HIST = "bpftrace_hist"
 
 
+PlotPalette: TypeAlias = list
+
+
 class PlotConfig(dict):
     CONFIG_KEY: str = "plots"
 
@@ -53,6 +57,7 @@ class PlotConfig(dict):
         title: Optional[str] = None,
         shape: Optional[str] = None,
         type: PlotType = PlotType.NORMAL,
+        palette: str | PlotPalette = "hls",
     ):
         """
         Plot configuration for benchmark results.
@@ -78,6 +83,8 @@ class PlotConfig(dict):
             The shape/type of the plot (e.g., 'lineplot', 'barplot'). If None, defaults based on `type`.
         type: PlotType
             The type of plot to be created, which determines default shape and other behaviors.
+        palette: str
+            The color palette to use for the plot.
         -
         """
         super().__init__(
@@ -90,6 +97,7 @@ class PlotConfig(dict):
             title=title,
             shape=shape,
             type=type,
+            palette=palette,
         )
         self.x = x
         self.y = y
@@ -100,3 +108,7 @@ class PlotConfig(dict):
         self.title = title if title is not None else f"{self.x_lbl} vs. {self.y_lbl}"
         self.type = type
         self.shape = shape if shape is not None else self.DEFAULT_PLOT[self.type]
+        self.palette = palette
+
+    def set_palette(self, palette: PlotPalette | str):
+        self.palette = palette
