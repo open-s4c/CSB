@@ -14,8 +14,7 @@ import bm_utils
 from textwrap import indent
 from typing import Optional
 from config.application import Application
-from config.container import ContainersConfig
-from config.nics import NicsConfig, ContainerNicConfig
+from config.nics import ContainerNicConfig
 from config.benchmark import ExecutionType
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
@@ -227,30 +226,3 @@ class Container(ExecutionUnit):
             command = f"cd {self.app.path} && {command}"
         commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, use_in_container=True)} 2> {resolve_path(self.err_file, use_in_container=True)}"  # same as self.output_file outside container.
         return self.__start(commands)
-
-
-class Containers(Executer):
-    def __init__(
-        self,
-        config: ContainersConfig,
-        apps: list[Application],
-        home_dir,
-        count,
-        record_data_dir,
-        nics: Optional[NicsConfig] = None,
-    ):
-        super().__init__(home_dir, results_dir=record_data_dir)
-        assert len(apps) == count, "[BUG] Application list length must be equal to count"
-        for i in range(count):
-            core_set = config.get_cpus(i)
-            container = Container(
-                idx=i,
-                home_dir=home_dir,
-                image=config.image,
-                core_set=core_set,
-                record_data_dir=record_data_dir,
-                port=config.port,
-                app=apps[i],
-                nic=self.nics.get_cfg(i) if self.nics else None,
-            )
-            self.add_exec_unit(container)

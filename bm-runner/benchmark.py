@@ -10,15 +10,12 @@ import sys
 from typing import Optional, Dict, Any, List
 import bm_utils
 from bm_utils import get_cgroups_version
-from bm_container import Containers
-from bm_process import Processes
 from config.benchmark import ExecutionType
 import bm_config
 from bm_executer import Executer
 from utils.logger import bm_log, LogType
 from utils.bm_builder import Builder
 from benchkit.shell.shell import shell_out
-from bm_bwrap import Bubblewraps
 
 
 class ScalabilityBenchmark(Benchmark):
@@ -105,36 +102,15 @@ class ScalabilityBenchmark(Benchmark):
         port_start = self.container_cfg.port
         # assign an app per container, this is relevant when there are multiple apps
         apps = [applications[i % len(applications)] for i in range(container_cnt)]
-        executer: Executer
-        match execution_type:
-            case ExecutionType.CONTAINER:
-                executer = Containers(
-                    config=self.container_cfg,
-                    count=container_cnt,
-                    home_dir=self.csb_dir,
-                    apps=apps,
-                    record_data_dir=record_data_dir,
-                )
-            case ExecutionType.NATIVE:
-                executer = Processes(
-                    config=self.container_cfg,
-                    count=container_cnt,
-                    home_dir=self.csb_dir,
-                    apps=apps,
-                    record_data_dir=record_data_dir,
-                )
-            case ExecutionType.BWRAP:
-                executer = Bubblewraps(
-                    config=self.container_cfg,
-                    count=container_cnt,
-                    home_dir=self.csb_dir,
-                    apps=apps,
-                    record_data_dir=record_data_dir,
-                )
-            case _:
-                bm_log(f"Unsupported execution type = {execution_type}", LogType.FATAL)
-                sys.exit(1)
-        assert executer is not None
+        executer = Executer(
+            config=self.container_cfg,
+            count=container_cnt,
+            home_dir=self.csb_dir,
+            apps=apps,
+            results_dir=record_data_dir,
+            type=execution_type,
+        )
+
         executer.exec_all(
             threads=nb_threads,
             duration=benchmark_duration_seconds,

@@ -13,23 +13,45 @@ from bm_utils import is_port_free_to_use
 from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
+<<<<<<< HEAD
 from bm_exec_unit import ExecutionUnit
+=======
+from config.container import ContainersConfig
+from bm_process import Process
+from bm_container import Container
+from bm_bwrap import Bubblewrap
+>>>>>>> 77934ee (refactor)
 
 
 class Executer:
     SLEEP_IN_SEC = 5
 
-    def __init__(self, home_dir, results_dir):
+    def __init__(
+        self,
+        config: ContainersConfig,
+        type: ExecutionType,
+        apps: list[Application],
+        home_dir,
+        results_dir,
+        count: int,
+    ):
         assert bm_config.g_config
         self.home_dir = home_dir
         self.results_dir = results_dir
         self.exec_units = []
         self.plugins = bm_config.g_config.get_plugins()
         self.nics = bm_config.g_config.get_nics()
+        self.config = config
+        self.apps = apps
+        self.count = count
         self.monitors = [
             MonitorFactory.create(monitor_type=type, results_dir=results_dir, args=args)
             for type, args in bm_config.g_config.get_benchmark_cfg().monitors.items()
         ]
+        assert len(apps) >= count, "#apps should be >= count"
+        for idx in range(self.count):
+            eu = self.__create_eu(type, idx)
+            self.add_exec_unit(eu)
 
     def __call_plugins(self, exec_time):
         plugins = [plugin for plugin in self.plugins if plugin.exec_time == exec_time]
@@ -56,6 +78,39 @@ class Executer:
             if plugin.exec_time == ExecutionTime.WITH
         ]
         return " ".join(plugins)
+
+    def __create_eu(self, type: ExecutionType, idx: int) -> ExecutionUnit:
+        core_set = self.config.get_cpus(idx)
+        match type:
+            case ExecutionType.CONTAINER:
+                return Container(
+                    idx=idx,
+                    home_dir=self.home_dir,
+                    image=self.config.image,
+                    core_set=core_set,
+                    record_data_dir=self.results_dir,
+                    port=self.config.port,
+                    app=self.apps[idx],
+                )
+            case ExecutionType.NATIVE:
+                return Process(
+                    idx=idx,
+                    home_dir=self.home_dir,
+                    core_set=core_set,
+                    record_data_dir=self.results_dir,
+                    app=self.apps[idx],
+                )
+            case ExecutionType.BWRAP:
+                return Bubblewrap(
+                    idx=idx,
+                    home_dir=self.home_dir,
+                    core_set=core_set,
+                    record_data_dir=self.results_dir,
+                    app=self.apps[idx],
+                )
+            case _:
+                bm_log(f"Unsupported execution type = {type}", LogType.FATAL)
+                sys.exit(1)
 
     def add_exec_unit(self, unit):
         self.exec_units.append(unit)

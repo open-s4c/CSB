@@ -4,11 +4,10 @@
 import os
 import sys
 
-from bm_executer import Executer, ExecutionUnit
+from bm_executer import ExecutionUnit
 from bm_utils import resolve_path
 from config.application import Application
 from config.benchmark import ExecutionType
-from config.container import ContainersConfig
 from utils.logger import bm_log, LogType
 from pathlib import Path
 from utils.process import BackgroundProcess
@@ -103,27 +102,3 @@ class Bubblewrap(ExecutionUnit):
     def stop(self):
         if self.process is not None:
             self.process.force_stop()
-
-
-class Bubblewraps(Executer):
-    def __init__(
-        self,
-        config: ContainersConfig,
-        apps: list[Application],
-        home_dir,
-        count,
-        record_data_dir,
-    ):
-        super().__init__(home_dir=home_dir, results_dir=record_data_dir)
-        assert len(apps) == count, "[BUG] Application list length must be equal to count"
-
-        for i in range(count):
-            core_set = config.get_cpus(i)
-            bwrap = Bubblewrap(
-                idx=i,
-                home_dir=home_dir,
-                core_set=core_set,
-                record_data_dir=record_data_dir,
-                app=apps[i],
-            )
-            self.add_exec_unit(bwrap)
