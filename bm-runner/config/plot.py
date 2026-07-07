@@ -7,6 +7,7 @@ from typing import TypeAlias
 
 import seaborn as sns
 
+
 class PlotType(str, Enum):
     """
     Supported types of plots.
