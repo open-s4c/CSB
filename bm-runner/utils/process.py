@@ -124,7 +124,7 @@ class BackgroundProcess:
         """
         Kills the process and whatever children the process spawned.
         """
-        if self.process:
+        if self.process and self.process.poll() is None:
             bm_log(f"Killing {self.name}, with PID = {self.process.pid}")
             stop_process(self.process.pid)
 
