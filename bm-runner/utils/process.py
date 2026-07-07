@@ -24,7 +24,7 @@ class BackgroundProcess:
         wdir: Optional[str] = None,
         ofile_name: Optional[str] = None,
         efile_name: Optional[str] = None,
-        pin: Optional[list[int]] = None,
+        pin: Optional[list[int] | str] = None,
         requires: list[str] = [],
     ):
         """
@@ -44,9 +44,10 @@ class BackgroundProcess:
             The name of the file to save `stdout` to. If not provided, a given `name` with a `.log` extension will be used.
         efile_name: Optional[str]
             The name of the file to save `stderr` to. If not provided, a given `name` with a `.err` extension will be used.
-        pin: Optional[list[int]]
+        pin: Optional[list[int]|str]
             Optional list of CPUs to assign to the process with taskset.
             If None, the process will not be assigned specific CPUs.
+            If str, it should be comma delimited list of ints e.g. "1,2,4".
         requires: list[str]
             A list of required applications that must be available for the launch to succeed. Each application is checked for existence.
         """
@@ -68,8 +69,14 @@ class BackgroundProcess:
         if pin is None:
             self.cmds = cmds
         else:
-            cpus = ",".join([str(c) for c in pin])
-            cmd_prefix = ["taskset", "--cpu-list", cpus]
+            cpus_str: str = ""
+            if isinstance(pin, list):
+                cpus_str = ",".join([str(c) for c in pin])
+            else:
+                assert isinstance(pin, str), "Type is not supported!"
+                cpus_str = pin
+
+            cmd_prefix = ["taskset", "--cpu-list", cpus_str]
             self.cmds = cmd_prefix + cmds
 
         # ensure process exist
