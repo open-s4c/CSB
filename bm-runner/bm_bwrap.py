@@ -74,7 +74,6 @@ class Bubblewrap(ExecutionUnit):
             assert self.app.path is not None, "path is not set while change directory is requested!"
             change_dir = f"cd {self.app.path} && "
 
-        # # CSB command is a shell string already, so run bash inside bwrap.
         inner_command = f"{self.CMD_WHILE_NOT_START} " f"{change_dir}" f" {command}"
 
         commands = self.__bwrap_prefix() + ["/bin/bash", "-c", inner_command]
