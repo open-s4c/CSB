@@ -13,14 +13,12 @@ from bm_utils import is_port_free_to_use
 from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
-<<<<<<< HEAD
-from bm_exec_unit import ExecutionUnit
-=======
 from config.container import ContainersConfig
 from bm_process import Process
 from bm_container import Container
 from bm_bwrap import Bubblewrap
->>>>>>> 77934ee (refactor)
+from bm_exec_unit import ExecutionUnit, ExecutionType
+from config.application import Application
 
 
 class Executer:

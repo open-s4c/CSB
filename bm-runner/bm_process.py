@@ -5,7 +5,6 @@ import os
 import resource
 import sys
 import subprocess
-from bm_executer import Executer
 from bm_exec_unit import ExecutionUnit
 from bm_utils import stop_process
 from bm_config import Application
