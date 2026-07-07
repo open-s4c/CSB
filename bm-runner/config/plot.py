@@ -31,7 +31,7 @@ class PlotType(str, Enum):
     BPFTRACE_HIST = "bpftrace_hist"
 
 
-PlotPalette: TypeAlias = list
+PlotPalette: TypeAlias = sns.palettes._ColorPalette
 
 
 class PlotConfig(dict):
