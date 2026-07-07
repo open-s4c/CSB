@@ -9,7 +9,7 @@ import time
 import sys
 from benchkit.shell.shell import shell_out
 from bm_executer import Executer
-from bm_executer import ExecutionUnit
+from bm_exec_unit import ExecutionUnit
 import bm_utils
 from textwrap import indent
 from typing import Optional
