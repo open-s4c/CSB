@@ -77,11 +77,7 @@ class Bubblewrap(ExecutionUnit):
         # # CSB command is a shell string already, so run bash inside bwrap.
         inner_command = f"{self.CMD_WHILE_NOT_START} " f"{change_dir}" f" {command}"
 
-        commands = self.__bwrap_prefix() + [
-            "/bin/bash",
-            "-c",
-            inner_command
-        ]
+        commands = self.__bwrap_prefix() + ["/bin/bash", "-c", inner_command]
 
         self.process = BackgroundProcess(
             name=self.name,
