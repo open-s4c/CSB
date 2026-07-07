@@ -54,11 +54,11 @@ This benchmark may require `sudo` to run correctly.
 Users can run it as follows:
 
 ```bash
-CSB_BPFTRACE_FILTER='/ comm == "runc" /' ./scripts/run-single.sh config/bm-external/bm-cgroups-runc.json
+CSB_BPFTRACE_FILTER='/ comm == "runc" /' ./scripts/run-single.sh config/bm-external/cgroups/runc.json
 ```
 
 For running the benchmark with the [youki](https://github.com/youki-dev/youki) runtime, please make `youki` executable available in the `$PATH`, and then run:
 
 ```bash
-CSB_BPFTRACE_FILTER='/ comm=="youki" || comm=="youki:[1:INTER]" || comm=="youki:[2:INIT]" /'  ./scripts/run-single.sh config/bm-external/bm-cgroups-youki.json
+CSB_BPFTRACE_FILTER='/ comm=="youki" || comm=="youki:[1:INTER]" || comm=="youki:[2:INIT]" /'  ./scripts/run-single.sh config/bm-external/cgroups/youki.json
 ```

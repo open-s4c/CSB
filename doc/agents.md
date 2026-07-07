@@ -33,8 +33,8 @@ npm install -g @openai/codex
 The following skills are available:
 
 - `csb`: instructs the agent about how to perform the experiments.
-  - Example: "$csb run config/bm-cgroups-runc.json"
-  - Example: "run benchmark using config/bm-cgroups-runc.json config"
+  - Example: "$csb run config/config/bm-external/cgroups/runc.json"
+  - Example: "run benchmark using config/config/bm-external/cgroups/runc.json config"
 - `csb-analysis`: performs automatic analysis of the benchmark run,
   trying to extract as much information as possible for identification
   and classification of the application performance bottleneck.

@@ -131,7 +131,7 @@ jobs:
           -  { prefix: "", prepare_cmd: "" , config: rocksdb/rocksdb_aggregated }
           -  { prefix: "", prepare_cmd: "" , config: mysql/mysql-aggregated }
           -  { prefix: "", prepare_cmd: "" , config: mysql/mysql-aggregated }
-          -  { prefix: "CSB_BPFTRACE_FILTER='/ comm == \"runc\" /'", prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-external/bm-cgroups-runc }
+          -  { prefix: "CSB_BPFTRACE_FILTER='/ comm == \"runc\" /'", prepare_cmd: "./scripts/bm-external/cgroups/prepare.sh" , config: bm-external/cgroups/runc }
     steps:
       - uses: actions/checkout@v4
         with:
