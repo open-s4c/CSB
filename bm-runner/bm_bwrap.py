@@ -4,7 +4,7 @@
 import os
 import sys
 
-from bm_executer import ExecutionUnit
+from bm_exec_unit import ExecutionUnit
 from bm_utils import resolve_path
 from config.application import Application
 from config.benchmark import ExecutionType
