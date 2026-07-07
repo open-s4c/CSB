@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Optional
 from typing import TypeAlias
 
+import seaborn as sns
 
 class PlotType(str, Enum):
     """
