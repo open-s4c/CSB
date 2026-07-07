@@ -142,6 +142,7 @@ Execution time of the plugin script/process.  <br/>Supported values:
 Execution environment of the benchmarks.  <br/>Supported values:
 - `"native"`:  Launches the benchmark(s) directly on the host OS.
 - `"container"`:  Launches the benchmark(s) inside a container.
+- `"bwrap"`:  Launches the benchmark(s) with bubblewrap.
 ## CpuOrder
 Supported CPU orders.  <br/>Supported values:
 - `"asc"`:  Assign CPUs in ascending order.
