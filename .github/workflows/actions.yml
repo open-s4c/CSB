@@ -143,7 +143,7 @@ jobs:
       - name: Install pre-requisites
         run: |
           sudo apt update
-          sudo apt-get install -y build-essential cmake libhiredis-dev bubblewrap
+          sudo apt-get install -y build-essential cmake libhiredis-dev bubblewrap uidmap
       - name: Satisfy Specific Prerequisites
         run: |
           ${{ matrix.benchmark.prepare_cmd }}

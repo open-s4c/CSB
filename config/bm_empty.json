@@ -43,7 +43,11 @@
       ]
     },
     "duration": 1,
-    "exec_env": ["bwrap"]
+    "exec_env": [
+      "bwrap",
+      "native",
+      "container"
+    ]
   },
   "containers": {
     "core_assignment_policy": {
@@ -51,7 +55,7 @@
       "pack_group": "none",
       "one_cpu_per_core": true
     },
-    "container_list" : {"values":[[1, 10]]}
+    "core_count": 2
   },
   "applications": [
     {
