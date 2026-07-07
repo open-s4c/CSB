@@ -12,7 +12,7 @@ FROM ${BASE_IMAGE}
 RUN dnf install -y glibc-all-langpacks cmake perf sysstat sudo gcc \
                    moby-engine moby-client hiredis-devel jq \
                    hostname python3 python3-pip iproute lshw ethtool \
-                   nvme-cli hdparm libcgroup-tools sudo git
+                   nvme-cli hdparm libcgroup-tools sudo git bubblewrap
 
 #
 # Reduce container disk space by dropping dnf data
