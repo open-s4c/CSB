@@ -1,9 +1,9 @@
 {
   "plots": [],
   "benchmark_config": {
-    "exec_env": [
-      "native"
-    ]
+    "exec_env": {
+      "native": []
+    }
   },
   "containers": {
     "container_list": {
