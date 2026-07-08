@@ -1,18 +1,19 @@
 from dominate import document
 from dominate.tags import style, table, tr, td, div, img, h1, h2, a, iframe
 import datetime
-from pathlib import Path
 import os
 import base64
+import re
+from benchkit.benchmark import PathType
+
 
 class Report:
-    def __init__(self, title:str):
+    def __init__(self, title: str):
         self.doc = document()
         self.doc.title = title
         self.doc.add(h1(f"Title: {title}"))
         self.doc.add(h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}"))
         self.__add_css_style()
-
 
     def add_table(self, data: dict[str, str]):
         tbl = table()
@@ -44,8 +45,6 @@ class Report:
             )
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
-
-
 
     def __add_css_style(self):
         self.doc.add(
@@ -80,19 +79,18 @@ class Report:
             )
         )
 
-    def save(self, report_file_name:Path):
+    def save(self, report_file_name: PathType):
         with open(report_file_name, "w") as f:
             f.write(self.doc.render())
 
-
     @staticmethod
-    def embed_img(path) -> div:
+    def embed_img(path: PathType) -> div:
         data_uri = base64.b64encode(open(path, "rb").read()).decode("utf-8")
         img_tag = f"data:image/png;base64,{data_uri}"
         return div(img(src=img_tag))
 
     @staticmethod
-    def embed_svg(path) -> div:
+    def embed_svg(path: PathType) -> div:
         with open(path, "r") as file:
             svg_content = file.read()
         # extract height from svg content

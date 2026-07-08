@@ -6,11 +6,11 @@ import argparse
 import pandas as pd
 from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
-from bm_visualize import dump_graphs_to_doc, _add_css_style
+from bm_visualize import dump_graphs_to_doc
 from config.plot import PlotConfig, PlotType
-from dominate import document
 from bm_utils import write_to_file, get_all_files_by_ext, read_data_frame_from_csv
 from datetime import datetime
+from visual.report import Report
 
 ################################################################################################
 # Input: directories
@@ -268,8 +268,7 @@ if __name__ == "__main__":
     write_to_file(dir=output_dir_name, fname="results.md", content=md_table)
     write_to_file(dir=output_dir_name, fname="results.csv", content=csv)
 
-    doc = document()
-    _add_css_style(doc)
-    dump_graphs_to_doc(output_dir_name, doc, num_plot_in_row=3)
-    write_to_file(dir=output_dir_name, fname="results.html", content=doc.render())
+    report = Report("Analysis Report")
+    dump_graphs_to_doc(output_dir_name, report, num_plot_in_row=3)
+    report.save(os.path.join(output_dir_name, "results.html"))
     bm_log(f"Results written to {output_dir_name}", LogType.INFO)

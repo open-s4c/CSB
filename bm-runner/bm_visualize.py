@@ -2,20 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 import os
-import datetime
 import glob
-from dominate import document
-from dominate.tags import style, table, tr, td, div, img, h1, h2, a, iframe
 import pandas as pd
 from pandas import DataFrame
-import base64
 import statistics
 import math
 from benchkit.utils.dir import parentdir
 from config.plot import PlotConfig
 from config.plot import PlotType
 from pathlib import Path
-import re
 from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
@@ -24,7 +19,6 @@ from visual.report import Report
 # TODO: refactor histogram building not to use global vars
 # TODO: document functions
 ###########################################################################
-
 
 
 ###########################################################################
@@ -281,9 +275,9 @@ def dump_graphs_to_doc(dir, report: Report, num_plot_in_row=2):
     # find all generated plots and embed them into the HTML document
     png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
     svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
-    graphs = png + svg
-    graphs.sort()
-    report.embed_plots(graphs, num_plot_in_row)
+    plots = png + svg
+    plots.sort()
+    report.embed_plots(plots, num_plot_in_row)
 
 
 ###########################################################################
@@ -371,7 +365,6 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
 
     # number of graphs displayed in the same row
     NUM_PLOTS_PER_ROW = 1  # TODO: make configurable.
-    report = Report(title=title)
     hostname = ""
     # load data frame
     result_file = f"{output_dir}.csv"
@@ -379,6 +372,7 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
         result_file, sep=";", comment="#", engine="python", on_bad_lines="error"
     )
     hostname = data_frame["hostname"].unique()
+    report = Report(title=f"{hostname}-{title}")
     # we split the data-frame into multiple data frames to help with visualization
     data_frames = split_data_frame(data_frame)
     # For each data frame we'll generate the related graphs
