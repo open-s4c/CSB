@@ -34,7 +34,8 @@ from glob import iglob
 from typing import Dict, List, Tuple, Optional
 
 from bm_utils import read_data_frame_from_csv
-from bm_visualize import create_plot, embed_img
+from bm_visualize import create_plot
+from visual.report import Report
 from config.plot import PlotConfig
 from utils.logger import bm_log, LogType
 
@@ -254,7 +255,7 @@ def generate_html(
                 for col in cols:
                     for _, rel_path in table_cols.get(col, []):
                         path = os.path.join(out_dir, rel_path)
-                        img_div = embed_img(path)
+                        img_div = Report.embed_img(path)
                         link = div().add(a(img_div, href=rel_path, _class="png_title"))
                         row.add(td(link))
 
