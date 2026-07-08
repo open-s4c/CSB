@@ -42,7 +42,7 @@ class Report:
                     img_div = self.embed_svg(plot_path)
                 else:
                     img_div = self.embed_img(plot_path)
-                    cell  = div()
+                    cell = div()
                     cell.add(a(img_div, href=plot_path))
                     if show_path:
                         cell.add(a(plot_path, href=plot_path, _class="png_title"))
