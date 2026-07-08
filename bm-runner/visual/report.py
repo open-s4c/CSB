@@ -32,7 +32,7 @@ class Report:
             tbl.add(row)
         self.doc.add(tbl)
 
-    def embed_plots(self, plot_lists: list[list[str]]):
+    def embed_plots(self, plot_lists: list[list[str]], show_path: bool = True):
         tbl = table()
         for list in plot_lists:
             row = tr()
@@ -42,13 +42,11 @@ class Report:
                     img_div = self.embed_svg(plot_path)
                 else:
                     img_div = self.embed_img(plot_path)
-                row.add(
-                    td(
-                        img_div,
-                        # add a link to the image file
-                        div().add(a(plot_path, href=plot_path, _class="png_title")),
-                    )
-                )
+                    cell  = div()
+                    cell.add(a(img_div, href=plot_path))
+                    if show_path:
+                        cell.add(a(plot_path, href=plot_path, _class="png_title"))
+                row.add(td(cell))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
 
