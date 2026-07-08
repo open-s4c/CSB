@@ -1,22 +1,14 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-import os
-import resource
 import sys
-import subprocess
 from bm_exec_unit import ExecutionUnit
-from bm_utils import stop_process
 from bm_config import Application
 from config.benchmark import ExecutionType
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
-
-
-def preexec_process():
-    os.setpgrp()
-    (fd_soft, fd_hard) = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (fd_hard, fd_hard))
+from utils.process import BackgroundProcess
+from pathlib import Path
 
 
 class Process(ExecutionUnit):
@@ -35,33 +27,37 @@ class Process(ExecutionUnit):
         if self.app.cd:
             assert self.app.path is not None, "path is not set while change directory is requested!"
             change_dir = f" cd {self.app.path} && "
-        commands = (
-            f"{self.CMD_WHILE_NOT_START}{change_dir}taskset --cpu-list {self.core_set} {command}"
+        inner_cmd = f"{change_dir} {command}"
+
+        cmds = [
+            "/bin/bash",
+            "-c",
+            self.CMD_WHILE_NOT_START,
+            inner_cmd,
+        ]
+
+        self.process = BackgroundProcess(
+            name=self.name,
+            cmds=cmds,
+            out_dir=str(resolve_path(Path(self.output_file).parent)),
+            efile_name=Path(self.err_file).name,
+            ofile_name=Path(self.output_file).name,
+            wdir=self.home_dir,
+            pin=self.core_set,
         )
-        with open(resolve_path(self.err_file), "w") as err_file:
-            with open(resolve_path(self.output_file), "w") as outfile:
-                self.process = subprocess.Popen(
-                    commands,
-                    shell=True,
-                    stdout=outfile,
-                    stderr=err_file,
-                    preexec_fn=preexec_process,
-                    cwd=self.home_dir,
-                )
-        bm_log(f"launched process {self.name} with {commands}")
+        self.process.start()
         return True
 
     def wait(self):
-        if self.process is None:
-            return
-        self.process.wait()
-        if self.process.returncode != 0:
-            bm_log(
-                f"process {self.name} has failed/or crashed with return code {self.process.returncode}",
-                LogType.FATAL,
-            )
-            sys.exit(1)
+        if self.process:
+            returncode = self.process.wait_indefinitely()
+            if returncode != 0:
+                bm_log(
+                    f"bwrap process {self.name} failed/crashed with return code {returncode}",
+                    LogType.FATAL,
+                )
+                sys.exit(1)
 
     def stop(self):
-        if self.process is not None:
-            stop_process(self.process.pid)
+        if self.process:
+            self.process.force_stop()
