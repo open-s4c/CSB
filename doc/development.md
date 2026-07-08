@@ -11,7 +11,7 @@ The main runner implementation lives in `bm-runner/`. The runner entry point is
 `bm-runner/main.py`; configuration parsing is in `bm-runner/bm_config.py` and
 `bm-runner/config/`; benchmark orchestration is in `bm-runner/benchmark.py` and
 `bm-runner/bm_executer.py`; native and container execution live in
-`bm-runner/bm_process.py` and `bm-runner/bm_container.py`; monitors live under
+`bm-runner/bm_native.py` and `bm-runner/bm_container.py`; monitors live under
 `bm-runner/monitors/`; plotting is implemented in `bm-runner/bm_visualize.py`.
 
 Builtin benchmark targets live under `bench/targets/` and external benchmark
@@ -90,7 +90,7 @@ report the missing requirement rather than changing code to hide the failure.
 
 - New runner config field: update the matching class and Docstrings under
   `bm-runner/config/`, parsing/defaults, and tests under `bm-runner/tests/`.
-- Run the following script to update doc/bm-config.md `helpers/update-doc.sh` 
+- Run the following script to update doc/bm-config.md `helpers/update-doc.sh`
 - New monitor: implement the monitor under `bm-runner/monitors/`, wire the
   monitor type and factory, document the config in `doc/bm-config.md`, and test
   empty/failing output handling.

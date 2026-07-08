@@ -11,7 +11,7 @@ from utils.process import BackgroundProcess
 from pathlib import Path
 
 
-class Process(ExecutionUnit):
+class Native(ExecutionUnit):
 
     def __init__(self, idx, home_dir, record_data_dir, core_set, app: Application):
         super().__init__(idx=idx, home_dir=home_dir, app=app, type=ExecutionType.NATIVE)
@@ -53,7 +53,7 @@ class Process(ExecutionUnit):
             returncode = self.process.wait_indefinitely()
             if returncode != 0:
                 bm_log(
-                    f"bwrap process {self.name} failed/crashed with return code {returncode}",
+                    f"Native process {self.name} failed/crashed with return code {returncode}",
                     LogType.FATAL,
                 )
                 sys.exit(1)

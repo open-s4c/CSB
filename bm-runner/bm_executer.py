@@ -14,7 +14,7 @@ from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
 from config.container import ContainersConfig
-from bm_process import Process
+from bm_native import Native
 from bm_container import Container
 from bm_bwrap import Bubblewrap
 from bm_exec_unit import ExecutionUnit, ExecutionType
@@ -92,7 +92,7 @@ class Executer:
                     nic=self.nics.get_cfg(idx) if self.nics else None,
                 )
             case ExecutionType.NATIVE:
-                return Process(
+                return Native(
                     idx=idx,
                     home_dir=self.home_dir,
                     core_set=core_set,

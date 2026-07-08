@@ -6,7 +6,7 @@ from pathlib import Path
 
 from bm_utils import ensure_exists
 from bm_container import Container
-from bm_process import Process
+from bm_native import Native
 from config.application import Application
 
 
@@ -31,7 +31,7 @@ def get_command(
     app = Application("ls", args=args)
 
     if is_process:
-        eu = Process(
+        eu = Native(
             app=app,
             idx=0,
             record_data_dir=results_dir,
