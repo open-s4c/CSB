@@ -267,14 +267,15 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
 
 
 ###########################################################################
-def dump_graphs_to_doc(dir, report: Report, num_plot_in_row=2):
+def dump_graphs_to_doc(dir, report: Report, split=1):
     # find all generated plots and embed them into the HTML document
     dir = os.path.realpath(dir)
     png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
     svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
     plots = png + svg
     plots.sort()
-    report.embed_plots(plots, num_plot_in_row)
+    plots = [plots[i : i + split] for i in range(0, len(plots), split)]
+    report.embed_plots(plots)
 
 
 ###########################################################################
@@ -361,7 +362,6 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     """
 
     # number of graphs displayed in the same row
-    NUM_PLOTS_PER_ROW = 1  # TODO: make configurable.
     hostname = ""
     # load data frame
     result_file = f"{output_dir}.csv"
@@ -378,7 +378,7 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
         add_info_tbl(df, report, result_file)
         create_plots(df, plots, output_dir, info=key)
         # dump graphs to HTML document
-        dump_graphs_to_doc(output_dir, report, NUM_PLOTS_PER_ROW)
+        dump_graphs_to_doc(output_dir, report)
 
     output_file_name = os.path.join(parentdir(output_dir), f"{output_dir}.html")
     report.save(output_file_name)

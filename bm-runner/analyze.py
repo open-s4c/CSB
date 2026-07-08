@@ -269,6 +269,6 @@ if __name__ == "__main__":
     write_to_file(dir=output_dir_name, fname="results.csv", content=csv)
 
     report = Report("Analysis Report")
-    dump_graphs_to_doc(output_dir_name, report, num_plot_in_row=3)
+    dump_graphs_to_doc(output_dir_name, report, split=3)
     report.save(os.path.join(output_dir_name, "results.html"))
     bm_log(f"Results written to {output_dir_name}", LogType.INFO)

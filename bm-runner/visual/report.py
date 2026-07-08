@@ -25,23 +25,23 @@ class Report:
             tbl.add(row)
         self.doc.add(tbl)
 
-    def embed_plots(self, plots: list[str], plots_per_row=2):
+    def embed_plots(self, plot_lists: list[list[str]]):
         tbl = table()
-        for i, plot_path in enumerate(plots):
-            if plot_path.endswith(".svg"):
-                img_div = self.embed_svg(plot_path)
-            else:
-                img_div = self.embed_img(plot_path)
-            if i % plots_per_row == 0:
-                row = tr()
-                tbl.add(row)
-            row.add(
-                td(
-                    img_div,
-                    # add a link to the image file
-                    div().add(a(plot_path, href=plot_path, _class="png_title")),
+        for list in plot_lists:
+            row = tr()
+            tbl.add(row)
+            for plot_path in list:
+                if plot_path.endswith(".svg"):
+                    img_div = self.embed_svg(plot_path)
+                else:
+                    img_div = self.embed_img(plot_path)
+                row.add(
+                    td(
+                        img_div,
+                        # add a link to the image file
+                        div().add(a(plot_path, href=plot_path, _class="png_title")),
+                    )
                 )
-            )
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
 
