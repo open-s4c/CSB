@@ -273,6 +273,7 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
 ###########################################################################
 def dump_graphs_to_doc(dir, report: Report, num_plot_in_row=2):
     # find all generated plots and embed them into the HTML document
+    dir = os.path.realpath(dir)
     png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
     svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
     plots = png + svg

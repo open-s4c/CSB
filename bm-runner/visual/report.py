@@ -1,7 +1,6 @@
 from dominate import document
 from dominate.tags import style, table, tr, td, div, img, h1, h2, a, iframe
 import datetime
-import os
 import base64
 import re
 from benchkit.benchmark import PathType
@@ -26,21 +25,19 @@ class Report:
 
     def embed_plots(self, plots: list[str], plots_per_row=2):
         tbl = table()
-        for i, plot in enumerate(plots):
-            if plot.endswith(".svg"):
-                img_div = self.embed_svg(plot)
+        for i, plot_path in enumerate(plots):
+            if plot_path.endswith(".svg"):
+                img_div = self.embed_svg(plot_path)
             else:
-                img_div = self.embed_img(plot)
+                img_div = self.embed_img(plot_path)
             if i % plots_per_row == 0:
-                line = tr()
-                tbl.add(line)
-            # TODO: this is not ideal!
-            clickable_path = os.path.relpath(plot, "./results")
-            line.add(
+                row = tr()
+                tbl.add(row)
+            row.add(
                 td(
                     img_div,
                     # add a link to the image file
-                    div().add(a(clickable_path, href=clickable_path, _class="png_title")),
+                    div().add(a(plot_path, href=plot_path, _class="png_title")),
                 )
             )
         # append the plots/graphs table to the given document
