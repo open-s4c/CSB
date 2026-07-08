@@ -14,11 +14,12 @@ class Report:
         self.doc = document(title=title)
         if add_title_date:
             self.doc.add(h1(f"Title: {title}"))
-            self.doc.add(h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}"))
+            self.doc.add(
+                h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}")
+            )
         self.__add_css_style()
 
-
-    def add_chapter(self, chapter_title:str):
+    def add_chapter(self, chapter_title: str):
         self.doc.add(br())
         self.doc.add(h2(chapter_title))
 
