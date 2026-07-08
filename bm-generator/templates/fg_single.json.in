@@ -33,7 +33,9 @@
 	],
 	"benchmark_config" : {
 		"duration": 60,
-		"exec_env": ["native"],
+		"exec_env": {
+      		"native" : []
+    	},
 		"monitors" : {"perf" : ["-C", "0"]}
 	},
 	"containers": {
