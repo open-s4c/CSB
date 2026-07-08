@@ -18,11 +18,6 @@ from visual.report import Report
 
 # TODO: refactor histogram building not to use global vars
 # TODO: document functions
-###########################################################################
-
-
-###########################################################################
-
 
 ###########################################################################
 def get_common_fields(df: DataFrame) -> list[str]:
