@@ -31,11 +31,10 @@ import shlex
 import sys
 
 from glob import iglob
-from textwrap import dedent
 from typing import Dict, List, Tuple, Optional
 
 from bm_utils import read_data_frame_from_csv
-from bm_visualize import create_plot
+from bm_visualize import create_plot, embed_img
 from config.plot import PlotConfig
 from utils.logger import bm_log, LogType
 
@@ -43,7 +42,57 @@ import matplotlib
 import pandas as pd
 import seaborn as sns
 
+from dominate import document
+from dominate.tags import a, div, h1, span, style, table, tbody, td, tr
+
 matplotlib.use("Agg")  # no GUI, pure file output
+
+
+#
+# CSS for the html output
+#
+def _add_css_style(doc: document):
+    doc.head.add(
+        style(
+            """
+            body {
+                font-family:
+                system-ui, -apple-system, sans-serif;
+                margin: 30px;
+                background: #fafafa;
+                color: #333;
+            }
+            h1 {
+                border-bottom: 2px solid #eee;
+                padding-bottom: 10px;
+            }
+            h2 {
+                margin-top: 40px;
+                color: #0056b3;
+            }
+            .plot-card {
+                background: #fff;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            }
+            img {
+                max-width: 920px;
+                height: auto;
+                display: block;
+                margin: 10px auto;
+            }
+            .exec-type {
+                font-weight: bold;
+                color: #555;
+                margin-top: 15px;
+                border-left: 4px solid #0056b3;
+                padding-left: 10px;
+            }
+        """
+        )
+    )
 
 
 #
@@ -188,88 +237,56 @@ def read_config(config_root: str) -> Dict[str, List[dict]]:
 
 
 def generate_html(
-    structured_plots: Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]], out_dir: str
+    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]]],
+    out_dir: str,
 ) -> str:
     """Generate a clean, indented HTML gallery and write it to out_dir/index.html"""
-    html_header = dedent(
-        """\
-        <!DOCTYPE html>
-        <html lang='en'>
-        <head>
-        <meta charset='utf-8'>
-        <title>Benchmark Comparison</title>
-        <style>
-            body { font-family: system-ui, -apple-system, sans-serif; margin: 30px; background: #fafafa; color: #333; }
-            h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
-            h2 { margin-top: 40px; color: #0056b3; }
-            .plot-card { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-            img { max-width: 920px; height: auto; display: block; margin: 10px auto; }
-            .exec-type { font-weight: bold; color: #555; margin-top: 15px; border-left: 4px solid #0056b3; padding-left: 10px; }
-        </style>
-        </head>
-        <body>
-    """
-    )
+    cols = ["NATIVE", "CONTAINER"]
 
-    cols_to_check = ["NATIVE", "CONTAINER"]
-
-    body = []
+    doc = document(title="Benchmark Comparison")
+    _add_css_style(doc)
 
     for machine, apps in structured_plots.items():
-        if machine:
-            s = f" on {machine}"
-        else:
-            s = ""
+        s = f" on {machine}" if machine else ""
+        doc.add(h1(f"Benchmark Comparison{s}"))
 
-        body.append(f"<h1>Benchmark Comparison{s}</h1>")
+        tbl = doc.add(table())
+        table_body = tbl.add(tbody())
 
-        body.append("<table>")
-        body.append("  <tbody>")
+        for _, base_type in apps.items():
+            for _, types in base_type.items():
+                row = table_body.add(tr())
+                others = []
+                table_cols = {}
 
-        for _, types in apps.items():
-            body.append("    <tr>")
+                for etype, item_cols in types.items():
+                    matched = False
+                    for col in cols:
+                        if col.upper() in etype.upper():
+                            table_cols[col] = item_cols
+                            matched = True
+                            break
+                    if not matched:
+                        others.append(etype)
 
-            others = []
-            table_cols = {}
-            for etype, cols in types.items():
-                # Match if "NATIVE" is part of the execution_type string
-                matched = False
-                for target in cols_to_check:
-                    if target.upper() in etype.upper():
-                        table_cols[target] = cols
-                        matched = True
-                        break
-                if not matched:
-                    others.append(etype)
+                for col in cols:
+                    for _, rel_path in table_cols.get(col, []):
+                        path = os.path.join(out_dir, rel_path)
+                        img_div = embed_img(path)
+                        link = (div().add(a(img_div, href=rel_path, _class="png_title")),)
+                        row.add(td(link))
 
-            # NATIVE column
-            body.append("      <td>")
-            for title, rel_path in table_cols.get("NATIVE", []):
-                body.append(f'<img name="{title}"src="{rel_path}">')
-            body.append("      </td>")
+                # Just in case, output other columns, if any
+                if others:
+                    for o_type in others:
+                        row.add(span(f"{o_type}: "))
+                        for _, rel_path in types[o_type]:
+                            path = os.path.join(out_dir, rel_path)
+                            img_div = embed_img(path)
+                            link = (div().add(a(img_div, href=rel_path, _class="png_title")),)
+                            row.add(td(link))
 
-            # CONTAINER column
-            body.append("      <td>")
-            for title, rel_path in table_cols.get("CONTAINER", []):
-                body.append(f'<img name="{title}"src="{rel_path}">')
-            body.append("      </td>")
-
-            # Others column (if needed)
-            if others:
-                body.append("      <td>")
-                for o_type in others:
-                    for title, rel_path in types[o_type]:
-                        body.append(f'{o_type}: <img name="{title}"src="{rel_path}">')
-                body.append("      </td>")
-
-            body.append("    </tr>")
-
-        body.append("  </tbody>")
-        body.append("</table>")
-
-    html_footer = "</body>\n</html>"
-    html_content = html_header + "\n".join(body) + html_footer
-
+    html_content = str(doc)
     html_path = os.path.join(out_dir, "index.html")
 
     with open(html_path, "w", encoding="utf-8") as f:
@@ -328,7 +345,7 @@ def main() -> None:
         sys.exit(f"No linearity plots found under {config_root}. Exiting.")
 
     # Filter by app using pandas boolean indexing (exactly as requested)
-    structured_plots: Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]] = {}
+    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]]] = {}
 
     for machine in df["machine"].dropna().unique():
         structured_plots[machine] = {}
@@ -351,7 +368,6 @@ def main() -> None:
                 print(f"Processing app: {app} ({len(exec_types)} execution types)")
 
             for etype in exec_types:
-                structured_plots[machine][app][etype] = []
 
                 filter_et = df["execution_type"] == etype
 
@@ -368,11 +384,19 @@ def main() -> None:
                 host = machine.split(" ")[0]
 
                 for plot_def in plot_defs:
+                    title = plot_def["title"]
+
                     plot_def["hue"] = "kernel_version"
                     plot_def["hue_lbl"] = "Kernel"
                     plot_def["palette"] = global_palette
                     plot = PlotConfig(**plot_def)
-                    plot.title = f"{host}: {plot_def['title']} ({etype_name})"
+                    plot.title = f"{host}: {title} ({etype_name})"
+
+                    if title not in structured_plots[machine][app]:
+                        structured_plots[machine][app][title] = {}
+
+                    if etype not in structured_plots[machine][app]:
+                        structured_plots[machine][app][title][etype] = []
 
                     try:
                         out_path = create_plot(df=df_filtered, plot=plot, dir=out_dir, info=app)
@@ -388,7 +412,7 @@ def main() -> None:
 
                     rel_path = os.path.relpath(out_path, out_dir)
 
-                    structured_plots[machine][app][etype].append((plot.title, rel_path))
+                    structured_plots[machine][app][title][etype].append((plot.title, rel_path))
 
     # Generate HTML gallery
     if structured_plots:
