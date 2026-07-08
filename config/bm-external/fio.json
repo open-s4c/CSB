@@ -15,9 +15,9 @@
     "initial_size": [
       1
     ],
-    "exec_env": [
-      "container"
-    ],
+    "exec_env": {
+      "container": []
+    },
     "monitors": {
       "mpstat": [
         "-n",

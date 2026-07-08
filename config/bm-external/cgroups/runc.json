@@ -137,9 +137,9 @@
     }
   ],
   "benchmark_config": {
-    "exec_env": [
-      "native"
-    ],
+    "exec_env": {
+      "native": []
+    },
     "monitors": {
       "mpstat": [
         "-n",

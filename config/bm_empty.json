@@ -45,9 +45,11 @@
     },
     "duration": 1,
     "exec_env": {
-      "bwrap":["--die-with-parent"],
-      "native":[],
-      "container":[]
+      "bwrap": [
+        "--die-with-parent"
+      ],
+      "native": [],
+      "container": []
     }
   },
   "containers": {

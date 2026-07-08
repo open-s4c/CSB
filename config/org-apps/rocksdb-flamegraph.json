@@ -13,9 +13,9 @@
   ],
   "benchmark_config": {
     "duration": 30,
-    "exec_env": [
-      "container"
-    ],
+    "exec_env": {
+      "container": []
+    },
     "monitors": {
       "mpstat": [
         "-n",
