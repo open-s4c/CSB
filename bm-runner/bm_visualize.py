@@ -19,62 +19,15 @@ import re
 from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
-
+from visual.report import Report
 
 # TODO: refactor histogram building not to use global vars
 # TODO: document functions
 ###########################################################################
-def _add_css_style(doc: document):
-    doc.add(
-        style(
-            """table {
-                width: 100%;
-                background-color: #FFFFFF;
-                border-collapse: collapse;
-                border-width: 2px;
-                border-color: #7ea8f8;
-                border-style: solid;
-                color: #000000;
-            }
-            td,  th {
-                border-width: 2px;
-                border-color: #7ea8f8;
-                border-style: solid;
-                padding: 5px;
-            }
-            thead {
-                background-color: #7ea8f8;
-            }
-            h1, h2 {
-                text-align: center;
-                font-color: blue;
-            }
-            .png_title {
-                font-size: 14px;
-                font-style: italic;
-            }
-            """
-        )
-    )
+
 
 
 ###########################################################################
-def embed_img(path) -> div:
-    data_uri = base64.b64encode(open(path, "rb").read()).decode("utf-8")
-    img_tag = f"data:image/png;base64,{data_uri}"
-    return div(img(src=img_tag))
-
-
-def embed_svg(path) -> div:
-    with open(path, "r") as file:
-        svg_content = file.read()
-    # extract height from svg content
-    height = re.search(r'height="([^"]+)"', svg_content)
-    h = height.group(1) if height else "1200"
-    # Note that we put each svg into an iframe to avoid all types of conflicts
-    # on IDs, styles, global variable names etc.
-    # The content of iframe will be rendered as a separate html document
-    return div(iframe(srcdoc=svg_content, width="100%", height=f"{h}px"))
 
 
 ###########################################################################
@@ -83,26 +36,20 @@ def get_common_fields(df: DataFrame) -> list[str]:
 
 
 ###########################################################################
-def add_info_tbl(df, doc: document, result_file: str):
+def add_info_tbl(df, report: Report, result_file: str):
     info_points = get_common_fields(df)
-    tbl = table()
-    r = tr()
-    r.add(td("Results file name:"))
-    r.add(td(result_file))
-    tbl.add(r)
+    data = {}
+    data["Results file name:"] = result_file
     for info in info_points:
         value = df[info].unique()
-        r = tr()
-        r.add(td(info))
         if len(value) == 1:
-            r.add(td(value[0]))
+            data[info] = value[0]
         else:
             vals = ",".join(str(v) for v in value)
             if not isinstance(value[0], str):
                 vals += f", mean = {statistics.mean(value)}"
-            r.add(td(vals))
-        tbl.add(r)
-    doc.add(tbl)
+            data[info] = vals
+    report.add_table(data)
 
 
 ###########################################################################
@@ -330,31 +277,13 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
 
 
 ###########################################################################
-def dump_graphs_to_doc(dir, doc: document, num_plot_in_row=2):
+def dump_graphs_to_doc(dir, report: Report, num_plot_in_row=2):
     # find all generated plots and embed them into the HTML document
     png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
     svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
     graphs = png + svg
     graphs.sort()
-    tbl = table()
-    for i, graph in enumerate(graphs):
-        if graph.endswith(".svg"):
-            img_div = embed_svg(graph)
-        else:
-            img_div = embed_img(graph)
-        if i % num_plot_in_row == 0:
-            line = tr()
-            tbl.add(line)
-        clickable_path = os.path.relpath(graph, "./results")
-        line.add(
-            td(
-                img_div,
-                # add a link to the image file
-                div().add(a(clickable_path, href=clickable_path, _class="png_title")),
-            )
-        )
-    # append the plots/graphs table to the given document
-    doc.add(tbl)
+    report.embed_plots(graphs, num_plot_in_row)
 
 
 ###########################################################################
@@ -442,10 +371,7 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
 
     # number of graphs displayed in the same row
     NUM_PLOTS_PER_ROW = 1  # TODO: make configurable.
-    doc = document()
-    _add_css_style(doc)
-    doc.add(h1(f"Title: {title}"))
-    doc.add(h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}"))
+    report = Report(title=title)
     hostname = ""
     # load data frame
     result_file = f"{output_dir}.csv"
@@ -458,15 +384,13 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     # For each data frame we'll generate the related graphs
     # and print related information
     for key, df in data_frames.items():
-        add_info_tbl(df, doc, result_file)
+        add_info_tbl(df, report, result_file)
         create_plots(df, plots, output_dir, info=key)
         # dump graphs to HTML document
-        dump_graphs_to_doc(output_dir, doc, NUM_PLOTS_PER_ROW)
+        dump_graphs_to_doc(output_dir, report, NUM_PLOTS_PER_ROW)
 
     output_file_name = os.path.join(parentdir(output_dir), f"{output_dir}.html")
-    doc.title = f"Results of: {hostname[0]}({title})"
-    with open(output_file_name, "w") as f:
-        f.write(doc.render())
+    report.save(output_file_name)
     bm_log(
         f"visualized results can be found in {output_file_name} with {title}",
         LogType.INFO,
