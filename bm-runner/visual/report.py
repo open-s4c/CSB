@@ -11,8 +11,7 @@ from benchkit.benchmark import PathType
 
 class Report:
     def __init__(self, title: str):
-        self.doc = document()
-        self.doc.title = title
+        self.doc = document(title=title)
         self.doc.add(h1(f"Title: {title}"))
         self.doc.add(h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}"))
         self.__add_css_style()
