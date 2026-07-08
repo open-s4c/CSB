@@ -27,12 +27,11 @@ class Native(ExecutionUnit):
         if self.app.cd:
             assert self.app.path is not None, "path is not set while change directory is requested!"
             change_dir = f" cd {self.app.path} && "
-        inner_cmd = f"{change_dir} {command}"
+        inner_cmd = f"{self.CMD_WHILE_NOT_START} {change_dir} {command}"
 
         cmds = [
             "/bin/bash",
             "-c",
-            self.CMD_WHILE_NOT_START,
             inner_cmd,
         ]
 
