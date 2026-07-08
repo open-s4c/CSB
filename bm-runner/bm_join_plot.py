@@ -377,7 +377,7 @@ def main() -> None:
                     if title not in structured_plots[machine][app]:
                         structured_plots[machine][app][title] = {}
 
-                    if etype not in structured_plots[machine][app]:
+                    if etype not in structured_plots[machine][app][title]:
                         structured_plots[machine][app][title][etype] = []
 
                     try:
