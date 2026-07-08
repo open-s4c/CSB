@@ -178,7 +178,7 @@ jobs:
     strategy:
       matrix:
         benchmark:
-          - { extern: byte-unixbench, dir: bm-external/byte-unixbench, config: byte-unixbench_syscall }
+          - { extern: byte-unixbench, dir: bm-external/byte-unixbench, config: syscall }
           - { extern: will-it-scale, dir: bm-external/, config: will-it-scale }
     steps:
       - uses: actions/checkout@v4
