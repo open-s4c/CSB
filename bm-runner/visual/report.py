@@ -1,3 +1,6 @@
+# Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 from dominate import document
 from dominate.tags import style, table, tr, td, div, img, h1, h2, a, iframe
 import datetime
