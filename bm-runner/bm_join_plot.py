@@ -255,7 +255,7 @@ def generate_html(
                     for _, rel_path in table_cols.get(col, []):
                         path = os.path.join(out_dir, rel_path)
                         img_div = embed_img(path)
-                        link = (div().add(a(img_div, href=rel_path, _class="png_title")),)
+                        link = (div().add(a(img_div, href=rel_path, _class="png_title")))
                         row.add(td(link))
 
                 # Just in case, output other columns, if any
@@ -265,7 +265,7 @@ def generate_html(
                         for _, rel_path in types[o_type]:
                             path = os.path.join(out_dir, rel_path)
                             img_div = embed_img(path)
-                            link = (div().add(a(img_div, href=rel_path, _class="png_title")),)
+                            link = (div().add(a(img_div, href=rel_path, _class="png_title")))
                             row.add(td(link))
 
     html_content = str(doc)
