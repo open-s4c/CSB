@@ -38,14 +38,15 @@ class Report:
             row = tr()
             tbl.add(row)
             for plot_path in list:
-                if plot_path.endswith(".svg"):
-                    img_div = self.embed_svg(plot_path)
-                else:
-                    img_div = self.embed_img(plot_path)
-                    cell = div()
-                    cell.add(a(img_div, href=plot_path))
-                    if show_path:
-                        cell.add(a(plot_path, href=plot_path, _class="png_title"))
+                img_div = (
+                    self.embed_svg(plot_path)
+                    if plot_path.endswith(".svg")
+                    else self.embed_img(plot_path)
+                )
+                cell = div()
+                cell.add(a(img_div, href=plot_path))
+                if show_path:
+                    cell.add(a(plot_path, href=plot_path, _class="png_title"))
                 row.add(td(cell))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
