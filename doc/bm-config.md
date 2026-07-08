@@ -18,7 +18,7 @@ General configuration for benchmarks, as well as a collection of system-level me
 |repeat|int|:white_check_mark:|`1`|    Number of times the benchmark should be repeated.     JSON example: `"repeat": 1` |
 |initial_size|list[int]|:white_check_mark:|`[0]`|    The initial size parameter that should be passed     to the benchmark initialization.     JSON example: `"initial_size" : [1, 1000]` |
 |noise|list[int]|:white_check_mark:|`[0]`|    How many `nop` operations to run between real     operations.     JSON example: `"noise" : [0, 1000]` |
-|exec_env|list[[ExecutionType](#executiontype)]|:white_check_mark:|`["native", "container"]`|    Whether to execute the benchmark in a container or     natively. JSON example: `"exec_env" : ["container", "native"]` |
+|exec_env|dict[[ExecutionType](#executiontype), list[str]]|:white_check_mark:|`{"native":[], "container":[]}`|    Dictates in which environments the benchmark is executed, and which     extra arguments are used. Note that currently the arguments are     only considered in case of `bwrap`.     JSON example: `"exec_env" : {"native":[], "container":[], "bwrap":["--die-with-parent"]}` |
 |monitors|dict[[MonitorType](#monitortype), list[str]]|:white_check_mark:|`{}`|    Monitors to run in the background. |
 |threads|[ListConfig](#listconfig)|:white_check_mark:|`{"values": [[1]]}`|    Determines number of threads to run target benchmarks with.     If not provided all applications will be run with 1 thread. |
 

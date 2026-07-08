@@ -92,9 +92,11 @@ class BenchmarkConfig(dict):
             How many `nop` operations to run between real
             operations.
             JSON example: `"noise" : [0, 1000]`
-        exec_env: list[ExecutionType] = ["native", "container"]
-            Whether to execute the benchmark in a container or
-            natively. JSON example: `"exec_env" : ["container", "native"]`
+        exec_env: dict[ExecutionType, list[str]] = {"native":[], "container":[]}
+            Dictates in which environments the benchmark is executed, and which
+            extra arguments are used. Note that currently the arguments are
+            only considered in case of `bwrap`.
+            JSON example: `"exec_env" : {"native":[], "container":[], "bwrap":["--die-with-parent"]}`
         monitors: dict[MonitorType, list[str]]
             Monitors to run in the background.
         threads: ListConfig = {"values": [[1]]}
