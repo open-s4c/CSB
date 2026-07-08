@@ -66,29 +66,11 @@ def _add_css_style(doc: document):
                 border-bottom: 2px solid #eee;
                 padding-bottom: 10px;
             }
-            h2 {
-                margin-top: 40px;
-                color: #0056b3;
-            }
-            .plot-card {
-                background: #fff;
-                padding: 15px;
-                margin: 10px 0;
-                border-radius: 8px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            }
             img {
                 max-width: 920px;
                 height: auto;
                 display: block;
                 margin: 10px auto;
-            }
-            .exec-type {
-                font-weight: bold;
-                color: #555;
-                margin-top: 15px;
-                border-left: 4px solid #0056b3;
-                padding-left: 10px;
             }
         """
         )
