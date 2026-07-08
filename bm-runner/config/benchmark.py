@@ -65,7 +65,10 @@ class BenchmarkConfig(dict):
         repeat: int = 1,
         initial_size: list[int] = [0],
         noise: list[int] = [0],
-        exec_env: list[ExecutionType] = [ExecutionType.NATIVE, ExecutionType.CONTAINER],
+        exec_env: dict[ExecutionType, list[str]] = {
+            ExecutionType.NATIVE: [],
+            ExecutionType.CONTAINER: [],
+        },
         monitors: dict[MonitorType, list[str]] = {},
         threads: Optional[ListConfig] = None,
     ):
@@ -110,3 +113,6 @@ class BenchmarkConfig(dict):
             if threads is not None
             else ListConfig([[1]]).get_list()
         )
+
+    def get_exec_env_args(self, exec_type: ExecutionType) -> list[str]:
+        return self.exec_env.get(exec_type, [])

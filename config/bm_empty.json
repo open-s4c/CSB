@@ -44,11 +44,11 @@
       ]
     },
     "duration": 1,
-    "exec_env": [
-      "bwrap",
-      "native",
-      "container"
-    ]
+    "exec_env": {
+      "bwrap":["--die-with-parent"],
+      "native":[],
+      "container":[]
+    }
   },
   "containers": {
     "core_assignment_policy": {

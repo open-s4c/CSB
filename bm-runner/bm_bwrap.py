@@ -12,6 +12,7 @@ from utils.logger import bm_log, LogType
 from pathlib import Path
 from utils.process import BackgroundProcess
 from bm_utils import ensure_exists
+import bm_config
 
 
 class Bubblewrap(ExecutionUnit):
@@ -65,6 +66,9 @@ class Bubblewrap(ExecutionUnit):
             if os.path.exists(Path(src)):
                 args.extend(["--ro-bind", src, dst])
 
+        assert bm_config.g_config, "Unexpected error, configuration object is not set!"
+        cfg = bm_config.g_config.get_benchmark_cfg()
+        args.extend(cfg.get_exec_env_args(ExecutionType.BWRAP))
         return args
 
     def exec(self, command: str) -> bool:

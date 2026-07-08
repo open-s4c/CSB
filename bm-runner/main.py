@@ -126,7 +126,7 @@ if __name__ == "__main__":
         benchmark_duration_seconds=benchmark_config.duration,
         container_cnt=container_cfg.get_container_cnt_list(),
         nb_threads=threads,
-        execution_type=benchmark_config.exec_env,
+        execution_type=list(benchmark_config.exec_env.keys()),
         noise=benchmark_config.noise,
         initial_size=benchmark_config.initial_size,
         nb_runs=benchmark_config.repeat,
