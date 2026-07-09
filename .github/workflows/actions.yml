@@ -157,8 +157,8 @@ jobs:
       - name: Install pre-requisites
         run: |
           sudo apt update
-          sudo apt-get install -y build-essential linux-tools-common linux-tools-$(uname -r) cmake libhiredis-dev bubblewrap
-      - name: Run Benchmark ${{ matrix.benchmark }}
+          sudo apt-get install -y build-essential cmake libhiredis-dev bubblewrap
+      - name: Enable bwrap user namespaces
         run: |
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           sudo sysctl -w kernel.unprivileged_userns_clone=1 || true
