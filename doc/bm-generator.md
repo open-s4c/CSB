@@ -213,6 +213,29 @@ The following list of syscalls is parsed by bm-generator, but excluded from [syz
 |write|Supported, but if used on file descriptor 1 or 2 (stdout, stderr) these are dropped to avoid output parsing issues|
 |read|Supported, but if used on file descriptor 0 (stdin) these are dropped to avoid blocking|
 
+
+## Generating JSON files
+
+Users can generate JSON files for any group of generated benchmark headers.
+The generator reads input headers from:
+`bench/targets/<group>/syz/*.h` and writes the generated JSON files to `config/<group>/`
+
+By default, `<group>` is `gen-ws`. To generate JSON files for another group,
+set the environment variable `CSB_RESULTS_GROUP` before running the CMake build target.
+
+For example, to generate JSON files for headers in `bench/targets/my-group/syz/`:
+
+```bash
+cd csb
+CSB_RESULTS_GROUP=my-group
+cmake -S../ -B../build -DCSB_BM_GENERATOR=ON
+cmake --build build --target bm_single.json.in
+```
+Note that `bm_single.json.in` is a template that exists under `bm-generator/templates/`.
+Users can also create their own templates and generate for them, provided that
+the template name matches `*single*.json.in`
+
+
 [strace]: https://github.com/strace/strace
 [tmplr]: https://github.com/open-s4c/tmplr
 [syzkaller]: https://github.com/open-s4c/syzkaller/tree/s4c/
