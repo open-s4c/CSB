@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 set -e
-set -x
 
 scriptpath=$(dirname "$0")
 

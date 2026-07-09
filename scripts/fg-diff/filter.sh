@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 set -e
-set -x
 
 file="$1"
 target="$2"
