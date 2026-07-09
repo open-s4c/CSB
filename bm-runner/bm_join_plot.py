@@ -31,7 +31,7 @@ import shlex
 import sys
 
 from glob import iglob
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 
 from bm_utils import read_data_frame_from_csv
 from bm_visualize import create_plot
@@ -213,7 +213,7 @@ def generate_html(
     """Generate a clean, indented HTML gallery and write it to out_dir/index.html"""
     cols = ["NATIVE", "CONTAINER"]
 
-    report = Report(title=f"Benchmark Comparison", css_style=CSS_STYLE, add_title_date=False)
+    report = Report(title="Benchmark Comparison", css_style=CSS_STYLE, add_title_date=False)
 
     for machine, apps in structured_plots.items():
         s = f" on {machine}" if machine else ""
@@ -245,7 +245,6 @@ def generate_html(
 
                 # Just in case, output other columns, if any
                 for o_type in others:
-                    row.add(span(f"{o_type}: "))
                     for rel_path in types[o_type]:
                         cur_plots.append(os.path.join(out_dir, rel_path))
 
