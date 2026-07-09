@@ -21,6 +21,7 @@ echo "STEP#5: Generating ..."
 ./05_generate.sh
 sudo -v
 echo "STEP#6 Selecting microbenchmarks using flamegraph-diff"
+cmake --build ../build --target fg_single.json.in
 # Commented out until CI runner has python enabled.
 ./06_select.sh
 
