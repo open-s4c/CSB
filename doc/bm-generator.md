@@ -227,14 +227,13 @@ For example, to generate JSON files for headers in `bench/targets/my-group/syz/`
 
 ```bash
 cd csb
-CSB_RESULTS_GROUP=my-group
-cmake -S../ -B../build -DCSB_BM_GENERATOR=ON
+export CSB_RESULTS_GROUP=my-group
+cmake -S. -B build -DCSB_BM_GENERATOR=ON
 cmake --build build --target bm_single.json.in
 ```
 Note that `bm_single.json.in` is a template that exists under `bm-generator/templates/`.
 Users can also create their own templates and generate for them, provided that
 the template name matches `*single*.json.in`
-
 
 [strace]: https://github.com/strace/strace
 [tmplr]: https://github.com/open-s4c/tmplr
