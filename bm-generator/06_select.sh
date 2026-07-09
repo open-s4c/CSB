@@ -8,7 +8,6 @@ source helper/bm-generator-lib.sh
 group="$(get_workspace_dir)"
 
 scriptpath=$(dirname "$0")
-
 cd "$scriptpath/../"
 
 if [ -e "./results/$group" ]; then
@@ -22,12 +21,12 @@ export CSB_RESULTS_GROUP="$group"
 
 export CSB_SELECTED_OUTPUT="$(mktemp)"
 
+export FLAMEGRAPH="deps/FlameGraph"
+
 ./scripts/fg-diff/select-benchmarks.sh ./config/"$group"/fg_*.json
 
 echo "The selected benchmarks are (available in $CSB_SELECTED_OUTPUT):"
 cat "$CSB_SELECTED_OUTPUT"
-
-export FLAMEGRAPH="deps/FlameGraph"
 
 ./scripts/fg-merge/filter-merge.sh "./results/$group" ./bench-select "$CSB_SELECTED_OUTPUT"
 if [ -e ./bench-select/all.html ]; then

@@ -2,7 +2,6 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-set -e
 if [ -z "$1" ]; then
     echo "usage: %0 directory-with-stacks"
     exit 1
