@@ -15,6 +15,7 @@ from utils.logger import bm_log, LogType
 from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
 from visual.report import Report
+from bm_utils import read_data_frame_from_csv
 
 # TODO: refactor histogram building not to use global vars
 # TODO: document functions
@@ -365,10 +366,10 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     hostname = ""
     # load data frame
     result_file = f"{output_dir}.csv"
-    data_frame = pd.read_csv(
-        result_file, sep=";", comment="#", engine="python", on_bad_lines="error"
-    )
-    hostname = data_frame["hostname"].unique()
+    data_frame = read_data_frame_from_csv(result_file)
+    if data_frame is None:
+        return
+    hostname = data_frame["hostname"].unique()[0]
     report = Report(title=f"{hostname}-{title}")
     # we split the data-frame into multiple data frames to help with visualization
     data_frames = split_data_frame(data_frame)

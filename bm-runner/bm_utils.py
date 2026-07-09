@@ -316,6 +316,9 @@ def read_data_frame_from_csv(
         df = pd.read_csv(
             file, names=names, sep=";", comment="#", engine="python", on_bad_lines="error"
         )
+        if df.empty:
+            bm_log(f"Extracted empty data frame from {file}", LogType.ERROR)
+            return None
         return df
     except Exception as e:
         bm_log(f"{e} on {file}", LogType.ERROR)
