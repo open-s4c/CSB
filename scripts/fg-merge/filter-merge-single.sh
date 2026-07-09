@@ -16,5 +16,5 @@ sudo perf script -i "$file" --dsos='[kernel.kallsyms]' | awk -vtarget="$target" 
 BEGIN {started = 0}
 started == 1 && NF==0 {started = 0; print;}
 started == 1 && $NF=="([kernel.kallsyms])" {print}
-$NF=="cycles:" || $NF=="cycles:P:"  {if ($1 ~ target) {sub(target"[-]?[0-9]*", "THR")}; started = 1; print}
-' 
+$NF=="cycles:" || $NF=="cycles:P:" || $NF=="cpu-clock:" {if ($1 ~ target) {sub(target"[-]?[0-9]*", "THR")}; started = 1; print}
+'
