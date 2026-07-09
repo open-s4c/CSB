@@ -43,39 +43,26 @@ import matplotlib
 import pandas as pd
 import seaborn as sns
 
-from dominate import document
-from dominate.tags import a, div, h1, span, style, table, tbody, td, tr
-
 matplotlib.use("Agg")  # no GUI, pure file output
-
-
-#
-# CSS for the html output
-#
-def _add_css_style(doc: document):
-    doc.head.add(
-        style(
-            """
-            body {
-                font-family:
-                system-ui, -apple-system, sans-serif;
-                margin: 30px;
-                background: #fafafa;
-                color: #333;
-            }
-            h1 {
-                border-bottom: 2px solid #eee;
-                padding-bottom: 10px;
-            }
-            img {
-                max-width: 920px;
-                height: auto;
-                display: block;
-                margin: 10px auto;
-            }
-        """
-        )
-    )
+CSS_STYLE = """
+    body {
+        font-family:
+        system-ui, -apple-system, sans-serif;
+        margin: 30px;
+        background: #fafafa;
+        color: #333;
+    }
+    h1 {
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+    img {
+        max-width: 920px;
+        height: auto;
+        display: block;
+        margin: 10px auto;
+    }
+"""
 
 
 #
@@ -220,25 +207,23 @@ def read_config(config_root: str) -> Dict[str, List[dict]]:
 
 
 def generate_html(
-    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]]],
+    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[str]]]]],
     out_dir: str,
 ) -> str:
     """Generate a clean, indented HTML gallery and write it to out_dir/index.html"""
     cols = ["NATIVE", "CONTAINER"]
 
-    doc = document(title="Benchmark Comparison")
-    _add_css_style(doc)
+    report = Report(title=f"Benchmark Comparison", css_style=CSS_STYLE, add_title_date=False)
 
     for machine, apps in structured_plots.items():
         s = f" on {machine}" if machine else ""
-        doc.add(h1(f"Benchmark Comparison{s}"))
 
-        tbl = doc.add(table())
-        table_body = tbl.add(tbody())
+        report.add_chapter(f"Benchmark Comparison{s}")
+
+        plots = []
 
         for _, base_type in apps.items():
             for _, types in base_type.items():
-                row = table_body.add(tr())
                 others = []
                 table_cols = {}
 
@@ -252,28 +237,26 @@ def generate_html(
                     if not matched:
                         others.append(etype)
 
-                for col in cols:
-                    for _, rel_path in table_cols.get(col, []):
-                        path = os.path.join(out_dir, rel_path)
-                        img_div = Report.embed_img(path)
-                        link = div().add(a(img_div, href=rel_path, _class="png_title"))
-                        row.add(td(link))
+                cur_plots = [""] * 2
+
+                for pos, col in enumerate(cols):
+                    for rel_path in table_cols.get(col, []):
+                        cur_plots[pos] = os.path.join(out_dir, rel_path)
 
                 # Just in case, output other columns, if any
-                if others:
-                    for o_type in others:
-                        row.add(span(f"{o_type}: "))
-                        for _, rel_path in types[o_type]:
-                            path = os.path.join(out_dir, rel_path)
-                            img_div = embed_img(path)
-                            link = div().add(a(img_div, href=rel_path, _class="png_title"))
-                            row.add(td(link))
+                for o_type in others:
+                    row.add(span(f"{o_type}: "))
+                    for rel_path in types[o_type]:
+                        cur_plots.append(os.path.join(out_dir, rel_path))
 
-    html_content = str(doc)
+                plots.append(cur_plots)
+
+        report.embed_plots(plots, show_path=False)
+
+        report.add_line("")
+
     html_path = os.path.join(out_dir, "index.html")
-
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    report.save(html_path)
 
     print(f"\nHTML with plots written to: {html_path}")
     return html_path
@@ -328,7 +311,7 @@ def main() -> None:
         sys.exit(f"No linearity plots found under {config_root}. Exiting.")
 
     # Filter by app using pandas boolean indexing (exactly as requested)
-    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[Tuple[str, str]]]]]] = {}
+    structured_plots: Dict[str, Dict[str, Dict[str, Dict[str, List[str]]]]] = {}
 
     for machine in df["machine"].dropna().unique():
         structured_plots[machine] = {}
@@ -395,7 +378,7 @@ def main() -> None:
 
                     rel_path = os.path.relpath(out_path, out_dir)
 
-                    structured_plots[machine][app][title][etype].append((plot.title, rel_path))
+                    structured_plots[machine][app][title][etype].append(rel_path)
 
     # Generate HTML gallery
     if structured_plots:

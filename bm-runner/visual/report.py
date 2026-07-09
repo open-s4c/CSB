@@ -10,18 +10,55 @@ from benchkit.benchmark import PathType
 
 
 class Report:
-    def __init__(self, title: str, add_title_date: bool = True):
+    CSS_STYLE = """
+        table {
+            width: 100%;
+            background-color: #FFFFFF;
+            border-collapse: collapse;
+            border-width: 2px;
+            border-color: #7ea8f8;
+            border-style: solid;
+            color: #000000;
+        }
+        td,  th {
+            border-width: 2px;
+            border-color: #7ea8f8;
+            border-style: solid;
+            padding: 5px;
+        }
+        thead {
+            background-color: #7ea8f8;
+        }
+        h1, h2 {
+            text-align: center;
+            font-color: blue;
+        }
+        .png_title {
+            font-size: 14px;
+            font-style: italic;
+        }
+    """
+
+    def __init__(self, title: str, add_title_date: bool = True, css_style=CSS_STYLE):
         self.doc = document(title=title)
         if add_title_date:
             self.doc.add(h1(f"Title: {title}"))
             self.doc.add(
                 h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}")
             )
-        self.__add_css_style()
+        self.__add_css_style(css_style)
 
-    def add_chapter(self, chapter_title: str):
-        self.doc.add(br())
-        self.doc.add(h2(chapter_title))
+    def add_line(self, text):
+        self.doc.add(br(text))
+
+    def add_chapter(self, name: str, level=1):
+        match level:
+            case 1:
+                self.doc.add(h1(name))
+
+            # Currently, only two levels are supported
+            case _:
+                self.doc.add(h2(name))
 
     def add_table(self, data: dict[str, str]):
         tbl = table()
@@ -38,6 +75,10 @@ class Report:
             row = tr()
             tbl.add(row)
             for plot_path in list:
+                if not plot_path:
+                    row.add(td(""))
+                    continue
+
                 img_div = (
                     self.embed_svg(plot_path)
                     if plot_path.endswith(".svg")
@@ -51,38 +92,8 @@ class Report:
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
 
-    def __add_css_style(self):
-        self.doc.add(
-            style(
-                """table {
-                    width: 100%;
-                    background-color: #FFFFFF;
-                    border-collapse: collapse;
-                    border-width: 2px;
-                    border-color: #7ea8f8;
-                    border-style: solid;
-                    color: #000000;
-                }
-                td,  th {
-                    border-width: 2px;
-                    border-color: #7ea8f8;
-                    border-style: solid;
-                    padding: 5px;
-                }
-                thead {
-                    background-color: #7ea8f8;
-                }
-                h1, h2 {
-                    text-align: center;
-                    font-color: blue;
-                }
-                .png_title {
-                    font-size: 14px;
-                    font-style: italic;
-                }
-                """
-            )
-        )
+    def __add_css_style(self, css_style):
+        self.doc.add(style(css_style))
 
     def save(self, report_file_name: PathType):
         with open(report_file_name, "w") as f:
