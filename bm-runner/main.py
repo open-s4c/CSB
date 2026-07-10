@@ -38,11 +38,11 @@ def csbCampaign(
     pretty: Optional[Dict[str, str]] = None,
 ) -> CampaignCartesianProduct:
     variables = {
+        "execution_type": execution_type,
+        "container_cnt": container_cnt,
         "nb_threads": nb_threads,
         "noise": noise,
         "initial_size": initial_size,
-        "container_cnt": container_cnt,
-        "execution_type": execution_type,
     }
 
     pretty_dict = None
