@@ -59,4 +59,4 @@ class Native(ExecutionUnit):
 
     def stop(self):
         if self.process:
-            self.process.stop()
+            self.process.force_stop()

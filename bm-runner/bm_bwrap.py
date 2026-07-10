@@ -105,4 +105,4 @@ class Bubblewrap(ExecutionUnit):
 
     def stop(self):
         if self.process is not None:
-            self.process.stop()
+            self.process.force_stop()
