@@ -150,16 +150,7 @@ class BackgroundProcess:
         bm_log(
             f"Waiting for {self.name} without timeout, with PID = {self.process.pid} to terminate"
         )
-        ret = self.process.wait()
-        if ret != 0:
-            bm_log(
-                f"""
-                    ERROR:
-                   -----
-                   {self.read_err()}
-                   """
-            )
-        return ret
+        return self.process.wait()
 
     def stop(self, timeout=TIMEOUT_SEC) -> int:
         """
@@ -188,17 +179,6 @@ class BackgroundProcess:
         """
         try:
             with open(self.ofile_name, "r") as file:
-                return file.read()
-        except Exception as e:
-            bm_log(f"Failed to read {self.ofile_name} {e}", LogType.ERROR)
-            return ""
-
-    def read_err(self):
-        """
-        Returns the content of the `stdout` file.
-        """
-        try:
-            with open(self.efile_name, "r") as file:
                 return file.read()
         except Exception as e:
             bm_log(f"Failed to read {self.ofile_name} {e}", LogType.ERROR)
