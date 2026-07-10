@@ -102,6 +102,7 @@ class BackgroundProcess:
             self.cmds,
             stdout=self.ofile,
             stderr=self.efile,
+            env=env,
             preexec_fn=self.__preexec_fn,
             cwd=self.wdir,
         )
