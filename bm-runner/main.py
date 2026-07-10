@@ -79,11 +79,13 @@ def construct_bm_name(config_file: Path):
     # remove everything before and including config
     if "config" in parts:
         parts = parts[parts.index("config") + 1 :]
-    # if external is in the path remove it as well
-    if parts and parts[0] == "bm-external":
-        parts = parts[1:]
-    # now join with `_`
-    return "_".join(parts)
+        # if external is in the path remove it as well
+        if parts and parts[0] == "bm-external":
+            parts = parts[1:]
+        # now join with `_`
+        return "_".join(parts)
+    else:
+        return config_file.stem
 
 
 ###########################################################################
