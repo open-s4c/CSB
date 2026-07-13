@@ -78,7 +78,7 @@ class PlotChart:
             chart.set_ylim(0, 1 if new_ylim == 0 else new_ylim)
         else:
             bm_log(
-                f"Tried to setup an invalid {new_ylim} Y axis limit on plot `{plot.title}` for hue `{plot.hue_lbl}`!",
+                f"Tried to setup an invalid Y={new_ylim} on `{plot.y_lbl}` axis limit at `{plot.title}` plot!",
                 LogType.WARNING,
             )
 
