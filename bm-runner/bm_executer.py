@@ -123,29 +123,26 @@ class Executer:
         for monitor in self.monitors:
             monitor.stop()
 
-    def exec_all(self, threads, duration, noise, initial_size, port_start: Optional[int]):
+    def exec_all(self, threads, duration, noise, port_start: Optional[int]):
         try:
             for idx, eu in enumerate(self.exec_units):
                 if port_start is not None:
-                    sz = idx + port_start
-                    # TODO: At the moment initial_size is exploited to pass the port number,
-                    # make sure that initial_size is not used when port is available
-                    # or find a proper way to pass the port number to the micro-bm
-                    if not is_port_free_to_use(sz):
+                    port = idx + port_start
+                    if not is_port_free_to_use(port):
                         bm_log(
-                            f"Port {sz} is already in use!, make sure ports in this range [{port_start}:{len(self.exec_units)-1}] are free to use.",
+                            f"Port {port} is already in use!, make sure ports in this range [{port_start}:{len(self.exec_units)-1}] are free to use.",
                             LogType.FATAL,
                         )
                         sys.exit(1)
                 else:
-                    sz = initial_size
+                    port = 0
                 ret = eu.exec(
                     eu.app.get_cmd(
                         plugins_cmds=self.__wrap_plugins(),
                         threads=threads,
                         duration=duration,
                         noise=noise,
-                        initial_size=sz,
+                        port=port,
                         index=idx,
                         work_dir=self.home_dir,
                         n_units=len(self.exec_units),

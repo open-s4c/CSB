@@ -47,10 +47,10 @@ class Application(dict):
             The sum of all values in the list must be equal to 1024.
             Each index represents a specific operation as defined by the benchmark/application.
             This is only relevant for builtin benchmarks.
-        args: Optional[str] = -t={threads} -n={noise} -d={duration} -s={initial_size}
+        args: Optional[str] = -t={threads} -n={noise} -d={duration} -s={port}
             A string that represents the command line arguments of the application.
             It can contain place holders for dynamic values. Available place holders:
-            are `{threads}`, `{noise}`, `{duration}`, `{index}`, `{initial_size}` and `{host_ip}`.
+            are `{threads}`, `{noise}`, `{duration}`, `{index}`, `{port}` and `{host_ip}`.
             They are replaced at runtime with the actual values: number of threads, number of nop instructions following an operation,
             duration of the benchmark in seconds, the index of the execution unit in the current benchmarking run, initial size of the data structure, and the host IP where CSB is running respectively.
             If any of the above is relevant for the external application they can be used in the args
@@ -75,9 +75,7 @@ class Application(dict):
         self.operations = operations
         self.cd = cd
         # Set default framework arguments
-        self.args = (
-            "-t={threads} -n={noise} -d={duration} -s={initial_size}" if args is None else args
-        )
+        self.args = "-t={threads} -n={noise} -d={duration} -s={port}" if args is None else args
         self.adapter = Adapter(**adapter) if adapter is not None else None
         if len(self.operations) > 0 and sum(self.operations) != self.DISTRIBUTION_SUM:
             bm_log(
@@ -110,7 +108,7 @@ class Application(dict):
         threads: int,
         duration: int,
         noise: int,
-        initial_size: int,
+        port: int,
         index: int,
         work_dir: Path,
         n_units: int,
@@ -136,7 +134,7 @@ class Application(dict):
             threads=threads,
             duration=duration,
             noise=noise,
-            initial_size=initial_size,
+            port=port,
             index=index,
             n_units=n_units,
             homedir=homedir,

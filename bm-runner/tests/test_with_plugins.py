@@ -53,7 +53,7 @@ def get_command(
         threads=1,
         duration=1,
         noise=0,
-        initial_size=0,
+        port=0,
         index=index,
         n_units=2,
         work_dir=work_dir,

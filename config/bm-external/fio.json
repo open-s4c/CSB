@@ -12,9 +12,6 @@
     }
   ],
   "benchmark_config": {
-    "initial_size": [
-      1
-    ],
     "exec_env": {
       "container": []
     },
@@ -56,7 +53,7 @@
   "applications": [
     {
       "name": "fio",
-      "args": "--name=randrw --filename=/tmp/fio.test --rw=randrw --rwmixread=70 --bs=4k --size={initial_size}G --iodepth=64 --numjobs={threads} --direct=1",
+      "args": "--name=randrw --filename=/tmp/fio.test --rw=randrw --rwmixread=70 --bs=4k --size=1G --iodepth=64 --numjobs={threads} --direct=1",
       "adapter": {
         "name": "fio-adapter.sh"
       }

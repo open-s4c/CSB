@@ -63,7 +63,6 @@ class BenchmarkConfig(dict):
         self,
         duration: int = 3,
         repeat: int = 1,
-        initial_size: list[int] = [0],
         noise: list[int] = [0],
         exec_env: dict[ExecutionType, list[str]] = {
             ExecutionType.NATIVE: [],
@@ -84,10 +83,6 @@ class BenchmarkConfig(dict):
         repeat: int
             Number of times the benchmark should be repeated.
             JSON example: `"repeat": 1`
-        initial_size: list[int]
-            The initial size parameter that should be passed
-            to the benchmark initialization.
-            JSON example: `"initial_size" : [1, 1000]`
         noise: list[int]
             How many `nop` operations to run between real
             operations.
@@ -106,7 +101,6 @@ class BenchmarkConfig(dict):
         """
         self.duration = duration
         self.repeat = repeat
-        self.initial_size = initial_size
         self.noise = noise
         self.exec_env = exec_env
         self.monitors = monitors
