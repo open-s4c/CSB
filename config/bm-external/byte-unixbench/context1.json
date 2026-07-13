@@ -3,12 +3,12 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "throughput_lps",
+      "y": "context1",
       "y_lbl": "Throughput(lps)",
       "hue_lbl": "Executer",
       "hue": "execution_unit",
       "shape": "barplot",
-      "title": "Unixbench context1 throughput (lps) vs. #container"
+      "title": "Unixbench Pipe-based Context Switching (lps) vs. #container"
     }
   ],
   "benchmark_config": {
@@ -24,7 +24,7 @@
       "cd": true,
       "args": "-c {threads} -i 1 -b -q context1",
       "adapter": {
-        "name": "byte-unixbench-adapter.sh"
+        "name": "byte-unixbench-adapter.py"
       }
     }
   ]

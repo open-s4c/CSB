@@ -3,12 +3,12 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "throughput_lps",
-      "y_lbl": "Throughput(lps)",
+      "y": "fscopy1024",
+      "y_lbl": "File copy (KBps)",
       "hue_lbl": "Executer",
       "hue": "execution_unit",
       "shape": "barplot",
-      "title": "Unixbench fstime throughput (lps) vs. #container"
+      "title": "Unixbench File copy throughput 2000 maxblocks with 1024 buffersize vs. #container"
     }
   ],
   "benchmark_config": {
@@ -31,7 +31,7 @@
       "cd": true,
       "args": "-c {threads} -i 1 -b -q fstime",
       "adapter": {
-        "name": "byte-unixbench-adapter.sh"
+        "name": "byte-unixbench-adapter.py"
       }
     }
   ]

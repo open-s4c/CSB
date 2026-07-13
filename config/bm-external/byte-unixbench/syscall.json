@@ -3,12 +3,12 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "throughput_lps",
+      "y": "syscall",
       "y_lbl": "Throughput(lps)",
       "hue_lbl": "Executer",
       "hue": "execution_unit",
       "shape": "barplot",
-      "title": "Unixbench syscall throughput (lps) vs. #container"
+      "title": "Unixbench syscall overhead throughput (lps) vs. #container"
     }
   ],
   "benchmark_config": {
@@ -31,7 +31,7 @@
       "cd": true,
       "args": "-c {threads} -i 1 -b -q syscall",
       "adapter": {
-        "name": "byte-unixbench-adapter.sh"
+        "name": "byte-unixbench-adapter.py"
       }
     }
   ]

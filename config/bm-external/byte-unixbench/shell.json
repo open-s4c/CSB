@@ -3,12 +3,12 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "throughput_lps",
-      "y_lbl": "Throughput(lps)",
+      "y": "shell1",
+      "y_lbl": "Throughput(lpm)",
       "hue_lbl": "Executer",
       "hue": "execution_unit",
       "shape": "barplot",
-      "title": "Unixbench shell throughput (lps) vs. #container"
+      "title": "Unixbench shell Scripts 1 concurrent throughput (lpm) vs. #container"
     }
   ],
   "benchmark_config": {
@@ -31,7 +31,7 @@
       "cd": true,
       "args": "-c {threads} -i 1 -b -q shell",
       "adapter": {
-        "name": "byte-unixbench-adapter.sh"
+        "name": "byte-unixbench-adapter.py"
       }
     }
   ]

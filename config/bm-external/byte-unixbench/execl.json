@@ -3,7 +3,7 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "throughput_lps",
+      "y": "execl",
       "y_lbl": "Throughput(lps)",
       "hue_lbl": "Executer",
       "hue": "execution_unit",
@@ -24,7 +24,7 @@
       "cd": true,
       "args": "-c {threads} -i 1 -b -q execl",
       "adapter": {
-        "name": "byte-unixbench-adapter.sh"
+        "name": "byte-unixbench-adapter.py"
       }
     }
   ]
