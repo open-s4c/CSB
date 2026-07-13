@@ -361,6 +361,15 @@ def main() -> None:
                     plot_def["hue"] = "kernel_version"
                     plot_def["hue_lbl"] = "Kernel"
                     plot_def["palette"] = global_palette
+
+                    # As hue is non-numerical, barplot won't work
+                    if plot_def["shape"] == "barplot":
+                        plot_def["shape"] = "lineplot"
+
+                    # Ensure that the type will do what we need
+                    if not "type" in plot_def or plot_def["type"] == "normal":
+                        plot_def["type"] = "mean"
+
                     plot = PlotConfig(**plot_def)
                     plot.title = f"{host}: {title} ({etype_name})"
 
