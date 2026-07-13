@@ -39,7 +39,7 @@ set at least includes a result directory plus sibling `.csv`, `.json`, and
 benchmark output contracts.
 
 Preserve run dimensions in every conclusion. Evidence from one
-`execution_type`, `container_cnt`, `nb_threads`, `noise`, `initial_size`, host,
+`execution_type`, `container_cnt`, `nb_threads`, host,
 kernel, or run is not evidence for another unless explicitly aggregated and
 stated.
 
@@ -84,7 +84,7 @@ For each benchmark/run:
    tree containing monitor CSVs. Record dependency or input failures directly.
 
 5. Find degradation points.
-   Compute performance by comparing each independent dimension group against 
+   Compute performance by comparing each independent dimension group against
    execution-unit count. Identify the peak or plateau and the first material
    drop. State the threshold used; a useful default is at least 10% below peak
    or sustained negative marginal scaling.
@@ -116,7 +116,7 @@ For each benchmark/run:
    it clearly changes the measured path in a matching way.
 
 10. Classify bottleneck.
-    Use evidence to suggest prime source of main performance bottleneck. 
+    Use evidence to suggest prime source of main performance bottleneck.
     A classification might be lock contention or CPU/IO bound.
 
 11. Write reports.

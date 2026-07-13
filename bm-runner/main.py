@@ -26,7 +26,6 @@ def csbCampaign(
     nb_runs: int = 3,
     benchmark_duration_seconds: int = 5,
     nb_threads: Iterable[int] = (1,),
-    noise: Iterable[int] = (0,),
     execution_type: Iterable[ExecutionType] = (ExecutionType.CONTAINER,),
     container_cnt: Iterable[int] = (1,),
     debug: bool = False,
@@ -40,7 +39,6 @@ def csbCampaign(
         "execution_type": execution_type,
         "container_cnt": container_cnt,
         "nb_threads": nb_threads,
-        "noise": noise,
     }
 
     pretty_dict = None
@@ -143,7 +141,6 @@ if __name__ == "__main__":
         container_cnt=container_cfg.get_container_cnt_list(),
         nb_threads=threads,
         execution_type=list(benchmark_config.exec_env.keys()),
-        noise=benchmark_config.noise,
         nb_runs=benchmark_config.repeat,
         continuing=arg_continue,
         enable_data_dir=True,

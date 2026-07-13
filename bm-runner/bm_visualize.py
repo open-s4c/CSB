@@ -282,12 +282,10 @@ def dump_graphs_to_doc(dir, report: Report, split=1):
 ###########################################################################
 def split_data_frame(df: DataFrame) -> dict:
     frames = {}
-    noises = df["noise"].unique()
     threads = df["nb_threads"].unique()
-    for n in noises:
-        for t in threads:
-            key = f"n={n}-t={t}"
-            frames[key] = df[(df["nb_threads"] == t) & (df["noise"] == n)]
+    for t in threads:
+        key = f"t={t}"
+        frames[key] = df[df["nb_threads"] == t]
     return frames
 
 

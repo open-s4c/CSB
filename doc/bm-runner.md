@@ -73,7 +73,7 @@ execution_unit=<name>;app=<app>;
 ```
 
 Result data is expected to include the campaign dimensions `nb_threads`,
-`noise`, `initial_size`, `container_cnt`, and `execution_type`.
+`container_cnt`, and `execution_type`.
 
 Plugins can run at `pre`, `post`, `cleanup`, or `with`. During cleanup, preserve
 the established ordering between execution units, monitors, plugins, and the

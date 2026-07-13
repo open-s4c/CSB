@@ -52,7 +52,6 @@ def get_command(
         plugins_cmds=plugins,
         threads=1,
         duration=1,
-        noise=0,
         port=0,
         index=index,
         n_units=2,

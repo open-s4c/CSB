@@ -70,7 +70,6 @@ class ScalabilityBenchmark(Benchmark):
         benchmark_duration_seconds: int,
         nb_threads: int,
         execution_type: ExecutionType,
-        noise: int,
         container_cnt: int,
         cpu_order: Optional[str] = None,
         master_thread_core: Optional[int] = None,
@@ -113,7 +112,6 @@ class ScalabilityBenchmark(Benchmark):
         executer.exec_all(
             threads=nb_threads,
             duration=benchmark_duration_seconds,
-            noise=noise,
             port_start=port_start,
         )
         output = executer.collect_results()
@@ -157,7 +155,6 @@ class ScalabilityBenchmark(Benchmark):
         return [
             "benchmark_duration_seconds",
             "nb_threads",
-            "noise",
             "cpu_order",
             "master_thread_core",
             "container_cnt",

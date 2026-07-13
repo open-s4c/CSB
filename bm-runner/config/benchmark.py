@@ -63,7 +63,6 @@ class BenchmarkConfig(dict):
         self,
         duration: int = 3,
         repeat: int = 1,
-        noise: list[int] = [0],
         exec_env: dict[ExecutionType, list[str]] = {
             ExecutionType.NATIVE: [],
             ExecutionType.CONTAINER: [],
@@ -83,10 +82,6 @@ class BenchmarkConfig(dict):
         repeat: int
             Number of times the benchmark should be repeated.
             JSON example: `"repeat": 1`
-        noise: list[int]
-            How many `nop` operations to run between real
-            operations.
-            JSON example: `"noise" : [0, 1000]`
         exec_env: dict[ExecutionType, list[str]] = {"native":[], "container":[]}
             Dictates in which environments the benchmark is executed, and which
             extra arguments are used. Note that currently the arguments are
@@ -101,7 +96,6 @@ class BenchmarkConfig(dict):
         """
         self.duration = duration
         self.repeat = repeat
-        self.noise = noise
         self.exec_env = exec_env
         self.monitors = monitors
         self.threads = (

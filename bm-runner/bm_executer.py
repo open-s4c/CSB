@@ -123,7 +123,7 @@ class Executer:
         for monitor in self.monitors:
             monitor.stop()
 
-    def exec_all(self, threads, duration, noise, port_start: Optional[int]):
+    def exec_all(self, threads, duration, port_start: Optional[int]):
         try:
             for idx, eu in enumerate(self.exec_units):
                 if port_start is not None:
@@ -141,7 +141,6 @@ class Executer:
                         plugins_cmds=self.__wrap_plugins(),
                         threads=threads,
                         duration=duration,
-                        noise=noise,
                         port=port,
                         index=idx,
                         work_dir=self.home_dir,

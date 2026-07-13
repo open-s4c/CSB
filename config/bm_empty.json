@@ -33,9 +33,6 @@
     }
   ],
   "benchmark_config": {
-    "noise": [
-      10
-    ],
     "threads": {
       "values": [
         [

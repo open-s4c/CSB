@@ -77,7 +77,7 @@ Expected complete result siblings:
 
 Per-run monitor files usually live below:
 
-`nb_threads-*/noise-*/initial_size-*/container_cnt-*/execution_type-*/run-*/`
+`execution_type-*/container_cnt-*/nb_threads-*/run-*`
 
 For post-run performance analysis, use `csb-analysis`.
 

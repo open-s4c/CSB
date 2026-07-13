@@ -47,11 +47,11 @@ class Application(dict):
             The sum of all values in the list must be equal to 1024.
             Each index represents a specific operation as defined by the benchmark/application.
             This is only relevant for builtin benchmarks.
-        args: Optional[str] = -t={threads} -n={noise} -d={duration} -s={port}
+        args: Optional[str] = -t={threads} -n=0 -d={duration} -s={port}
             A string that represents the command line arguments of the application.
             It can contain place holders for dynamic values. Available place holders:
-            are `{threads}`, `{noise}`, `{duration}`, `{index}`, `{port}` and `{host_ip}`.
-            They are replaced at runtime with the actual values: number of threads, number of nop instructions following an operation,
+            are `{threads}`, `{duration}`, `{index}`, `{port}` and `{host_ip}`.
+            They are replaced at runtime with the actual values: number of threads,
             duration of the benchmark in seconds, the index of the execution unit in the current benchmarking run, network port, and the host IP where CSB is running respectively.
             If any of the above is relevant for the external application they can be used in the args
             string. Otherwise they can be omitted.
@@ -75,7 +75,7 @@ class Application(dict):
         self.operations = operations
         self.cd = cd
         # Set default framework arguments
-        self.args = "-t={threads} -n={noise} -d={duration} -s={port}" if args is None else args
+        self.args = "-t={threads} -n=0 -d={duration} -s={port}" if args is None else args
         self.adapter = Adapter(**adapter) if adapter is not None else None
         if len(self.operations) > 0 and sum(self.operations) != self.DISTRIBUTION_SUM:
             bm_log(
@@ -107,7 +107,6 @@ class Application(dict):
         plugins_cmds: str,
         threads: int,
         duration: int,
-        noise: int,
         port: int,
         index: int,
         work_dir: Path,
@@ -133,7 +132,6 @@ class Application(dict):
         cmd = cmd.format(
             threads=threads,
             duration=duration,
-            noise=noise,
             port=port,
             index=index,
             n_units=n_units,
