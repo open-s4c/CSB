@@ -8,6 +8,9 @@ It consists of the following components:
 - [bm-generator][] extends [syzkaller] and uses [tmplr][] to generate system calls based benchmarks
 - [bench][] a set of manual and auto-generated C benchmarks
 
+
+![image](doc/res/csb-overview.png)
+
 ## Getting started
 
 A good place to start is to try to run a dummy benchmark. Read [bm-runner][]
