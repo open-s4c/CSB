@@ -52,7 +52,7 @@ class Application(dict):
             It can contain place holders for dynamic values. Available place holders:
             are `{threads}`, `{noise}`, `{duration}`, `{index}`, `{port}` and `{host_ip}`.
             They are replaced at runtime with the actual values: number of threads, number of nop instructions following an operation,
-            duration of the benchmark in seconds, the index of the execution unit in the current benchmarking run, initial size of the data structure, and the host IP where CSB is running respectively.
+            duration of the benchmark in seconds, the index of the execution unit in the current benchmarking run, network port, and the host IP where CSB is running respectively.
             If any of the above is relevant for the external application they can be used in the args
             string. Otherwise they can be omitted.
         adapter: Optional[Adapter] = {}
