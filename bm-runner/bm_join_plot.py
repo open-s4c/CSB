@@ -362,7 +362,7 @@ def main() -> None:
                     plot_def["hue_lbl"] = "Kernel"
                     plot_def["palette"] = global_palette
 
-                    # As hue is non-numerical, barplot won't work
+                    # As we're using kernel as hue, lineplot works better
                     if plot_def["shape"] == "barplot":
                         plot_def["shape"] = "lineplot"
 
