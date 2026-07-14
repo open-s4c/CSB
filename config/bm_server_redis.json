@@ -70,15 +70,6 @@
     {
       "x": "container_cnt",
       "x_lbl": "#Containers",
-      "y": "op0_read_write",
-      "y_lbl": "Operation Histogram",
-      "hue": "execution_unit",
-      "hue_lbl": "Executer",
-      "type": "histogram"
-    },
-    {
-      "x": "container_cnt",
-      "x_lbl": "#Containers",
       "y": "branch-misses",
       "y_lbl": "Branch Misses",
       "hue": "execution_unit",
