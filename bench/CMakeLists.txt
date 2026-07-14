@@ -38,7 +38,7 @@ set(BM_PARAM_bm_server_redis
     "-t=1"
     "-n=0" # noise
     "-d=1" # duration
-    "-p=${DEFAULT_PORT}" # used as port
+    "-p=${DEFAULT_PORT}" # port
     "-op0=500" # op0 freq in /1024
     "-op1=524" # op1 freq in /1024
 )
