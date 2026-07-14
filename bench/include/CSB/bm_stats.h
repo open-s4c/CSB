@@ -10,7 +10,6 @@
 #include "bm_target.h"
 #include "math.h"
 
-#define STAT_MAX_NUM_BUCKETS         60
 #define STAT_INC_FACTOR              1.1
 #define STAT_OP_NAME_op_name_MAX_LEN 20
 #define CACHELINE_SIZE               128U
@@ -26,7 +25,6 @@ typedef struct bm_op_stat_s {
     uint64_t sum;
     uint64_t min;
     uint64_t max;
-    uint64_t histogram_data[STAT_MAX_NUM_BUCKETS];
 } bm_op_stat_t;
 
 typedef struct bm_thread_stat_s {
@@ -43,8 +41,6 @@ typedef struct bm_stat_s {
     uint64_t max_duration_clk;
     uint64_t min_duration_ms;
     uint64_t max_duration_ms;
-
-    uint64_t op_time_ranges[STAT_MAX_NUM_BUCKETS];
 } bm_stat_t;
 
 #define BM_PRINT_OP_STAT(_op_name_, _idx_, _fmt_, _stat_, _deli_)              \
@@ -64,9 +60,6 @@ typedef struct bm_stat_s {
 static inline void
 bm_stat_init(bm_stat_t *stats, size_t num_threads, size_t num_ops)
 {
-    uint64_t min     = 0;
-    uint64_t max     = 99;
-    uint64_t old_max = 0;
     assert(stats);
     stats->threads = aligned_alloc(
         CACHELINE_SIZE, ALIGNMENT_SIZE(num_threads * sizeof(bm_thread_stat_t)));
@@ -83,13 +76,6 @@ bm_stat_init(bm_stat_t *stats, size_t num_threads, size_t num_ops)
         for (size_t op = 0; op < num_ops; op++) {
             stats->threads[i].ops[op].min = UINT64_MAX;
         }
-    }
-    for (size_t i = 0; i < STAT_MAX_NUM_BUCKETS; i++) {
-        // printf("%zu [%zu:%zu]\n", i, min, max);
-        stats->op_time_ranges[i] = max;
-        old_max                  = max;
-        max                      = max + (max - min + 1) * STAT_INC_FACTOR;
-        min                      = old_max + 1;
     }
 }
 
@@ -108,7 +94,6 @@ bm_stat_add_op(bm_stat_t *stats, size_t tid, size_t op, bm_op_res_t result,
                uint64_t duration, bool skipped)
 {
     bm_op_stat_t *op_stat = NULL;
-    size_t idx            = 0;
     assert(stats);
     assert(tid < stats->len);
     assert(op < stats->threads[tid].len);
@@ -123,15 +108,6 @@ bm_stat_add_op(bm_stat_t *stats, size_t tid, size_t op, bm_op_res_t result,
 
         op_stat->max = VMAX(op_stat->max, duration);
         op_stat->min = VMIN(op_stat->min, duration);
-
-        for (idx = 0; idx < STAT_MAX_NUM_BUCKETS; idx++) {
-            if (duration <= stats->op_time_ranges[idx]) {
-                break;
-            }
-        }
-        if (idx == STAT_MAX_NUM_BUCKETS)
-            idx--;
-        op_stat->histogram_data[idx]++;
     }
 }
 
@@ -159,8 +135,7 @@ bm_print_stats(bm_stat_t *stats, char delimiter, const size_t op_len)
     uint64_t succ_count[op_len]; /* count of successful (returned true)
                                      operations of a certain type */
     uint64_t skipped_count[op_len];
-    uint64_t histogram_data[op_len]
-                           [STAT_MAX_NUM_BUCKETS]; /* merge threads data */
+
     double avg[op_len];          /* average operation time of certain type */
     double succ_percent[op_len]; /* success percent of operations */
 
@@ -185,8 +160,6 @@ bm_print_stats(bm_stat_t *stats, char delimiter, const size_t op_len)
         succ_percent[op]  = 0;
         succ_count[op]    = 0;
         skipped_count[op] = 0;
-        for (size_t i = 0; i < STAT_MAX_NUM_BUCKETS; i++)
-            histogram_data[op][i] = 0;
     }
 
     /* collect stats from all threads */
@@ -201,10 +174,6 @@ bm_print_stats(bm_stat_t *stats, char delimiter, const size_t op_len)
             count[op] += thrd_stat->ops[op].count;
             succ_count[op] += thrd_stat->ops[op].succ_count;
             skipped_count[op] += thrd_stat->ops[op].skipped_count;
-
-            for (size_t j = 0; j < STAT_MAX_NUM_BUCKETS; j++) {
-                histogram_data[op][j] += thrd_stat->ops[op].histogram_data[j];
-            }
         }
     }
 
@@ -245,15 +214,6 @@ bm_print_stats(bm_stat_t *stats, char delimiter, const size_t op_len)
         BM_PRINT_OP_STAT(op_name, op, "%lu", skipped_count, delimiter);
         BM_PRINT_OP_STAT(op_name, op, "%.2f", avg, delimiter);
         BM_PRINT_OP_STAT(op_name, op, "%.2f", succ_percent, delimiter);
-
-        printf("%s_histogram=", op_name);
-        for (size_t j = 0; j < STAT_MAX_NUM_BUCKETS; j++) {
-            if (j + 1 < STAT_MAX_NUM_BUCKETS)
-                printf("%lu,", histogram_data[op][j]);
-            else
-                printf("%lu", histogram_data[op][j]);
-        }
-        printf("%c", delimiter);
     }
 
     /* calculate universal average */

@@ -90,14 +90,13 @@ run(void *args)
         op_start_time      = read_time_stamp_counter();
         bm_op_res_t result = bm_dispatch_operation(&ctx, op);
         op_end_time        = read_time_stamp_counter();
-        // pthread_setschedprio(pthread_self(), 0);
+
         op_time = op_end_time - op_start_time;
 
         // skip this stat if the thread was preempted mid operation
         skip = false;
         bm_stat_add_op(&g_stats, tid, op, result, op_time, skip);
 
-        // TODO: add to the params if noise should be random
         bm_generate_noise(g_params.max_noise, false);
         i++;
     }
