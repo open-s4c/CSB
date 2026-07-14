@@ -188,15 +188,27 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
 
 
 ###########################################################################
-def dump_graphs_to_doc(dir, report: Report, split=1):
+def container_folder(p: Path):
+    for parent in p.parents:
+        if "container_cnt" in parent.name:
+            return parent.name
+    return ""  # fallback if not found
+
+def plot_sort_key(path):
+    p = Path(path)
+    return (p.stem, container_folder(p))
+
+
+def dump_graphs_to_doc(dir, report: Report, split=4):
     # find all generated plots and embed them into the HTML document
     dir = os.path.realpath(dir)
     png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
     svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
-    plots = png + svg
-    plots.sort()
+    plots = png
+    plots.sort(key=plot_sort_key)
     plots = [plots[i : i + split] for i in range(0, len(plots), split)]
     report.embed_plots(plots)
+    report.embed_plots([svg])
 
 
 ###########################################################################
