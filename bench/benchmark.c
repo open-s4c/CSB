@@ -90,7 +90,6 @@ run(void *args)
         op_start_time      = read_time_stamp_counter();
         bm_op_res_t result = bm_dispatch_operation(&ctx, op);
         op_end_time        = read_time_stamp_counter();
-
         op_time = op_end_time - op_start_time;
 
         // skip this stat if the thread was preempted mid operation

@@ -10,7 +10,6 @@
 #include "bm_target.h"
 #include "math.h"
 
-#define STAT_INC_FACTOR              1.1
 #define STAT_OP_NAME_op_name_MAX_LEN 20
 #define CACHELINE_SIZE               128U
 #define ALIGNMENT_SIZE(x)                                                      \
@@ -135,7 +134,6 @@ bm_print_stats(bm_stat_t *stats, char delimiter, const size_t op_len)
     uint64_t succ_count[op_len]; /* count of successful (returned true)
                                      operations of a certain type */
     uint64_t skipped_count[op_len];
-
     double avg[op_len];          /* average operation time of certain type */
     double succ_percent[op_len]; /* success percent of operations */
 
