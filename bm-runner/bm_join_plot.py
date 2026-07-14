@@ -367,7 +367,7 @@ def main() -> None:
                         plot_def["shape"] = "lineplot"
 
                     # Ensure that the type will do what we need
-                    if not "type" in plot_def or plot_def["type"] == "normal":
+                    if "type" not in plot_def or plot_def["type"] == "normal":
                         plot_def["type"] = "mean"
 
                     plot = PlotConfig(**plot_def)
