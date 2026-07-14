@@ -127,7 +127,6 @@ Supported types of plots.  <br/>Supported values:
 - `"normal"`:  Plots according to the config no post processing of data.
 - `"mean"`:  Plots the mean value of execution units' throughput (`y` value specified in plot config) per run.
 - `"min_max_avg"`:  Plots min, max optionally with percentile or average time of operations.
-- `"histogram"`:  Experimental, Plots the distribution of operations.
 - `"success_percent"`:  Experimental, Plots the percentage of successful operations.
 - `"linearity"`:  Calculates and plots the linearity of the benchmark results.
 - `"bpftrace_hist"`:  Exclusive graph for `bpftrace` monitor. To be used with programs that generate histogram data. Use the program name without `.bt` suffix in the plot `y` field. The plot will represent the summary of the collected data over all runs.

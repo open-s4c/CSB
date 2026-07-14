@@ -17,7 +17,6 @@ class PlotType(str, Enum):
     NORMAL: Plots according to the config no post processing of data.
     MEAN: Plots the mean value of execution units' throughput (`y` value specified in plot config) per run.
     MIN_MAX_AVG: Plots min, max optionally with percentile or average time of operations.
-    HISTOGRAM: Experimental, Plots the distribution of operations.
     SUCCESS_PERCENT: Experimental, Plots the percentage of successful operations.
     LINEARITY: Calculates and plots the linearity of the benchmark results.
     BPFTRACE_HIST: Exclusive graph for `bpftrace` monitor. To be used with programs that generate histogram data. Use the program name without `.bt` suffix in the plot `y` field. The plot will represent the summary of the collected data over all runs.
@@ -26,7 +25,6 @@ class PlotType(str, Enum):
     NORMAL = "normal"
     MEAN = "mean"
     MIN_MAX_AVG = "min_max_avg"
-    HISTOGRAM = "histogram"
     SUCCESS_PERCENT = "success_percent"
     LINEARITY = "linearity"
     BPFTRACE_HIST = "bpftrace_hist"
@@ -42,7 +40,6 @@ class PlotConfig(dict):
         PlotType.NORMAL: "lineplot",
         PlotType.MEAN: "lineplot",
         PlotType.MIN_MAX_AVG: "barplot",
-        PlotType.HISTOGRAM: "boxenplot",
         PlotType.BPFTRACE_HIST: "barplot",
         PlotType.SUCCESS_PERCENT: "barplot",
         PlotType.LINEARITY: "lineplot",

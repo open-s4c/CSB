@@ -6,7 +6,6 @@ import glob
 import pandas as pd
 from pandas import DataFrame
 import statistics
-import math
 from benchkit.utils.dir import parentdir
 from config.plot import PlotConfig
 from config.plot import PlotType
@@ -17,18 +16,10 @@ from monitors.bpftrace import BpfTrace
 from visual.report import Report
 from bm_utils import read_data_frame_from_csv
 
-# TODO: refactor histogram building not to use global vars
-# TODO: document functions
-
-
-###########################################################################
-def get_common_fields(df: DataFrame) -> list[str]:
-    return [col for col in df.columns if df[col].nunique() == 1]
-
 
 ###########################################################################
 def add_info_tbl(df, report: Report, result_file: str):
-    info_points = get_common_fields(df)
+    info_points = [col for col in df.columns if df[col].nunique() == 1]
     data = {}
     data["Results file name:"] = result_file
     for info in info_points:
@@ -163,75 +154,6 @@ def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
     return pc.save(out_fig_name=f"{dir}/{config.y}_min_avg_max")
 
 
-###########################################################
-# TODO: do we need to pass it as a param?
-bucket_avg = []
-
-
-def gen_row(smr, threads, i):
-    # todo find real value instead of i+1
-    return [smr, threads, bucket_avg[i]]
-
-
-def log_scale(cnt):
-    if cnt == 0:
-        return 0
-    else:
-        return int(math.log2(cnt) + 1)
-
-
-def gen_rows_from_histogram(smr, threads, histogram):
-    # split the column value into an array
-    # map bucket i to the number of elements of the bucket
-    buckets = histogram.split(",")
-    return [
-        # add the row log_scale(int(count)] times
-        # to not use log_scale just use count directly
-        [gen_row(smr, threads, i)] * log_scale(int(count))
-        for i, count in enumerate(buckets)
-    ]
-
-
-def implicit_add_columns(trans_df, subdf, histo, x_col, gp_name):
-    res_l = list(
-        map(
-            gen_rows_from_histogram,
-            subdf[gp_name],
-            subdf[x_col],
-            subdf[histo],
-        )
-    )
-    res = [item for sublist in res_l for sublist_2 in sublist for item in sublist_2]
-    o_df = pd.DataFrame(res)
-    trans_df[[gp_name, x_col, "latency"]] = o_df[[0, 1, 2]]
-
-
-###########################################################
-def create_histogram_plot(df, plot: PlotConfig, dir) -> str:
-    col_prefix = plot.y
-    histo = f"{col_prefix}_histogram"
-    subdf = df[[plot.x, plot.hue, histo]].copy()
-
-    ############################################################
-    cols = range(1, 61)  # TODO: align with C
-    bucket_min = 0
-    bucket_max = 99
-    for i in cols:
-        bucket_avg.append((bucket_max + bucket_min) / 2)
-        bucket_max, bucket_min = (
-            bucket_max + int((bucket_max - bucket_min + 1) * 1.1),
-            bucket_max + 1,
-        )
-
-    ############################################################
-    # Transformation
-    trans_df = pd.DataFrame()
-    implicit_add_columns(trans_df, subdf, histo, plot.x, plot.hue)
-    ############################################################
-    plot.y = "latency"  # TODO configure
-    return PlotChart.plot(plot=plot, df=trans_df, out_fig_name=f"{dir}/{histo}_boxplot")
-
-
 ###########################################################################
 def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
     match plot.type:
@@ -242,8 +164,6 @@ def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
             return create_min_max_avg_plot(org_df=df, config=plot, dir=dir)
         case PlotType.SUCCESS_PERCENT:
             return create_success_rate_plot(org_df=df, config=plot, dir=dir)
-        case PlotType.HISTOGRAM:
-            return create_histogram_plot(df=df, plot=plot, dir=dir)
         case PlotType.LINEARITY:
             return create_linearity_plot(df=df, plot=plot, dir=dir)
         case PlotType.MEAN:
