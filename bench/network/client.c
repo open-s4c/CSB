@@ -179,7 +179,7 @@ int
 main(int argc, char *argv[])
 {
     size_t num_conn = 1;
-    size_t port     = 10000;
+    uint16_t port   = 10000;
     char *host      = NULL;
     char *program   = NULL;
     char *prog_file = NULL;

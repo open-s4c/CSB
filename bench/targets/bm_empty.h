@@ -43,9 +43,9 @@ bm_target_get_op_name(char *out_str, const size_t len, size_t op_id)
 }
 
 static inline void
-bm_target_init(size_t init_size, size_t num_threads)
+bm_target_init(uint16_t port, size_t num_threads)
 {
-    V_UNUSED(init_size, num_threads);
+    V_UNUSED(num_threads);
 }
 
 static inline void

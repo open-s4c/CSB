@@ -118,20 +118,17 @@ bm_target_get_op_name(char *out_str, const size_t len, size_t op_id)
 }
 
 static inline void
-bm_target_init(size_t init_size, size_t num_threads)
+bm_target_init(uint16_t port, size_t num_threads)
 {
     op_name_tbl[0] = "min_mysql_lseek_fallocate_98_0";
-    assert(init_size <= UINT16_MAX);
-    if (init_size > UINT16_MAX) {
-        init_size = UINT16_MAX;
-    }
-    g_conn_port = (uint16_t)init_size;
-    g_bind_port = (uint16_t)init_size;
+
+    g_conn_port = port;
+    g_bind_port = port;
     parse_net_addr("BM_SYS_CONNECT_ADDR", "BM_SYS_CONNECT_PORT",
                    &bm_connect_addr, &bm_connect_addr_inited, g_conn_port);
     parse_net_addr("BM_SYS_BIND_ADDR", "BM_SYS_BIND_PORT", &bm_bind_addr,
                    &bm_bind_addr_inited, g_bind_port);
-    V_UNUSED(init_size, num_threads);
+    V_UNUSED(num_threads);
 }
 
 static inline void

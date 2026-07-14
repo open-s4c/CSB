@@ -30,7 +30,7 @@ set(BM_PARAM
     "-t=${UNITS}"
     "-n=0" # noise
     "-d=2" # duration
-    "-s=${DEFAULT_PORT}" # initial size
+    "-p=${DEFAULT_PORT}" # port
     "-op0=1024" # op0 freq in /1024
 )
 
@@ -38,7 +38,7 @@ set(BM_PARAM_bm_server_redis
     "-t=1"
     "-n=0" # noise
     "-d=1" # duration
-    "-s=${DEFAULT_PORT}" # used as port
+    "-p=${DEFAULT_PORT}" # used as port
     "-op0=500" # op0 freq in /1024
     "-op1=524" # op1 freq in /1024
 )
@@ -47,7 +47,7 @@ set(BM_PARAM_bm_empty
     "-t=12"
     "-n=0" # noise
     "-d=1" # duration
-    "-s=0" # initial size
+    "-p=0" # port
     "-op0=1024" # op0 freq in /1024
 )
 

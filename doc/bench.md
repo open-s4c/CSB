@@ -36,7 +36,7 @@ The builtin benchmarks accept the following command line arguments:
 - `-t=T`: where `T` is the number of threads created with `pthread_create`.
 - `-n=N`: where `N` is the number of `nop` operations to run between real operations. This is helpful when less contention is desired.
 - `-d=D`: where `D` is the duration of benchmark in seconds.
-- `-s=S`: where `S` is an integer passed to the initialization function. Often `S` will be used as the initial size of (e.g. a data structure).
+- `-p=P`: where `P` is an integer passed to the initialization function. `P` will be used as the port of client/server in networking benchmarks.
 - `-op0=F`: where `F` specifies how often the operation with index `0` should be called in every `1024` operations.
     Note that when there is only one operation this should equal to `1024`. If there is more than one operation, then the sum of all frequencies
     should equal to `1024`. For example, say the benchmark has two operations, then one can pass `-op0=500 -op1=524` or `-op0=512 -op1=512` for
@@ -45,7 +45,7 @@ The builtin benchmarks accept the following command line arguments:
 Here is how ctest will run `bm_empty`:
 
 ```bash
-build/bm_empty "-t=12" "-n=0" "-d=1" "-s=0" "-op0=1024"
+build/bm_empty "-t=12" "-n=0" "-d=1" "-p=0" "-op0=1024"
 ```
 
 ## Adding a new builtin benchmark

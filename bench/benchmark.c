@@ -115,7 +115,7 @@ bm_phase_warmup(void)
     // start from a fixed thread
     random_init_seed(0);
     bm_stat_init(&g_stats, g_params.num_threads, bm_target_op_count());
-    bm_target_init(g_params.init_sz, g_params.num_threads);
+    bm_target_init(g_params.port, g_params.num_threads);
 
     size_t total = 0;
     for (size_t i = 0; i < g_params.op_dist_len; i++) {

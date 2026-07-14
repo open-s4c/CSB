@@ -116,7 +116,7 @@ usage(const char *argv0)
 int
 main(int argc, char *argv[])
 {
-    size_t port     = 10000;
+    uint16_t port   = 10000;
     char *program   = NULL;
     bool use_ipv6   = false;
     int opt         = 0;

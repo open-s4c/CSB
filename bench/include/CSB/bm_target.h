@@ -23,7 +23,7 @@ static inline size_t bm_target_op_count(void);
 static inline void bm_target_get_op_name(char *out_str, const size_t len,
                                          size_t op_id);
 
-static inline void bm_target_init(size_t init_size, size_t num_threads);
+static inline void bm_target_init(uint16_t port, size_t num_threads);
 
 static inline void bm_target_reg(thread_ctx_t *ctx, size_t tid);
 

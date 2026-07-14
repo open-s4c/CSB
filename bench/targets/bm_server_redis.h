@@ -80,7 +80,7 @@ make_socket_nonblocking(int fd)
     return r;
 }
 static inline void
-bm_target_init(size_t port, size_t num_threads)
+bm_target_init(uint16_t port, size_t num_threads)
 {
     /* domain specifies a communication domain */
     int domain = AF_INET; //  IPv4 Internet protocols

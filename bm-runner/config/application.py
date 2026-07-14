@@ -47,7 +47,7 @@ class Application(dict):
             The sum of all values in the list must be equal to 1024.
             Each index represents a specific operation as defined by the benchmark/application.
             This is only relevant for builtin benchmarks.
-        args: Optional[str] = -t={threads} -n=0 -d={duration} -s={port}
+        args: Optional[str] = -t={threads} -n=0 -d={duration} -p={port}
             A string that represents the command line arguments of the application.
             It can contain place holders for dynamic values. Available place holders:
             are `{threads}`, `{duration}`, `{index}`, `{port}` and `{host_ip}`.
@@ -75,7 +75,7 @@ class Application(dict):
         self.operations = operations
         self.cd = cd
         # Set default framework arguments
-        self.args = "-t={threads} -n=0 -d={duration} -s={port}" if args is None else args
+        self.args = "-t={threads} -n=0 -d={duration} -p={port}" if args is None else args
         self.adapter = Adapter(**adapter) if adapter is not None else None
         if len(self.operations) > 0 and sum(self.operations) != self.DISTRIBUTION_SUM:
             bm_log(

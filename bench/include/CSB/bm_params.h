@@ -19,14 +19,14 @@
 #define PARAM_NTHREADS  "-t=([0-9]+)"
 #define PARAM_MAX_NOISE "-n=([0-9]+)"
 #define PARAM_DURATION  "-d=([0-9]+)"
-#define PARAM_INIT_SIZE "-s=([0-9]+)"
+#define PARAM_PORT      "-p=([0-9]+)"
 #define PARAM_OP_DIST   "-op([0-9]+)=([0-9]+)"
 
 #define PARAM_FIXED_LEN 5
 
 typedef struct bm_params_s {
     uint32_t num_threads;
-    uint32_t init_sz;
+    uint32_t port;
     uint32_t max_noise;
     uint32_t duration;
     uint32_t *op_dist;
@@ -105,7 +105,7 @@ _bm_params_match_field(bm_params_t *out_params, char *param)
     if (_bm_param_check_match(param, PARAM_DURATION, &out_params->duration))
         return true;
 
-    if (_bm_param_check_match(param, PARAM_INIT_SIZE, &out_params->init_sz))
+    if (_bm_param_check_match(param, PARAM_PORT, &out_params->port))
         return true;
 
     if (_bm_param_check_match_op(param, PARAM_OP_DIST, out_params->op_dist,
@@ -119,7 +119,7 @@ static inline void
 bm_print_params(bm_params_t *out_params, char delimiter)
 {
     printf("num_threads=%u%c", out_params->num_threads, delimiter);
-    printf("init_sz=%u%c", out_params->init_sz, delimiter);
+    printf("port=%u%c", out_params->port, delimiter);
     printf("max_noise=%u%c", out_params->max_noise, delimiter);
     printf("duration=%u%c", out_params->duration, delimiter);
 
@@ -132,7 +132,7 @@ static inline void
 _bm_params_init(bm_params_t *out_params)
 {
     out_params->num_threads = PARAM_VAL_NONE;
-    out_params->init_sz     = PARAM_VAL_NONE;
+    out_params->port        = PARAM_VAL_NONE;
     out_params->max_noise   = PARAM_VAL_NONE;
     out_params->duration    = PARAM_VAL_NONE;
 
@@ -146,7 +146,7 @@ _bm_are_params_set(bm_params_t *out_params)
 {
     if (out_params->num_threads == PARAM_VAL_NONE)
         return false;
-    if (out_params->init_sz == PARAM_VAL_NONE)
+    if (out_params->port == PARAM_VAL_NONE)
         return false;
     if (out_params->max_noise == PARAM_VAL_NONE)
         return false;
