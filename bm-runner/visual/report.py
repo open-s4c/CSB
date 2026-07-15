@@ -82,6 +82,8 @@ class Report:
         plot_lists : list[list[str]]
             a list of lists. Each list is added to the table as a row, and each element is a cell.
         """
+        if len(plot_lists) == 0:
+            return
         tbl = table()
         num_cols = max(map(len, plot_lists))
         width = 100 / num_cols
