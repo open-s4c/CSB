@@ -187,22 +187,21 @@ def create_plots(df, plots: list[PlotConfig], dir, info: str):
             )
 
 
-###########################################################################
-def container_folder(p: Path):
-    for parent in p.parents:
-        if "container_cnt" in parent.name:
-            return parent.name
-    return "z"  # fallback if not found
-
-
 def plot_sort_key(path):
+    """
+    Sorts according to filename, and creation date.
+    """
     p = Path(path)
+    return (p.stem, p.stat().st_mtime)
 
-    return (p.stem, p.stat().st_mtime, container_folder(p))
 
-
-def split_plots(plots, split):
-    groups = []
+def split_in_lists(plots: list[str], split: int) -> list[list]:
+    """
+    Splits the given list into list of lists
+    the split happens when either a new file name is encountered,
+    or if the current length is greater than split.
+    """
+    lists = []
     current = []
     current_stem = None
 
@@ -210,28 +209,30 @@ def split_plots(plots, split):
         stem = Path(plot).stem
 
         if current and (stem != current_stem or len(current) >= split):
-            groups.append(current)
+            lists.append(current)
             current = []
 
         current.append(plot)
         current_stem = stem
 
     if current:
-        groups.append(current)
+        lists.append(current)
 
-    return groups
+    return lists
 
 
-def dump_plots_with_ext(dir:str, report: Report, ext:str="png", max_plots_per_row=1):
+def dump_plots_with_ext(dir: str, report: Report, ext: str = "png", max_plots_per_row=1):
     dir = os.path.realpath(dir)
     plots = glob.glob(os.path.join(dir, "**", f"*.{ext}"), recursive=True)
     plots.sort(key=plot_sort_key)
-    plots_table = split_plots(plots, max_plots_per_row)
+    plots_table = split_in_lists(plots, max_plots_per_row)
     report.embed_plots(plots_table)
+
 
 def dump_graphs_to_doc(dir, report: Report, split=4):
     dump_plots_with_ext(dir, report, ext="png", max_plots_per_row=2)
     dump_plots_with_ext(dir, report, ext="svg", max_plots_per_row=1)
+
 
 ###########################################################################
 def split_data_frame(df: DataFrame) -> dict:
