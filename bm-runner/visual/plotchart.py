@@ -8,6 +8,7 @@ import pandas as pd
 from pandas import DataFrame
 from utils.logger import LogType, bm_log
 import seaborn as sns
+from pathlib import Path
 
 
 class PlotChart:
@@ -94,13 +95,15 @@ class PlotChart:
         self.fig.set_size_inches(w=10, h=8)
         self.fig.tight_layout()
 
-        figure_name = f"{out_fig_name}"
-        self.fig.savefig(f"{figure_name}.png", transparent=False)
+        fig_name = f"{out_fig_name}.png"
+        if Path(fig_name).exists():
+            bm_log(f"{fig_name} already exists and is going to be overwritten!!!", LogType.WARNING)
+        self.fig.savefig(fig_name, transparent=False)
         if gen_pdf:
-            self.fig.savefig(f"{figure_name}.pdf", transparent=False)
+            self.fig.savefig(f"{out_fig_name}.pdf", transparent=False)
         plt.close()
 
-        return f"{figure_name}.png"
+        return fig_name
 
     @staticmethod
     def __col_exists(df: DataFrame, col: str, title: str) -> bool:
