@@ -194,6 +194,7 @@ def container_folder(p: Path):
             return parent.name
     return ""  # fallback if not found
 
+
 def plot_sort_key(path):
     p = Path(path)
     return (p.stem, container_folder(p))
