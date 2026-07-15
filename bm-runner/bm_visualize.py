@@ -192,27 +192,46 @@ def container_folder(p: Path):
     for parent in p.parents:
         if "container_cnt" in parent.name:
             return parent.name
-    return ""  # fallback if not found
+    return "z"  # fallback if not found
 
 
 def plot_sort_key(path):
     p = Path(path)
-    return (p.stem, container_folder(p))
 
+    return (p.stem, p.stat().st_mtime, container_folder(p))
+
+
+def split_plots(plots, split):
+    groups = []
+    current = []
+    current_stem = None
+
+    for plot in plots:
+        stem = Path(plot).stem
+
+        if current and (stem != current_stem or len(current) >= split):
+            groups.append(current)
+            current = []
+
+        current.append(plot)
+        current_stem = stem
+
+    if current:
+        groups.append(current)
+
+    return groups
+
+
+def dump_plots_with_ext(dir:str, report: Report, ext:str="png", max_plots_per_row=1):
+    dir = os.path.realpath(dir)
+    plots = glob.glob(os.path.join(dir, "**", f"*.{ext}"), recursive=True)
+    plots.sort(key=plot_sort_key)
+    plots_table = split_plots(plots, max_plots_per_row)
+    report.embed_plots(plots_table)
 
 def dump_graphs_to_doc(dir, report: Report, split=4):
-    # find all generated plots and embed them into the HTML document
-    dir = os.path.realpath(dir)
-    png = glob.glob(os.path.join(dir, "**", "*.png"), recursive=True)
-    svg = glob.glob(os.path.join(dir, "**", "*.svg"), recursive=True)
-    plots = png
-    plots.sort(key=plot_sort_key)
-    plots = [plots[i : i + split] for i in range(0, len(plots), split)]
-    report.embed_plots(plots)
-
-    svg =  [svg[i : i + 1] for i in range(0, len(svg), 1)]
-    report.embed_plots(svg)
-
+    dump_plots_with_ext(dir, report, ext="png", max_plots_per_row=2)
+    dump_plots_with_ext(dir, report, ext="svg", max_plots_per_row=1)
 
 ###########################################################################
 def split_data_frame(df: DataFrame) -> dict:

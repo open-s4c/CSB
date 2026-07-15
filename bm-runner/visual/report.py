@@ -7,6 +7,8 @@ import datetime
 import base64
 import re
 from benchkit.benchmark import PathType
+from pathlib import Path
+import os
 
 
 class Report:
@@ -101,7 +103,8 @@ class Report:
                 cell = div()
                 cell.add(a(img_div, href=plot_path))
                 if show_path:
-                   cell.add(a(plot_path, href=plot_path))
+                    relative_path = Path(plot_path).relative_to(Path(os.getcwd()).parent)
+                    cell.add(a(str(relative_path), href=str(relative_path)))
                 row.add(td(cell, width=f"{width}%"))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
