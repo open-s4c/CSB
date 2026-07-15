@@ -101,10 +101,10 @@ class Report:
                     else self.embed_img(plot_path)
                 )
                 cell = div()
-                url = get_path_rel_to_csb(plot_path)
-                cell.add(a(img_div, href=url))
+                cell.add(a(img_div, href=plot_path))
                 if show_path:
-                    cell.add(a(str(url), href=str(url)))
+                    relative_path = get_path_rel_to_csb(plot_path)
+                    cell.add(a(relative_path, href=str(plot_path)))
                 row.add(td(cell, width=f"{width}%"))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
