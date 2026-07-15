@@ -209,7 +209,9 @@ def dump_graphs_to_doc(dir, report: Report, split=4):
     plots.sort(key=plot_sort_key)
     plots = [plots[i : i + split] for i in range(0, len(plots), split)]
     report.embed_plots(plots)
-    report.embed_plots([svg])
+
+    svg =  [svg[i : i + 1] for i in range(0, len(svg), 1)]
+    report.embed_plots(svg)
 
 
 ###########################################################################

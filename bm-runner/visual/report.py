@@ -75,12 +75,19 @@ class Report:
         self.doc.add(tbl)
 
     def embed_plots(self, plot_lists: list[list[str]], show_path: bool = True):
+        """
+        Parameters
+        ---
+        plot_lists : list[list[str]]
+            a list of lists. Each list is added to the table as a row, and each element is a cell.
+        """
         tbl = table()
-        cols = len(plot_lists)
-        width = 100 / cols
+        num_cols = max(map(len, plot_lists))
+        width = 100 / num_cols
         for list in plot_lists:
             row = tr()
             tbl.add(row)
+            print(f"{len(list)} {width}")
             for plot_path in list:
                 if not plot_path:
                     row.add(td("", width=f"{width}%"))
@@ -94,7 +101,7 @@ class Report:
                 cell = div()
                 cell.add(a(img_div, href=plot_path))
                 if show_path:
-                    cell.add(a(plot_path, href=plot_path))
+                   cell.add(a(plot_path, href=plot_path))
                 row.add(td(cell, width=f"{width}%"))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
