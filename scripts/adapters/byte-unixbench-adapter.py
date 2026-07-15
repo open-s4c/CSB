@@ -69,7 +69,7 @@ def parse_sysbench(text):
 
     results = {}
 
-    re_key_value = re.compile(r"([\d\.]+)\s+(lpm|lps|KBps)")
+    re_key_value = re.compile(r"([\d\.]+)\s+(lpm|lps|KBps|MWIPS|score)")
 
     for ln in text.splitlines():
         for key, var in benchmark_map.items():
