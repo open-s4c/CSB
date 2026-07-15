@@ -8,7 +8,6 @@ import pandas as pd
 from pandas import DataFrame
 from utils.logger import LogType, bm_log
 import seaborn as sns
-import time
 
 
 class PlotChart:
@@ -95,7 +94,7 @@ class PlotChart:
         self.fig.set_size_inches(w=10, h=8)
         self.fig.tight_layout()
 
-        figure_name = f"{out_fig_name}_{time.perf_counter()}"
+        figure_name = f"{out_fig_name}"
         self.fig.savefig(f"{figure_name}.png", transparent=False)
         if gen_pdf:
             self.fig.savefig(f"{figure_name}.pdf", transparent=False)

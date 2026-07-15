@@ -15,7 +15,6 @@ from config.env_config import UniversalConfig, EnvUniversalConfig
 import math
 import seaborn as sns
 import matplotlib.pyplot as plt
-import time
 
 
 class BpfTrace(Monitor):
@@ -422,7 +421,7 @@ class BpfTrace(Monitor):
                 ylabel="Buckets",
             )
 
-        figure_name = f"{output_dir}/{plot.title}_{time.perf_counter()}"
+        figure_name = f"{output_dir}/{plot.title}"
         fig.tight_layout()
         fig.savefig(f"{figure_name}.png", dpi=300, bbox_inches="tight")
         plt.close(fig)

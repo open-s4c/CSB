@@ -229,7 +229,7 @@ def dump_plots_with_ext(dir: str, report: Report, ext: str = "png", max_plots_pe
     report.embed_plots(plots_table)
 
 
-def dump_graphs_to_doc(dir, report: Report, split=4):
+def dump_graphs_to_doc(dir, report: Report):
     dump_plots_with_ext(dir, report, ext="png", max_plots_per_row=2)
     dump_plots_with_ext(dir, report, ext="svg", max_plots_per_row=1)
 
