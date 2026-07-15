@@ -7,8 +7,7 @@ import datetime
 import base64
 import re
 from benchkit.benchmark import PathType
-from pathlib import Path
-import os
+from bm_utils import get_path_rel_to_csb
 
 
 class Report:
@@ -89,7 +88,6 @@ class Report:
         for list in plot_lists:
             row = tr()
             tbl.add(row)
-            print(f"{len(list)} {width}")
             for plot_path in list:
                 if not plot_path:
                     row.add(td("", width=f"{width}%"))
@@ -101,10 +99,10 @@ class Report:
                     else self.embed_img(plot_path)
                 )
                 cell = div()
-                cell.add(a(img_div, href=plot_path))
+                url = get_path_rel_to_csb(plot_path)
+                cell.add(a(img_div, href=url))
                 if show_path:
-                    relative_path = Path(plot_path).relative_to(Path(os.getcwd()).parent)
-                    cell.add(a(str(relative_path), href=str(relative_path)))
+                    cell.add(a(str(url), href=str(url)))
                 row.add(td(cell, width=f"{width}%"))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)

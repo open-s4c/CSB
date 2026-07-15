@@ -34,6 +34,14 @@ def resolve_path(path: PathType, use_in_container: bool = False) -> PathType:
     return new_path
 
 
+def get_path_rel_to_csb(path: str) -> str:
+    try:
+        rel = Path(path).relative_to(Path(os.getcwd()).parent)
+        return str(rel)
+    except Exception:
+        return path
+
+
 def check_data_directory(output_dir):
     if output_dir is None:
         bm_log(
