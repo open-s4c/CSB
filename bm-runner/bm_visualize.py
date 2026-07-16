@@ -15,6 +15,7 @@ from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
 from visual.report import Report
 from bm_utils import read_data_frame_from_csv
+import copy
 
 
 ###########################################################################
@@ -156,7 +157,8 @@ def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
 
 ###########################################################################
 def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
-    plot.fname = f"{plot.fname}_{info}"
+    plot = copy.deepcopy(plot)
+    plot.fname += f"_{info}"
     match plot.type:
         case PlotType.NORMAL:
             fig_name = f"{dir}/{plot.fname}"
