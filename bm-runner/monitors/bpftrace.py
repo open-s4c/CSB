@@ -421,7 +421,7 @@ class BpfTrace(Monitor):
                 ylabel="Buckets",
             )
 
-        figure_name = f"{output_dir}/{plot.title}"
+        figure_name = f"{output_dir}/{plot.fname}"
         fig.tight_layout()
         fig.savefig(f"{figure_name}.png", dpi=300, bbox_inches="tight")
         plt.close(fig)
