@@ -324,7 +324,8 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     if data_frame is None:
         return
     hostname = data_frame["hostname"].unique()[0]
-    report = Report(title=f"{hostname}-{title}")
+    output_file_name = os.path.join(parentdir(output_dir), f"{output_dir}.html")
+    report = Report(title=f"{hostname}-{title}", fname=output_file_name)
     # we split the data-frame into multiple data frames to help with visualization
     data_frames = split_data_frame(data_frame)
     # For each data frame we'll generate the related graphs
@@ -334,9 +335,7 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
         create_plots(df, plots, output_dir, info=key)
         # dump graphs to HTML document
         dump_graphs_to_doc(output_dir, report)
-
-    output_file_name = os.path.join(parentdir(output_dir), f"{output_dir}.html")
-    report.save(output_file_name)
+    report.save()
     bm_log(
         f"visualized results can be found in {output_file_name} with {title}",
         LogType.INFO,

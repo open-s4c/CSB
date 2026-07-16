@@ -7,7 +7,10 @@ import datetime
 import base64
 import re
 from benchkit.benchmark import PathType
-from bm_utils import get_path_rel_to_csb
+from typing import Optional
+from pathlib import Path
+from utils.logger import LogType, bm_log
+import sys
 
 
 class Report:
@@ -45,7 +48,13 @@ class Report:
 
     """
 
-    def __init__(self, title: str, add_title_date: bool = True, css_style=CSS_STYLE):
+    def __init__(
+        self,
+        title: str,
+        fname: Optional[PathType] = None,
+        add_title_date: bool = True,
+        css_style=CSS_STYLE,
+    ):
         self.doc = document(title=title)
         if add_title_date:
             self.doc.add(h1(f"Title: {title}"))
@@ -53,9 +62,22 @@ class Report:
                 h2(f"Datetime: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')}")
             )
         self.__add_css_style(css_style)
+        self.fname = fname
 
     def add_line(self, text):
         self.doc.add(br(text))
+
+    def __get_rel_path(self, path: PathType) -> PathType:
+        """
+        Returns relative path to the report's parent directory if possible,
+        otherwise returns the given path.
+        """
+        try:
+            if self.fname:
+                return Path(path).relative_to(Path(self.fname).parent)
+        except Exception:
+            pass
+        return path
 
     def add_chapter(self, name: str, level=1):
         match level:
@@ -101,10 +123,10 @@ class Report:
                     else self.embed_img(plot_path)
                 )
                 cell = div()
-                cell.add(a(img_div, href=plot_path))
+                relative_path = str(self.__get_rel_path(plot_path))
+                cell.add(a(img_div, href=relative_path))
                 if show_path:
-                    relative_path = get_path_rel_to_csb(plot_path)
-                    cell.add(a(relative_path, href=str(plot_path)))
+                    cell.add(a(relative_path, href=relative_path))
                 row.add(td(cell, width=f"{width}%"))
         # append the plots/graphs table to the given document
         self.doc.add(tbl)
@@ -112,8 +134,12 @@ class Report:
     def __add_css_style(self, css_style):
         self.doc.add(style(css_style))
 
-    def save(self, report_file_name: PathType):
-        with open(report_file_name, "w") as f:
+    def save(self, report_file_name: Optional[PathType] = None):
+        fname = self.fname if report_file_name is None else report_file_name
+        if fname is None:
+            bm_log("Cannot save report, filename is not set!", LogType.FATAL)
+            sys.exit(1)
+        with open(str(fname), "w") as f:
             f.write(self.doc.render())
 
     @staticmethod
