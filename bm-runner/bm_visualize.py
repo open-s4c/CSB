@@ -335,8 +335,9 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     for key, df in data_frames.items():
         add_info_tbl(df, report, result_file)
         create_plots(df, plots, output_dir, info=key)
-        # dump graphs to HTML document
-        dump_graphs_to_doc(output_dir, report)
+
+    # dump all plot to the HTML report
+    dump_graphs_to_doc(output_dir, report)
     report.save()
     bm_log(
         f"visualized results can be found in {output_file_name} with {title}",
