@@ -51,7 +51,7 @@ def create_success_rate_plot(org_df, config: PlotConfig, dir) -> str:
     )
     # overwrite
     config.y = succ_percent
-    return PlotChart.plot(plot=config, df=df, out_fig_name=f"{dir}/{prefix}_succ_percent")
+    return PlotChart.plot(plot=config, df=df, out_fig_name=f"{dir}/{prefix}{config.fname}")
 
 
 ###########################################################################
@@ -151,14 +151,15 @@ def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
         errorbar=min_max_errorbar,
     )
 
-    return pc.save(out_fig_name=f"{dir}/{config.y}_min_avg_max")
+    return pc.save(out_fig_name=f"{dir}/{config.fname}")
 
 
 ###########################################################################
 def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
+    plot.fname += f"_{info}"
     match plot.type:
         case PlotType.NORMAL:
-            fig_name = f"{dir}/{plot.x}_vs_{plot.y}_{info}"
+            fig_name = f"{dir}/{plot.fname}"
             return PlotChart.plot(plot=plot, df=df, out_fig_name=fig_name)
         case PlotType.MIN_MAX_AVG:
             return create_min_max_avg_plot(org_df=df, config=plot, dir=dir)
@@ -239,7 +240,7 @@ def split_data_frame(df: DataFrame) -> dict:
     frames = {}
     threads = df["nb_threads"].unique()
     for t in threads:
-        key = f"t={t}"
+        key = f"{t}_threads"
         frames[key] = df[df["nb_threads"] == t]
     return frames
 
@@ -248,7 +249,7 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
     return PlotChart.plot(
         plot=plot,
         df=df,
-        out_fig_name=f"{dir}/{plot.y}_mean",
+        out_fig_name=f"{dir}/{plot.fname}",
         add_points=True,
         estimator="mean",
     )
@@ -294,7 +295,7 @@ def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):
 
     plot.y = "linearity"
     plot.y_lbl = "Linearity"
-    return PlotChart.plot(plot=plot, df=lin_df, out_fig_name=f"{dir}/linearity")
+    return PlotChart.plot(plot=plot, df=lin_df, out_fig_name=f"{dir}/{plot.fname}")
 
 
 ###########################################################################

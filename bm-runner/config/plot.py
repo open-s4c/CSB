@@ -108,6 +108,15 @@ class PlotConfig(dict):
         self.type = type
         self.shape = shape if shape is not None else self.DEFAULT_PLOT[self.type]
         self.palette = palette
+        self._fname = f"{self.x}_vs_{self.y}_{PlotType(self.type).value}"
 
     def set_palette(self, palette: PlotPalette | str):
         self.palette = palette
+
+    @property
+    def fname(self):
+        return self._fname
+
+    @fname.setter
+    def fname(self, value):
+        self._fname = value
