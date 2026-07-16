@@ -156,7 +156,7 @@ def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
 
 ###########################################################################
 def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
-    plot.fname += f"_{info}"
+    plot.fname = f"{plot.fname}_{info}"
     match plot.type:
         case PlotType.NORMAL:
             fig_name = f"{dir}/{plot.fname}"
