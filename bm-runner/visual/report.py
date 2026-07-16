@@ -11,6 +11,7 @@ from typing import Optional
 from pathlib import Path
 from utils.logger import LogType, bm_log
 import sys
+import os
 
 
 class Report:
@@ -72,11 +73,13 @@ class Report:
         Returns relative path to the report's parent directory if possible,
         otherwise returns the given path.
         """
-        try:
-            if self.fname:
-                return Path(path).relative_to(Path(self.fname).parent)
-        except Exception:
-            pass
+        if self.fname:
+            plot_path = Path(path).resolve()
+            report_dir = Path(self.fname).resolve().parent
+            try:
+                return plot_path.relative_to(report_dir)
+            except ValueError:
+                return Path(os.path.relpath(plot_path, report_dir))
         return path
 
     def add_chapter(self, name: str, level=1):
