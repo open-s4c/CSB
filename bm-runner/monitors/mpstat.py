@@ -9,6 +9,10 @@ from monitors.monitor import Monitor
 from utils.logger import bm_log, LogType
 from utils.process import BackgroundProcess
 from bm_utils import str_to_json
+from visual.plotchart import PlotChart
+from config.plot import PlotConfig
+
+import sys
 
 
 class SystemStats(Monitor):
@@ -136,6 +140,7 @@ class SystemStats(Monitor):
             # If some offsets are negative due to wraparound at midnight, add number of seconds in
             # a day to make the number positive:
             df["time"] = df["time"] + (df["time"] < 0) * (24 * 60 * 60)
+
             df.set_index("time").plot()
             plt.title(f"CPU Usage Over Time - core {core}")
             plt.ylabel("Percentage")
@@ -149,3 +154,27 @@ class SystemStats(Monitor):
             filename = os.path.join(self.dir, f"system-stats-{core}.png")
             plt.savefig(filename)
             plt.close()
+
+            cpu_cols = ["usr", "sys", "iowait", "idle", "softirq", "irq"]
+            plot_df = (
+                df.reset_index()
+                .melt(
+                    id_vars=["time"],
+                    value_vars=cpu_cols,
+                    var_name="metric",
+                    value_name="value",
+                )
+            )
+            plt_cfg = PlotConfig(
+                x="time",
+                x_lbl="Seconds Elapsed",
+                y="value",
+                y_lbl="CPU utilization (%)",
+                hue="metric",
+                shape="lineplot",
+                title=f"CPU Usage Over Time - core {core}",
+            )
+            filename = os.path.join(self.dir, f"mpstat-{core}")
+            PlotChart.plot(plt_cfg, plot_df, filename)
+            #sys.exit(1)
+            #cfg = PlotConfig(x=)
