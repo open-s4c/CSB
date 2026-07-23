@@ -166,6 +166,7 @@ Note
 ```
 
 Add only the needed sections to describe the changes. Keep them concise.
+Extra elaborate information can be added in the form of comments to the PR.
 Restrict the PR title to 50chars if possible, and the commit message/description lines to 72 chars max.
 All commits should be signed with `-s`.
 
