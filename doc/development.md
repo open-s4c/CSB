@@ -134,3 +134,38 @@ License to new files will be added with:
 ```bash
 helpers/license-check.sh
 ```
+
+## Commit Message Template
+
+When creating PRs use the below commit message template in their description.
+Most PRs will be squashed and the description will be the commit message.
+
+**Example:**
+
+```
+Add
+
+- a new monitor X is implemented in file.py
+
+Change
+
+- changed monitor X default arguments.
+
+Remove
+
+- file_b.py was removed, dropping monitor X.
+
+Fix
+
+- bug Y in monitor X is fixed.
+
+Note
+
+- This addresses issue #1.
+
+```
+
+Add only the needed sections to describe the changes. Keep them concise.
+Restrict the PR title to 50chars if possible, and the commit message/description lines to 72 chars max.
+All commits should be signed with `-s`.
+
