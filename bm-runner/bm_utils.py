@@ -411,3 +411,31 @@ def is_perf_event_supported(event_name: str) -> bool:
     except Exception:
         # if perf is not installed an exception can occur.
         return False
+
+def git_info(repo="."):
+    def git(*args):
+        return shell_out(
+            ["git", "-C", repo, *args],
+            output_is_log=False,
+            print_file_shell_cmd=False,
+        ).strip()
+    try:
+        upstream = git("rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}")
+        remote, remote_branch = upstream.split("/", 1)
+    except subprocess.CalledProcessError:
+        remote = None
+        remote_branch = None
+
+    bm_log(f"{remote}")
+    bm_log(f"{remote_branch}")
+    sys.exit(1)
+
+    return {
+        "branch": git("branch", "--show-current"),
+        "commit": git("rev-parse", "HEAD"),
+        "short_commit": git("rev-parse", "--short", "HEAD"),
+        "tags": git("tag", "--points-at", "HEAD").splitlines(),
+        "remote": remote,
+        "remote_branch": remote_branch,
+        "remote_url": git("remote", "get-url", remote) if remote else None,
+    }

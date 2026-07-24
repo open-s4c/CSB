@@ -48,6 +48,7 @@ class ScalabilityBenchmark(Benchmark):
         self.common_info["kernel"] = kernel_info.replace("#", " ")
         self.common_info["Allowed CPUs"] = self.container_cfg.get_cpu_pool()
         self.common_info["cgroup"] = get_cgroups_version()
+        self.common_info |= bm_utils.git_info()
 
     def prebuild_bench(self, **_kwargs):
         b = Builder()
