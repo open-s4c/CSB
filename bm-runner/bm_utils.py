@@ -421,10 +421,12 @@ def git_info(repo="."):
             print_file_shell_cmd=False,
         ).strip()
 
+    dirty = bool(git("status", "--porcelain"))
+    dirty_state = "yes" if dirty else "no"
     return {
         "csb-branch": git("branch", "--show-current"),
         "csb-commit": git("rev-parse", "HEAD"),
         "csb-short_commit": git("rev-parse", "--short", "HEAD"),
         "csb-tags": git("tag", "--points-at", "HEAD").splitlines(),
-        "csb-dirty": bool(git("status", "--porcelain")),
+        "csb-dirty": dirty_state,
     }
