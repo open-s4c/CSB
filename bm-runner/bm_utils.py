@@ -421,6 +421,13 @@ def git_info(repo="."):
             print_file_shell_cmd=False,
         ).strip()
 
+    try:
+        if git("rev-parse", "--is-inside-work-tree") != "true":
+            return {}
+    except Exception:
+        # Git is unavailable, or repo is not a Git working tree.
+        return {}
+
     dirty = bool(git("status", "--porcelain"))
     dirty_state = "yes" if dirty else "no"
     return {
