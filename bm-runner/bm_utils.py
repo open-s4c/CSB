@@ -426,4 +426,5 @@ def git_info(repo="."):
         "commit": git("rev-parse", "HEAD"),
         "short_commit": git("rev-parse", "--short", "HEAD"),
         "tags": git("tag", "--points-at", "HEAD").splitlines(),
+        "dirty": bool(git("status", "--porcelain")),
     }
