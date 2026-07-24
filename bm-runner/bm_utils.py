@@ -422,9 +422,9 @@ def git_info(repo="."):
         ).strip()
 
     return {
-        "branch": git("branch", "--show-current"),
-        "commit": git("rev-parse", "HEAD"),
-        "short_commit": git("rev-parse", "--short", "HEAD"),
-        "tags": git("tag", "--points-at", "HEAD").splitlines(),
-        "dirty": bool(git("status", "--porcelain")),
+        "csb-branch": git("branch", "--show-current"),
+        "csb-commit": git("rev-parse", "HEAD"),
+        "csb-short_commit": git("rev-parse", "--short", "HEAD"),
+        "csb-tags": git("tag", "--points-at", "HEAD").splitlines(),
+        "csb-dirty": bool(git("status", "--porcelain")),
     }
