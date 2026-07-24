@@ -419,23 +419,10 @@ def git_info(repo="."):
             output_is_log=False,
             print_file_shell_cmd=False,
         ).strip()
-    try:
-        upstream = git("rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}")
-        remote, remote_branch = upstream.split("/", 1)
-    except subprocess.CalledProcessError:
-        remote = None
-        remote_branch = None
-
-    bm_log(f"{remote}")
-    bm_log(f"{remote_branch}")
-    sys.exit(1)
 
     return {
         "branch": git("branch", "--show-current"),
         "commit": git("rev-parse", "HEAD"),
         "short_commit": git("rev-parse", "--short", "HEAD"),
         "tags": git("tag", "--points-at", "HEAD").splitlines(),
-        "remote": remote,
-        "remote_branch": remote_branch,
-        "remote_url": git("remote", "get-url", remote) if remote else None,
     }
