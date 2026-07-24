@@ -412,6 +412,7 @@ def is_perf_event_supported(event_name: str) -> bool:
         # if perf is not installed an exception can occur.
         return False
 
+
 def git_info(repo="."):
     def git(*args):
         return shell_out(
