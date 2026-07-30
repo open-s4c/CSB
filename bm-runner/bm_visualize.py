@@ -22,18 +22,20 @@ import copy
 ###########################################################################
 def add_info_tbl(df, report: Report, result_file: str):
     info_points = [col for col in df.columns if df[col].nunique() == 1]
-    data = {}
-    data["Results file name:"] = result_file
+    # virtual table list of lists.
+    # each list is a row
+    table = []
+    table.append(["Results file name:", result_file])
     for info in info_points:
         value = df[info].unique()
         if len(value) == 1:
-            data[info] = value[0]
+            table.append([info, value[0]])
         else:
             vals = ",".join(str(v) for v in value)
             if not isinstance(value[0], str):
                 vals += f", mean = {statistics.mean(value)}"
-            data[info] = vals
-    report.add_table(data)
+            table.append([info, vals])
+    report.add_table(table)
 
 
 ###########################################################################

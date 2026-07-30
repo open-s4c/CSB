@@ -91,13 +91,13 @@ class Report:
             case _:
                 self.doc.add(h2(name))
 
-    def add_table(self, data: dict[str, str]):
+    def add_table(self, tbl_data: list[list[str]]):
         tbl = table()
-        for k, v in data.items():
+        for r_data in tbl_data:
             row = tr()
-            row.add(td(k))
-            row.add(td(v))
             tbl.add(row)
+            for v in r_data:
+                row.add(td(v))
         self.doc.add(tbl)
 
     def embed_plots(self, plot_lists: list[list[str]], show_path: bool = True):
