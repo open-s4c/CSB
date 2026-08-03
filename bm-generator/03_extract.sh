@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 
+source helper/bm-generator-lib.sh
+
  : ${DIR_PROG:="./deserialized"}
  : ${DIR_OUT:="./extracted"}
  : ${MINCALLS:=10}
@@ -53,7 +55,9 @@ for file in $files; do
   echo $file
   dir="${DIR_OUT_ABS}/$i"
   mkdir -p "${dir}"
-  bin/syz-extraction -prog "${file}" -deserialize "${dir}" -minCalls ${MINCALLS} &
+  prog_os="$(prog_target_os "${file}")"
+  prog_arch="$(prog_target_arch "${file}")"
+  bin/syz-extraction -os "${prog_os}" -arch "${prog_arch}" -prog "${file}" -deserialize "${dir}" -minCalls ${MINCALLS} &
   i=$(($i + 1))
 done
 

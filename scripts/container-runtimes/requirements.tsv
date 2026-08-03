@@ -1,0 +1,16 @@
+# tool	kind	privilege	host requirements	install source
+runc	oci	root or rootless	user/mount/pid namespaces; cgroup v2	GitHub binary
+crun	oci	root or rootless	namespaces; cgroup v2; libseccomp	package-backend closure
+youki	oci	root or rootless	Rust/cargo; namespaces; cgroup v2; seccomp	upstream source build
+bwrap	sandbox	unprivileged	unprivileged user namespaces	package-backend closure
+systemd-nspawn	system-container	root	running systemd	package-backend closure
+lxc	system-container	root	cgroup v2; host LXC libraries; bridge optional	package-backend closure
+docker	high-level	root	cgroup v2; overlayfs; nftables; Docker daemon	package-backend closure
+podman	high-level	root or rootless	conmon; OCI runtime; netavark; subuid/subgid	package-backend closure
+containerd	high-level	root	cgroup v2; containerd service; runc	package-backend closure
+runsc	userspace-kernel	root or rootless	user namespaces; ptrace or KVM platform	gVisor binary
+kata	vm-container	root	/dev/kvm; arm64 virtualization; guest kernel/rootfs	Kata static archive
+firecracker	microvm	root or KVM group	/dev/kvm; arm64 guest kernel/rootfs	GitHub archive
+nsjail	sandbox	root or userns	protobuf; libnl; libseccomp; user namespaces	source build
+firejail	sandbox	unprivileged/setuid	setuid helper or userns; seccomp	upstream source build
+minijail	sandbox	root or userns	libcap; seccomp; user namespaces	source build

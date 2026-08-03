@@ -34,7 +34,9 @@ DIR_TARGETS="../bench/targets/$(get_workspace_dir)/syz"
 
 DIR_TARGETS_ABS="`readlink -e ${DIR_TARGETS}`"
 FILEPROG_ABS="`readlink -e ${FILEPROG}`"
+PROG_OS="$(prog_target_os "${FILEPROG_ABS}")"
+PROG_ARCH="$(prog_target_arch "${FILEPROG_ABS}")"
 
 cd "${DIR_SYZ_SRC}"
 echo "Converting ${PROG} to benchmark framework"
-bin/syz-prog2c -csb -trace=true -format=false -prog "${FILEPROG_ABS}" -cfile "${DIR_TARGETS_ABS}/${PROG}.h"
+bin/syz-prog2c -os "${PROG_OS}" -arch "${PROG_ARCH}" -csb -trace=true -format=false -prog "${FILEPROG_ABS}" -cfile "${DIR_TARGETS_ABS}/${PROG}.h"

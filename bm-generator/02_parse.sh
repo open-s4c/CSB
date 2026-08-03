@@ -12,12 +12,16 @@ fi
 
 TRACE="$1"
 
+source helper/bm-generator-lib.sh
+
 if [ ! -f "${TRACE}" ]; then
   echo "Specified trace file ${TRACE} does not exist."
   exit 1
 fi
 
 TRACE_ABS="`readlink -e ${TRACE}`"
+TRACE_OS_RESOLVED="$(trace_target_os "${TRACE_ABS}")"
+TRACE_ARCH_RESOLVED="$(trace_target_arch "${TRACE_ABS}")"
 
 # Check that syzkaller source directory is known
 SCRIPT_SYZ_SRC="helper/find_syzkaller_src.sh"
@@ -53,7 +57,7 @@ fi
 # Change to syzkaller source
 cd "${DIR_SYZ_SRC}"
 
-bin/syz-trace2syz -vv 0 -file "${TRACE_ABS}" --deserialize "${DIR_PROG_ABS}" --nocorpus
+bin/syz-trace2syz -vv 0 -os "${TRACE_OS_RESOLVED}" -arch "${TRACE_ARCH_RESOLVED}" -file "${TRACE_ABS}" --deserialize "${DIR_PROG_ABS}" --nocorpus
 
 cd "${DIR_CUR}"
 

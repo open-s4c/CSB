@@ -13,7 +13,7 @@ endif()
 message(STATUS "Go found at: ${GO_EXECUTABLE}")
 
 # Tools we want to build of syzkaller
-set(TOOLS trace2syz prog2c extraction)
+set(TOOLS trace2syz prog2c extraction progreduce)
 # Build each tool
 foreach(TOOL ${TOOLS})
     add_custom_target(

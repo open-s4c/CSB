@@ -17,6 +17,9 @@ The main runner implementation lives in `bm-runner/`. The runner entry point is
 Builtin benchmark targets live under `bench/targets/` and external benchmark
 helpers live under `scripts/adapters/` and `scripts/bm-external/`. Plugin
 scripts referenced from JSON configs live under `scripts/plugins/`.
+The portable container-runtime trace harness lives under
+`scripts/container-runtimes/`; its README documents isolated installation,
+capture points, architecture requirements, mirrors, and complete-matrix runs.
 
 `deps/syzkaller` is a nested repository/submodule. Check its status and history
 with `git -C deps/syzkaller ...` and keep its changes separate from the CSB root
@@ -70,6 +73,18 @@ Run a single benchmark config:
 ```bash
 scripts/run-single.sh config/bm_empty.json
 ```
+
+Plan or smoke-test the container-runtime trace matrix without a long capture:
+
+```bash
+scripts/container-runtimes/requirements.sh --check
+scripts/container-runtimes/sweep.sh --plan
+scripts/container-runtimes/run.sh --no-trace bwrap create-start
+```
+
+Authoritative arm64 traces require a native arm64 host. Use
+`scripts/container-runtimes/sweep.sh --trace` there; each supported operation
+is verified immediately after capture.
 
 Replot existing results:
 
