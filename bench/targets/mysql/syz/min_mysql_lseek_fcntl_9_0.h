@@ -8,7 +8,7 @@
 #define CSB_PROGRAM_NAME ""
 #endif
 #define MMAP_OFFSET 0x20000000ul
-#define MMAP_LENGTH 0x1000000ul
+#define MMAP_LENGTH 0x1161000ul
 const static uint64_t maxWriteBufferSize = 0ul;
 const static uint64_t maxWriteBufferSizeAlignment = 4096ul;
 static const char* netops_connect[0] __attribute__((unused)) = {};
