@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install pre-requisites
-        run: sudo apt-get install -y build-essential linux-tools-common linux-tools-$(uname -r) cmake libhiredis-dev
+        run: sudo apt-get install -y build-essential linux-tools-common linux-tools-$(uname -r) cmake libhiredis-dev ninja-build
 
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
@@ -159,7 +159,7 @@ jobs:
       - name: Install pre-requisites
         run: |
           sudo apt update
-          sudo apt-get install -y build-essential cmake libhiredis-dev bubblewrap
+          sudo apt-get install -y build-essential cmake libhiredis-dev bubblewrap ninja-build
       - name: Enable bwrap user namespaces
         run: |
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
@@ -207,7 +207,7 @@ jobs:
       - name: Install pre-requisites
         run: |
           sudo apt update
-          sudo apt-get install -y build-essential cmake libhiredis-dev libhwloc-dev
+          sudo apt-get install -y build-essential cmake libhiredis-dev libhwloc-dev ninja-build
       - name: Prepare benchmark
         run: |
           ./scripts/bm-external/${{ matrix.benchmark.extern }}/configure.sh

@@ -18,7 +18,7 @@ jobs:
         config: [-DCSB_ADDRESS_SANITIZER=ON, -DCSB_THREAD_SANITIZER=ON, ""]
     steps:
       - name: install pre-requisites
-        run: sudo apt-get install -y libhiredis-dev
+        run: sudo apt-get install -y libhiredis-dev ninja-build
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
       - name: Configure Testing

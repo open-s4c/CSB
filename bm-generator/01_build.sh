@@ -20,13 +20,13 @@ SCRIPT_SYZ_SRC="helper/find_syzkaller_src.sh"
 
 if [ ! -d "${DIR_BUILD}" ]; then
   echo "Configuring CSB build directory ..."
-  cmake -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
+  cmake -G Ninja -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
 fi
 
 if [ ! -d "${DIR_SYZ_SRC}" ]; then
   echo "syzkaller source dir not found."
   echo "  Building syzkaller with cmake ..."
-  cmake -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
+  cmake -G Ninja -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
   DIR_SYZ_SRC=$(${SCRIPT_SYZ_SRC})
   if [ ! -d "${DIR_SYZ_SRC}" ]; then
     echo "Failed setting up syzkaller sources."

@@ -26,7 +26,7 @@ class Builder:
         return Path(os.getcwd()).parent
 
     def __run_cmake_config(self):
-        cmd = f"cmake -DCMAKE_BUILD_TYPE=Release -S{self.project_dir} -B{self.build_dir}"
+        cmd = f"cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -S{self.project_dir} -B{self.build_dir}"
         shell_out(cmd, output_is_log=False, print_file_shell_cmd=False)
 
     def __clean_build_dir(self):
@@ -67,15 +67,18 @@ class Builder:
         output = shell_out(
             cmd, print_shell_cmd=False, print_output=False, print_file_shell_cmd=False
         )
+        targets = set()
         try:
-            # Split output by lines and remove the first line and '... ' from each target
+            # Example line:
+            # mysql_min_mysql_brk_missing_0_0: phony
             lines = output.splitlines()
-            # Skip the first line, and strip the '... ' from each subsequent line, adding them to a set (hashset)
-            targets = {line.strip()[4:] for line in lines[1:] if line.strip().startswith("...")}
-            return targets
+            for line in lines:
+                s = line.split(":")
+                if len(s) > 1 and s[1].strip() == "phony":
+                    targets.add(s[0])
         except Exception as e:
             bm_log(f"Failed to parse list of targets from cmake. {e}", LogType.ERROR)
-            return set()
+        return targets
 
     def target_exists(self, target: str) -> bool:
         targets = self.__get_targets()
