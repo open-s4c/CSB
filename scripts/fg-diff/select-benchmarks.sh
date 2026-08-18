@@ -18,7 +18,7 @@ for i in $*; do
     c=$((c+1))
     fbase=$(basename $i .json)
     echo "[$(date)] Benchmarking ${i} ${c}/${N_ARGS}"
-    ./scripts/run-single.sh $(realpath "$i") > ./logs/$fbase.stdout 2> ./logs/$fbase.stderr || true
+    ./scripts/run-single.sh $(realpath "$i")
 done
 
 source ./venv/bin/activate
