@@ -52,6 +52,7 @@
   },
   "applications": [
     {
+      "path": "bm-external/fio",
       "name": "fio",
       "args": "--name=randrw --filename=/tmp/fio.test --rw=randrw --rwmixread=70 --bs=4k --size=1G --iodepth=64 --numjobs={threads} --direct=1",
       "adapter": {

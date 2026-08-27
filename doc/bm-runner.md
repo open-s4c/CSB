@@ -155,10 +155,50 @@ to add external benchmarks under the following conditions:
 - Users should provide a relative path to the CSB project directory where the external benchmarks are located (see [applications config](bm-config.md#application)).
 - If the external benchmark is installed on the host (in /usr/bin), it can be run in the container, provided the container's OS matches the host's OS.
 
-CSB contains minimal examples for some external benchmarks like [fio][], [stress-ng][], [unixbench][], and [will-it-scale][].
-Each of these benchmarks have a JSON file under `config/` and an adapter under `scripts/adapters`.
-For [unixbench][] and [will-it-scale][] we recommend users to clone these repos under a folder called `bm-external` inside
-`CSB` directory.
+CSB contains examples for external benchmarks including [fio][], [stress-ng][],
+[unixbench][], [will-it-scale][], and [sysbench][]. Each benchmark has a JSON
+file under `config/bm-external/` and an adapter under `scripts/adapters/`.
+
+Download, build, and validate all supported source-built external benchmarks
+from the CSB project root with:
+
+```bash
+scripts/bm-external/setup.sh --all
+```
+
+External tool setup is opt-in. A normal CMake build, `scripts/prepare.sh`, and
+`run.sh` do not download or build any external benchmark.
+
+The source builds require Git, Make, and a C compiler. Will-it-scale also
+requires the hwloc development headers. Sysbench has additional database build
+dependencies documented in [Using Sysbench](bm-external/sysbench.md).
+
+The setup installs the tools below `bm-external/`, where the supplied JSON
+configs expect them. This directory is part of the CSB project mount used for
+container executions, so the same installation works for native and container
+runs.
+
+Individual tools, the `unixbench` alias, and installation checks are supported:
+
+```bash
+scripts/bm-external/setup.sh fio stress-ng will-it-scale
+scripts/bm-external/setup.sh unixbench sysbench
+scripts/bm-external/setup.sh --check
+scripts/bm-external/setup.sh --list
+```
+
+The same operations are available as CMake targets after configuring a build:
+
+```bash
+cmake --build build --target external-tools
+cmake --build build --target external-fio
+cmake --build build --target external-tools-check
+```
+
+The build scripts use pinned releases by default where upstream releases are
+available. `FIO_VERSION`, `STRESS_NG_VERSION`, `UNIXBENCH_VERSION`,
+`WILL_IT_SCALE_VERSION`, and `SYSBENCH_VERSION` can override their revisions.
+`BUILD_JOBS` controls build parallelism.
 
 ## Generating Configuration Files in Bulk
 
@@ -196,3 +236,4 @@ __Note: make sure to run in the project root, and remove existing build folder b
 [unixbench]: https://github.com/kdlucas/byte-unixbench
 [stress-ng]: https://github.com/ColinIanKing/stress-ng
 [will-it-scale]: https://github.com/antonblanchard/will-it-scale
+[sysbench]: https://github.com/akopytov/sysbench

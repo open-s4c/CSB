@@ -11,6 +11,8 @@ multidiff/
 Testing/
 gen-ws
 bm-external/byte-unixbench
+bm-external/fio
+bm-external/stress-ng
 bm-external/sysbench
 bm-external/will-it-scale
 bm-external/cgroups/rootfs/

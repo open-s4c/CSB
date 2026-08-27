@@ -2,20 +2,22 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-set -ex
-SRC_DIR="$(readlink -f $(dirname "$0")/../../..)"
-BUILD_DIR=${SRC_DIR}/bm-external
+set -eu
 
-echo $BUILD_DIR
+SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+CSB_ROOT="$(CDPATH='' cd -- "${SCRIPT_DIR}/../../.." && pwd)"
+export CSB_ROOT
+. "${CSB_ROOT}/scripts/bm-external/common.sh"
 
-mkdir -p ${BUILD_DIR}
+WILL_IT_SCALE_VERSION="${WILL_IT_SCALE_VERSION:-master}"
+SOURCE_DIR="${EXTERNAL_DIR}/will-it-scale"
+
+require_command make
+clone_release https://github.com/antonblanchard/will-it-scale.git \
+	"${SOURCE_DIR}" "${WILL_IT_SCALE_VERSION}"
+
 (
-	cd ${BUILD_DIR}
-	if [ ! -e will-it-scale/.git ]; then
-		git clone https://github.com/antonblanchard/will-it-scale.git
-	else
-	    (cd will-it-scale && make clean|| true)
-	fi
-	cd will-it-scale
-	make
+	cd "${SOURCE_DIR}"
+	make clean >/dev/null 2>&1 || true
+	make -j "${BUILD_JOBS}"
 )

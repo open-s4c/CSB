@@ -9,15 +9,15 @@ CSB_ROOT="$(CDPATH='' cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 export CSB_ROOT
 . "${CSB_ROOT}/scripts/bm-external/common.sh"
 
-UNIXBENCH_VERSION="${UNIXBENCH_VERSION:-v6.0.1}"
-SOURCE_DIR="${EXTERNAL_DIR}/byte-unixbench"
+FIO_VERSION="${FIO_VERSION:-fio-3.42}"
+SOURCE_DIR="${EXTERNAL_DIR}/fio"
 
 require_command make
-clone_release https://github.com/kdlucas/byte-unixbench.git "${SOURCE_DIR}" \
-	"${UNIXBENCH_VERSION}"
+clone_release https://github.com/axboe/fio.git "${SOURCE_DIR}" "${FIO_VERSION}"
 
 (
-	cd "${SOURCE_DIR}/UnixBench"
+	cd "${SOURCE_DIR}"
 	make clean >/dev/null 2>&1 || true
+	./configure
 	make -j "${BUILD_JOBS}"
 )

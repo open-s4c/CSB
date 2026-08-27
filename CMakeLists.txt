@@ -55,3 +55,25 @@ add_custom_target(
     json-format-apply
     COMMAND bash -c ${HELPERS}/json-format.sh ${CMAKE_SOURCE_DIR}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# ##############################################################################
+# Add external benchmark setup targets
+# ##############################################################################
+set(EXTERNAL_SETUP ${CMAKE_SOURCE_DIR}/scripts/bm-external/setup.sh)
+add_custom_target(
+    external-tools
+    COMMAND ${EXTERNAL_SETUP} --all
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL VERBATIM)
+add_custom_target(
+    external-tools-check
+    COMMAND ${EXTERNAL_SETUP} --check
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL VERBATIM)
+foreach(EXTERNAL_TOOL fio stress-ng byte-unixbench will-it-scale sysbench)
+    add_custom_target(
+        external-${EXTERNAL_TOOL}
+        COMMAND ${EXTERNAL_SETUP} ${EXTERNAL_TOOL}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        USES_TERMINAL VERBATIM)
+endforeach()

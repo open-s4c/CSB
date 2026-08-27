@@ -32,6 +32,12 @@ Prepare the Python and benchkit environment from the repository root:
 scripts/prepare.sh
 ```
 
+Install all supported source-built external benchmarks:
+
+```bash
+scripts/bm-external/setup.sh --all
+```
+
 Run the Python test suite from the repository root:
 
 ```bash
@@ -169,4 +175,3 @@ Add only the needed sections to describe the changes. Keep them concise.
 Extra elaborate information can be added in the form of comments to the PR.
 Restrict the PR title to 50chars if possible, and the commit message/description lines to 72 chars max.
 All commits should be signed with `-s`.
-

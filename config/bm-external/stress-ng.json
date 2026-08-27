@@ -63,6 +63,7 @@
   },
   "applications": [
     {
+      "path": "bm-external/stress-ng",
       "name": "stress-ng",
       "args": "--futex {threads} -t {duration} -M",
       "adapter": {
