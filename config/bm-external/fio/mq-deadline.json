@@ -1,0 +1,66 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#fio jobs",
+      "y": "read_iops",
+      "y_lbl": "Read IOPS",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "fio mq-deadline read IOPS"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "#fio jobs",
+      "y": "read_clat_p99_9_ns",
+      "y_lbl": "Read p99.9 latency (ns)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "fio mq-deadline p99.9 latency"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 3,
+    "repeat": 1,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          2,
+          4,
+          8
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 8,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "scripts/bm-external",
+      "name": "fio.sh",
+      "args": "--name=mq-deadline-contention --rw=randrw --rwmixread=50 --bs=4k --ioengine=psync --direct=1 --numjobs={threads} --size=64m --time_based=1 --runtime={duration} --fsync=128 --group_reporting=1 --lat_percentiles=1 --percentile_list=50:95:99:99.9 --output-format=json",
+      "adapter": {
+        "name": "fio-json-adapter.py"
+      }
+    }
+  ]
+}

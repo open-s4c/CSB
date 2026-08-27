@@ -1,0 +1,66 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#fio jobs",
+      "y": "read_bw",
+      "y_lbl": "Read bandwidth (KiB/s)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "fio buffered-read throughput"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "#fio jobs",
+      "y": "read_clat_p99_ns",
+      "y_lbl": "Read p99 latency (ns)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "fio buffered-read p99 latency"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 3,
+    "repeat": 1,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          2,
+          4,
+          8
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 8,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "scripts/bm-external",
+      "name": "fio.sh",
+      "args": "--name=lru-buffered-read --size=256m --rw=read --bs=128k --ioengine=psync --direct=0 --invalidate=1 --fadvise_hint=1 --numjobs={threads} --time_based=1 --runtime={duration} --group_reporting=1 --lat_percentiles=1 --percentile_list=50:95:99:99.9 --output-format=json",
+      "adapter": {
+        "name": "fio-json-adapter.py"
+      }
+    }
+  ]
+}

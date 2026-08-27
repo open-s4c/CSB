@@ -157,6 +157,7 @@ to add external benchmarks under the following conditions:
 
 CSB contains minimal examples for some external benchmarks like [fio][], [stress-ng][], [unixbench][], and [will-it-scale][].
 Each of these benchmarks have a JSON file under `config/` and an adapter under `scripts/adapters`.
+See [Using fio](bm-external/fio.md) for focused storage scalability examples.
 For [unixbench][] and [will-it-scale][] we recommend users to clone these repos under a folder called `bm-external` inside
 `CSB` directory.
 
