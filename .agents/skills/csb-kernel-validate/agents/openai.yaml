@@ -1,0 +1,4 @@
+interface:
+  display_name: "CSB Kernel Validate"
+  short_description: "Safely validate remote CSB kernel patches"
+  default_prompt: "Use $csb-kernel-validate to deploy and validate this CSB-derived kernel patch on the remote benchmark host."
