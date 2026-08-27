@@ -1,0 +1,56 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#stress-ng exec workers",
+      "y": "throughput_real",
+      "y_lbl": "Exec bogo operations/s",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "stress-ng execve throughput"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 3,
+    "repeat": 1,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          2,
+          4,
+          8
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 8,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "scripts/bm-external",
+      "name": "stress-ng.sh",
+      "args": "--exec {threads} --exec-max 128 --exec-method execve --exec-fork-method fork --timeout {duration}s --metrics --verify",
+      "adapter": {
+        "name": "stress-ng-adapter.sh"
+      }
+    }
+  ]
+}

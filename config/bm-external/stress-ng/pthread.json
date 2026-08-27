@@ -1,0 +1,66 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#stress-ng pthread workers",
+      "y": "throughput_real",
+      "y_lbl": "Pthread bogo operations/s",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "stress-ng pthread throughput"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "#stress-ng pthread workers",
+      "y": "pthread_start_ns",
+      "y_lbl": "pthread start time (ns)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "stress-ng pthread creation latency"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 3,
+    "repeat": 1,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          2,
+          4,
+          8
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 8,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "scripts/bm-external",
+      "name": "stress-ng.sh",
+      "args": "--pthread {threads} --pthread-max 128 --timeout {duration}s --metrics --verify",
+      "adapter": {
+        "name": "stress-ng-adapter.sh"
+      }
+    }
+  ]
+}
