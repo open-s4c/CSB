@@ -1,0 +1,6 @@
+interface:
+  display_name: "CSB Dev"
+  short_description: "Develop and debug CSB framework internals"
+  default_prompt: "Use $csb-dev to modify bm-runner, monitors, plots, plugins, adapters, execution behavior, tests, or framework documentation. Use $csb-remote alongside it for remote-only reproductions or validation."
+policy:
+  allow_implicit_invocation: true
