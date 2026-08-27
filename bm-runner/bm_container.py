@@ -42,6 +42,10 @@ class Container(ExecutionUnit):
     def get_results_dir(self) -> str:
         return str(resolve_path(self.record_data_dir, use_in_container=True))
 
+    @classmethod
+    def _ulimits(cls):
+        return [docker.types.Ulimit(name="nofile", soft=cls.NOFILE_LIMIT, hard=cls.NOFILE_LIMIT)]
+
     def __log_status(self, container):
         exit_code = container.attrs["State"].get("ExitCode")
         logs = container.logs().decode(errors="replace").strip()
@@ -193,6 +197,7 @@ class Container(ExecutionUnit):
                 detach=True,  # detached mode
                 working_dir="/home",
                 ports=ports,
+                ulimits=self._ulimits(),
             )
 
             timeout = 20

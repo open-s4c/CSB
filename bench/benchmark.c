@@ -12,8 +12,11 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #define DISTRIBUTION_BOUND 1024
+#define BM_NOFILE_LIMIT    1024
 #define BM_PRINT_DELIMITER ';'
 
 /**
@@ -39,6 +42,7 @@ void bm_phase_warmup(void);
 void bm_phase_run(void);
 void bm_phase_conclude(void);
 void bm_phase_cooldown(void);
+static void bm_nofile_limit_set(void);
 
 int
 main(int argc, char *argv[])
@@ -112,9 +116,38 @@ run(void *args)
 void
 bm_env_prepare(void)
 {
+    bm_nofile_limit_set();
+
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
         perror("Failed to ignore sigpipe.");
         exit(-1);
+    }
+}
+
+static void
+bm_nofile_limit_set(void)
+{
+    const struct rlimit requested = {
+        .rlim_cur = BM_NOFILE_LIMIT,
+        .rlim_max = BM_NOFILE_LIMIT,
+    };
+    struct rlimit effective = {0};
+
+    if (setrlimit(RLIMIT_NOFILE, &requested) != 0) {
+        perror("Failed to set RLIMIT_NOFILE");
+        exit(EXIT_FAILURE);
+    }
+    if (getrlimit(RLIMIT_NOFILE, &effective) != 0) {
+        perror("Failed to read RLIMIT_NOFILE");
+        exit(EXIT_FAILURE);
+    }
+    if (effective.rlim_cur != requested.rlim_cur ||
+        effective.rlim_max != requested.rlim_max) {
+        fprintf(stderr,
+                "Unexpected RLIMIT_NOFILE: soft=%llu hard=%llu, expected=%d\n",
+                (unsigned long long)effective.rlim_cur,
+                (unsigned long long)effective.rlim_max, BM_NOFILE_LIMIT);
+        exit(EXIT_FAILURE);
     }
 }
 

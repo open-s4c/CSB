@@ -5,6 +5,11 @@ Each benchmark is a C header under (bench/targets). Each header is compiled with
 in a separate binary. These binaries represent an application/benchmark pool
 to be run by [bm-runner][].
 
+Each builtin benchmark sets and verifies both its soft and hard
+`RLIMIT_NOFILE` values at `1024` before target initialization or worker-thread
+creation. This keeps the per-process file descriptor limit deterministic across
+execution environments.
+
 Manual targets normally live directly under `bench/targets/`. Generated
 syzkaller headers usually live under grouped target folders and/or
 `bench/targets/<group>/syz/`; headers under `syz/` are intermediate generated
