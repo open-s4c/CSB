@@ -1,0 +1,6 @@
+interface:
+  display_name: "CSB Syzkaller Usage"
+  short_description: "Run the syzkaller benchmark generator"
+  default_prompt: "Use $csb-syzkaller to prepare bm-generator, parse traces, extract syz programs, refresh generated headers/configs, or adapt generated configs for CSB runs."
+policy:
+  allow_implicit_invocation: true
