@@ -155,7 +155,7 @@ to add external benchmarks under the following conditions:
 - Users should provide a relative path to the CSB project directory where the external benchmarks are located (see [applications config](bm-config.md#application)).
 - If the external benchmark is installed on the host (in /usr/bin), it can be run in the container, provided the container's OS matches the host's OS.
 
-CSB contains minimal examples for some external benchmarks like [fio][], [stress-ng][], [unixbench][], and [will-it-scale][].
+CSB contains minimal examples for some external benchmarks like [fio][], [stress-ng][], [sysbench][], [unixbench][], and [will-it-scale][].
 Each of these benchmarks have a JSON file under `config/` and an adapter under `scripts/adapters`.
 For [unixbench][] and [will-it-scale][] we recommend users to clone these repos under a folder called `bm-external` inside
 `CSB` directory.
@@ -195,4 +195,5 @@ __Note: make sure to run in the project root, and remove existing build folder b
 [fio]: https://github.com/axboe/fio
 [unixbench]: https://github.com/kdlucas/byte-unixbench
 [stress-ng]: https://github.com/ColinIanKing/stress-ng
+[sysbench]: https://github.com/akopytov/sysbench
 [will-it-scale]: https://github.com/antonblanchard/will-it-scale

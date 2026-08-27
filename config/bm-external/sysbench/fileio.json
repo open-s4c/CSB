@@ -1,0 +1,66 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "#sysbench threads",
+      "y": "file_operations.reads_s",
+      "y_lbl": "Reads/s",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "sysbench fileio read throughput"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "#sysbench threads",
+      "y": "latency.95th_percentile",
+      "y_lbl": "p95 latency (ms)",
+      "hue": "execution_type",
+      "hue_lbl": "Execution environment",
+      "shape": "lineplot",
+      "title": "sysbench fileio p95 latency"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 3,
+    "repeat": 1,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          2,
+          4,
+          8
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 8,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "scripts/bm-external",
+      "name": "sysbench-fileio.sh",
+      "args": "--threads={threads} --time={duration} --file-test-mode=rndrw --file-extra-flags=direct --file-fsync-freq=128",
+      "adapter": {
+        "name": "sysbench-adapter.py"
+      }
+    }
+  ]
+}
