@@ -1,0 +1,62 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "Concurrent CI steps",
+      "y": "steps_per_second",
+      "y_lbl": "Completed CI steps/s",
+      "hue": "execution_type",
+      "hue_lbl": "Environment",
+      "type": "mean",
+      "title": "Warm CI runner shell-step throughput"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "Concurrent CI steps",
+      "y": "elapsed_seconds",
+      "y_lbl": "Fixed-work elapsed time (s)",
+      "hue": "execution_type",
+      "hue_lbl": "Environment",
+      "type": "mean",
+      "title": "Warm CI runner fixed-work completion time"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 10,
+    "repeat": 5,
+    "exec_env": {
+      "native": [],
+      "container": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          8,
+          32,
+          64,
+          128
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 128,
+    "image": "ubuntu:latest",
+    "name": "ci-fanout"
+  },
+  "applications": [
+    {
+      "path": "bm-external/ci-fanout",
+      "name": "ci-fanout.sh",
+      "args": "--workers {threads} --steps 1024 --warmup-steps 32"
+    }
+  ]
+}

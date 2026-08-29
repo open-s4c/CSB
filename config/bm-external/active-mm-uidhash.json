@@ -1,0 +1,61 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "Concurrent workers",
+      "y": "operations_per_second",
+      "y_lbl": "UID transitions/s",
+      "hue": "execution_type",
+      "hue_lbl": "Environment",
+      "type": "mean",
+      "title": "Independent UID buckets"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 10,
+    "repeat": 5,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          8,
+          32,
+          64,
+          128
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 128,
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    },
+    "name": "active-mm-uid-unique"
+  },
+  "applications": [
+    {
+      "path": "bm-external/active-mm-scalability",
+      "name": "active-mm-scalability",
+      "args": "uid-unique {threads} {duration}"
+    }
+  ],
+  "plugins": [
+    {
+      "name": "sudo",
+      "exec_time": "with"
+    }
+  ]
+}

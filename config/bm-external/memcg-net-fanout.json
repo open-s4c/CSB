@@ -1,0 +1,61 @@
+{
+  "plots": [
+    {
+      "x": "nb_threads",
+      "x_lbl": "Concurrent tenant flows",
+      "y": "aggregate_gbps",
+      "y_lbl": "Aggregate reverse-loopback Gbit/s",
+      "hue": "execution_type",
+      "hue_lbl": "Environment",
+      "type": "mean",
+      "title": "Multi-cgroup network receive throughput"
+    },
+    {
+      "x": "nb_threads",
+      "x_lbl": "Concurrent tenant flows",
+      "y": "gbps_per_client",
+      "y_lbl": "Gbit/s per tenant",
+      "hue": "execution_type",
+      "hue_lbl": "Environment",
+      "type": "mean",
+      "title": "Multi-cgroup network receive efficiency"
+    }
+  ],
+  "benchmark_config": {
+    "duration": 5,
+    "repeat": 5,
+    "exec_env": {
+      "native": []
+    },
+    "threads": {
+      "values": [
+        [
+          1,
+          8,
+          16,
+          32,
+          64
+        ]
+      ]
+    }
+  },
+  "containers": {
+    "container_list": {
+      "values": [
+        [
+          1
+        ]
+      ]
+    },
+    "core_count": 128,
+    "image": "ubuntu:latest",
+    "name": "memcg-net-fanout"
+  },
+  "applications": [
+    {
+      "path": "bm-external/memcg-net-fanout",
+      "name": "memcg-net-fanout.sh",
+      "args": "--workers {threads} --duration 5"
+    }
+  ]
+}
